@@ -5,7 +5,7 @@ import jakarta.persistence.Embeddable
 
 @Embeddable
 class Persona(
-    @Column(name = "persona_id", unique = true, nullable = false)
+    @Column(name = "persona_id", nullable = false)
     val personaId: Long,
 
     @Column(name = "persona_type", nullable = false)
