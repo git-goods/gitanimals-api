@@ -15,7 +15,10 @@ class Persona(
     @Column(name = "level", nullable = false)
     private val level: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
     val user: User,
+
+    @Version
+    private val version: Long,
 )

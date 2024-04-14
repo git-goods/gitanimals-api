@@ -1,4 +1,5 @@
 dependencies {
+    implementation "com.github.f4b6a3:tsid-creator:${snowflakeVersion}"
     implementation "mysql:mysql-connector-java:${mysqlConnectorVersion}"
 
     testRuntimeOnly "com.h2database:h2"
