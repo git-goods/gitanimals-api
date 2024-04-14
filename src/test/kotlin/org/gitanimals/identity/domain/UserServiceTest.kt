@@ -31,13 +31,13 @@ internal class UserServiceTest(
 
     describe("givePoint 메소드는") {
         context("username에 해당하는 user가 존재할경우,") {
-            val contribution = 100
-            it("(contribution - 기존에 갖고있던 contribtuion) 만큼을 추가하고 point를 지급한다.") {
-                userService.givePoint(USER_NAME, contribution)
+            val point = 100L
+            it("입력받은 point를 지급한다.") {
+                userService.givePoint(USER_NAME, point)
 
                 val user = userRepository.findByName(USER_NAME)!!
 
-                user.getPoints() shouldBeEqual contribution * 100L
+                user.getPoints() shouldBeEqual point
             }
         }
 
@@ -46,6 +46,20 @@ internal class UserServiceTest(
                 shouldThrowExactly<IllegalArgumentException> {
                     userService.givePoint(NOT_EXIST_USER_NAME, 100)
                 }
+            }
+        }
+    }
+
+    describe("newUser 메소드는") {
+        context("username과 년별 contribution 내역을 받으면,") {
+            val username = "NEW_USER"
+            val contributionPerYears = mapOf(2024 to 100, 2023 to 100)
+            val expectedPoint = 200 * 100L
+
+            it("contribution * 100의 포인트를 갖고있는 새로운 user를 생성한다.") {
+                val user = userService.newUser(username, contributionPerYears)
+
+                user.getPoints() shouldBeEqual expectedPoint
             }
         }
     }

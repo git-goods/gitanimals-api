@@ -16,7 +16,7 @@ class Application {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            SpringApplication.run(this::class.java, *args)
+            SpringApplication.run(Application::class.java, *args)
         }
 
     }
