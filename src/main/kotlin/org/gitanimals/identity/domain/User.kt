@@ -21,6 +21,9 @@ class User(
     @Column(name = "points", nullable = false)
     private var points: Long,
 
+    @Column(name = "profile_image", nullable = false)
+    val profileImage: String,
+
     @Version
     private val version: Long? = null,
 ) : AbstractTime() {

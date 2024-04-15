@@ -6,6 +6,7 @@ data class UserResponse(
     val id: String,
     val username: String,
     val points: String,
+    val profileImage: String,
 ) {
 
     companion object {
@@ -13,7 +14,8 @@ data class UserResponse(
             return UserResponse(
                 user.id.toString(),
                 user.name,
-                user.getPoints().toString()
+                user.getPoints().toString(),
+                user.profileImage,
             )
         }
     }

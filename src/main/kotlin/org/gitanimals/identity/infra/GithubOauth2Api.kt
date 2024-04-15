@@ -35,7 +35,7 @@ class GithubOauth2Api(
         return "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
     }
 
-    override fun getOauthUsername(token: String): String {
+    override fun getOauthUsername(token: String): Oauth2Api.OAuthUserResponse {
         val userResponse = githubApiClient.get()
             .uri("/user")
             .header(HttpHeaders.AUTHORIZATION, token)
@@ -47,7 +47,7 @@ class GithubOauth2Api(
                     )
             }
 
-        return userResponse.login
+        return Oauth2Api.OAuthUserResponse(userResponse.login, userResponse.avatarUrl)
     }
 
     private data class TokenResponse(
@@ -60,5 +60,7 @@ class GithubOauth2Api(
 
     private data class UserResponse(
         val login: String,
+        @JsonProperty("avatar_url")
+        val avatarUrl: String,
     )
 }

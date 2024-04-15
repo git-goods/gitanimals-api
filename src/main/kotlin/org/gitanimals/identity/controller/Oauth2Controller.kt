@@ -1,8 +1,8 @@
 package org.gitanimals.identity.controller
 
 import org.gitanimals.identity.app.LoginFacade
-import org.gitanimals.identity.controller.response.TokenResponse
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,5 +31,14 @@ class Oauth2Controller(
     @ResponseStatus(HttpStatus.CREATED)
     fun login(
         @RequestParam("code") code: String,
-    ): TokenResponse = TokenResponse(loginFacade.login(code))
+    ): ResponseEntity<Unit> {
+        val token = loginFacade.login(code)
+        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+            .header(
+                "Location",
+                "http://localhost:5500/html/Main.html"
+            )
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .build()
+    }
 }

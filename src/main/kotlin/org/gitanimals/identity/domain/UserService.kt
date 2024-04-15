@@ -22,7 +22,7 @@ class UserService(
     }
 
     @Transactional
-    fun newUser(username: String, contributionPerYears: Map<Int, Int>): User {
+    fun newUser(username: String, profileImage: String, contributionPerYears: Map<Int, Int>): User {
         if (existsUser(username)) {
             return getUserByName(username)
         }
@@ -30,6 +30,7 @@ class UserService(
             id = IdGenerator.generate(),
             name = username,
             points = contributionPerYears.toPoint(),
+            profileImage = profileImage,
         )
         return userRepository.save(user)
     }

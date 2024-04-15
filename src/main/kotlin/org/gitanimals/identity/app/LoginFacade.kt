@@ -12,16 +12,24 @@ class LoginFacade(
 ) {
 
     fun login(code: String): String {
-        val username = oauth2Api.getOauthUsername(oauth2Api.getToken(code))
+        val oauthUserResponse = oauth2Api.getOauthUsername(oauth2Api.getToken(code))
 
-        val user = when (userService.existsUser(username)) {
-            true -> userService.getUserByName(username)
+        val user = when (userService.existsUser(oauthUserResponse.username)) {
+            true -> userService.getUserByName(oauthUserResponse.username)
             else -> {
-                val contributedYears = contributionApi.getAllContributionYearsWithToken(username)
+                val contributedYears =
+                    contributionApi.getAllContributionYearsWithToken(oauthUserResponse.username)
                 val contributionCountPerYears =
-                    contributionApi.getContributionCountWithToken(username, contributedYears)
+                    contributionApi.getContributionCountWithToken(
+                        oauthUserResponse.username,
+                        contributedYears
+                    )
 
-                userService.newUser(username, contributionCountPerYears)
+                userService.newUser(
+                    oauthUserResponse.username,
+                    oauthUserResponse.profileImage,
+                    contributionCountPerYears
+                )
             }
         }
 
