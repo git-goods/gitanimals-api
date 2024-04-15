@@ -1,7 +1,7 @@
 package org.gitanimals.identity.controller
 
 import org.gitanimals.identity.app.LoginFacade
-import org.gitanimals.identity.controller.response.UserResponse
+import org.gitanimals.identity.controller.response.TokenResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -31,5 +31,5 @@ class Oauth2Controller(
     @ResponseStatus(HttpStatus.CREATED)
     fun login(
         @RequestParam("code") code: String,
-    ): UserResponse = UserResponse.of(loginFacade.login(code))
+    ): TokenResponse = TokenResponse(loginFacade.login(code))
 }
