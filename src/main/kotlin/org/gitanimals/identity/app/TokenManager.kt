@@ -2,7 +2,9 @@ package org.gitanimals.identity.app
 
 import org.gitanimals.identity.domain.User
 
-fun interface TokenManager {
+interface TokenManager {
 
     fun createToken(user: User): Token
+
+    fun getUserId(token: Token): Long
 }

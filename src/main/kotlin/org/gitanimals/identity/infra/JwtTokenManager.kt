@@ -21,8 +21,8 @@ class JwtTokenManager : TokenManager {
             .add("type", "JWT")
             .and()
             .claims()
-            .add("userId", user.id)
-            .add("username", user.name)
+            .add(USER_ID, user.id)
+            .add(USER_NAME, user.name)
             .issuedAt(Date.from(Instant.now()))
             .expiration(Date.from(Instant.now().plus(24, ChronoUnit.HOURS)))
             .and()
@@ -30,5 +30,18 @@ class JwtTokenManager : TokenManager {
             .compact()
 
         return Token.bearer(value)
+    }
+
+    override fun getUserId(token: Token): Long {
+        return Jwts.parser()
+            .verifyWith(key)
+            .build()
+            .parseSignedClaims(token.value)
+            .payload[USER_ID] as Long
+    }
+
+    private companion object {
+        private const val USER_ID = "userId"
+        private const val USER_NAME = "username"
     }
 }

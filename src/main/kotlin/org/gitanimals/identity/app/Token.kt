@@ -8,6 +8,16 @@ class Token private constructor(
     fun withType(): String = "${type.value} $value"
 
     companion object {
+
+        fun from(token: String): Token {
+            return runCatching {
+                val tokensParts = token.split(" ")
+                Token(Type.valueOf(tokensParts[0].uppercase()), tokensParts[1])
+            }.getOrElse {
+                throw IllegalArgumentException("Cannot create token from \"$token\"", it)
+            }
+        }
+
         fun bearer(value: String): Token = Token(Type.BEARER, value)
     }
 

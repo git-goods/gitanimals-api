@@ -17,6 +17,7 @@ internal class JwtTokenManagerTest(
     describe("createToken 메소드는") {
         context("user를 받으면,") {
             val user = user()
+
             it("BEARER타입의 token을 반환한다.") {
                 val token = tokenManager.createToken(user)
 
@@ -24,5 +25,17 @@ internal class JwtTokenManagerTest(
             }
         }
     }
-}) {
-}
+
+    describe("getUserId 메소드는") {
+        context("token을 받으면,") {
+            val user = user()
+            val token = tokenManager.createToken(user)
+
+            it("user의 id를 반환한다.") {
+                val userId = tokenManager.getUserId(token)
+
+                userId shouldBeEqual user.id
+            }
+        }
+    }
+})

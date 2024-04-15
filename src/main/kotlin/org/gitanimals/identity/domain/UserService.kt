@@ -1,6 +1,7 @@
 package org.gitanimals.identity.domain
 
 import org.gitanimals.identity.core.IdGenerator
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
@@ -43,6 +44,9 @@ class UserService(
 
     fun getUserByName(username: String): User = userRepository.findByName(username)
         ?: throw IllegalArgumentException("Cannot find exists user by username \"$username\"")
+
+    fun getUserById(userId: Long): User = userRepository.findByIdOrNull(userId)
+        ?: throw IllegalArgumentException("Cannot find exists user by id \"$userId\"")
 
     private companion object {
         private const val CONTRIBUTION_POINT_RATIO = 100
