@@ -1,6 +1,7 @@
 package org.gitanimals.identity.controller.response
 
 import org.gitanimals.identity.domain.Ticket
+import org.gitanimals.identity.domain.TicketType
 import org.gitanimals.identity.domain.User
 
 data class UserResponse(
@@ -8,18 +9,19 @@ data class UserResponse(
     val username: String,
     val points: String,
     val profileImage: String,
-    val ticketResponse: List<TicketResponse>,
+    val tickets: List<TicketResponse>,
 ) {
 
     data class TicketResponse(
-        val id: Long,
+        val id: String,
         val subject: String,
         val isUsed: Boolean,
+        val type: TicketType,
     ) {
 
         companion object {
             fun from(ticket: Ticket): TicketResponse =
-                TicketResponse(ticket.id, ticket.subject, ticket.isUsed)
+                TicketResponse(ticket.id.toString(), ticket.subject, ticket.isUsed, ticket.ticketType)
         }
     }
 
