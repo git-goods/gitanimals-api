@@ -12,12 +12,14 @@ data class UserResponse(
 ) {
 
     data class TicketResponse(
+        val id: Long,
         val subject: String,
         val isUsed: Boolean,
     ) {
 
         companion object {
-            fun from(ticket: Ticket): TicketResponse = TicketResponse(ticket.subject, ticket.isUsed)
+            fun from(ticket: Ticket): TicketResponse =
+                TicketResponse(ticket.id, ticket.subject, ticket.isUsed)
         }
     }
 

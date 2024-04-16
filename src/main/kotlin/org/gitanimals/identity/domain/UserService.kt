@@ -1,6 +1,5 @@
 package org.gitanimals.identity.domain
 
-import org.gitanimals.identity.core.IdGenerator
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.retry.annotation.Retryable
@@ -27,7 +26,6 @@ class UserService(
             return getUserByName(username)
         }
         val user = User.newUser(
-            id = IdGenerator.generate(),
             name = username,
             points = contributionPerYears.toPoint(),
             profileImage = profileImage,
@@ -45,6 +43,29 @@ class UserService(
 
     fun getUserByName(username: String): User = userRepository.findByName(username)
         ?: throw IllegalArgumentException("Cannot find exists user by username \"$username\"")
+
+    @Retryable(retryFor = [ObjectOptimisticLockingFailureException::class])
+    @Transactional
+    fun useTicket(userId: Long, ticketId: Long) {
+        val ticket = getTicket(userId, ticketId)
+
+        ticket.use()
+    }
+
+    @Retryable(retryFor = [ObjectOptimisticLockingFailureException::class])
+    @Transactional
+    fun rollbackTicket(userId: Long, ticketId: Long) {
+        val ticket = getTicket(userId, ticketId)
+
+        ticket.unuse()
+    }
+
+    private fun getTicket(userId: Long, ticketId: Long): Ticket {
+        val user = getUserById(userId)
+        return user.tickets.find {
+            it.id == ticketId
+        } ?: throw IllegalArgumentException("Cannot find ticket by id \"$ticketId\"")
+    }
 
     fun getUserById(userId: Long): User = userRepository.findByIdOrNull(userId)
         ?: throw IllegalArgumentException("Cannot find exists user by id \"$userId\"")

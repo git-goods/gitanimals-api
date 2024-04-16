@@ -1,18 +1,40 @@
 package org.gitanimals.identity.domain
 
-import jakarta.persistence.Column
-import jakarta.persistence.Embeddable
+import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.*
 
-@Embeddable
+@Table(name = "ticket")
+@Entity(name = "ticket")
 class Ticket(
+    @Id
+    @Column(name = "id")
+    val id: Long,
+
     @Column(name = "subject", nullable = false)
     val subject: String,
+
     @Column(name = "isUsed", nullable = false)
-    val isUsed: Boolean,
+    var isUsed: Boolean,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    val ticketType: TicketType,
+
+    @Version
+    private val version: Long? = null,
 ) : AbstractTime() {
 
-    companion object {
+    @JsonIgnore
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    lateinit var user: User
 
-        fun from(subject: String): Ticket = Ticket(subject, false)
+    fun use() {
+        require(!isUsed) { "Already used ticket." }
+        isUsed = true
+    }
+
+    fun unuse() {
+        isUsed = false
     }
 }
