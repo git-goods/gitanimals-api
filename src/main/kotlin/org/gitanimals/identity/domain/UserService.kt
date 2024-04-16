@@ -26,7 +26,7 @@ class UserService(
         if (existsUser(username)) {
             return getUserByName(username)
         }
-        val user = User(
+        val user = User.newUser(
             id = IdGenerator.generate(),
             name = username,
             points = contributionPerYears.toPoint(),

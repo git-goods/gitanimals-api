@@ -57,7 +57,8 @@ internal class UserServiceTest(
             val expectedPoint = 200 * 100L
 
             it("contribution * 100의 포인트를 갖고있는 새로운 user를 생성한다.") {
-                val user = userService.newUser(username, contributionPerYears)
+                val user =
+                    userService.newUser(username, DEFAULT_PROFILE_IMAGE, contributionPerYears)
 
                 user.getPoints() shouldBeEqual expectedPoint
             }
@@ -68,6 +69,7 @@ internal class UserServiceTest(
     private companion object {
         private const val NOT_EXIST_USER_NAME = "NOT_EXIST"
         private const val USER_NAME = "NAME"
+        private const val DEFAULT_PROFILE_IMAGE = "profile_imge"
         private val defaultUser = user(name = USER_NAME)
     }
 }

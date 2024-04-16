@@ -24,6 +24,10 @@ class User(
     @Column(name = "profile_image", nullable = false)
     val profileImage: String,
 
+    @ElementCollection
+    @CollectionTable(name = "users_tickets")
+    val tickets: MutableList<Ticket>,
+
     @Version
     private val version: Long? = null,
 ) : AbstractTime() {
@@ -32,5 +36,18 @@ class User(
 
     fun givePoint(point: Long) {
         this.points += point
+    }
+
+    companion object {
+
+        fun newUser(id: Long, name: String, points: Long, profileImage: String): User {
+            return User(
+                id = id,
+                name = name,
+                points = points,
+                profileImage = profileImage,
+                tickets = mutableListOf(Ticket.from("Bonus pet")),
+            )
+        }
     }
 }
