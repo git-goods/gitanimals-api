@@ -65,50 +65,6 @@ internal class UserServiceTest(
             }
         }
     }
-
-    describe("useTicket 메소드는") {
-        context("userId에 해당하는 user가 사용하지 않은 ticket을 가지고 있으면") {
-            val userId = defaultUser.id
-            val ticketId = defaultUser.tickets[0].id
-
-            it("ticket을 사용한다.") {
-                userService.useTicket(userId, ticketId)
-
-                val user = userService.getUserById(userId)
-
-                user.tickets[0].isUsed shouldBeEqual true
-            }
-        }
-
-        context("ticketId에 해당하는 ticket이 이미 사용되었다면,") {
-            val userId = defaultUser.id
-            val ticketId = defaultUser.tickets[0].id
-
-            it("IllegalArgumentException을 던진다.") {
-                userService.useTicket(userId, ticketId)
-
-                shouldThrowWithMessage<IllegalArgumentException>("Already used ticket.") {
-                    userService.useTicket(userId, ticketId)
-                }
-            }
-        }
-    }
-
-    describe("rollbackTicket 메소드는") {
-        context("userId에 해당하는 user가 ticket을 가지고 있으면,") {
-            val userId = defaultUser.id
-            val ticketId = defaultUser.tickets[0].id
-
-            it("해당 ticket을 \"사용되지 않음.\" 상태로 변경한다.") {
-                userService.useTicket(userId, ticketId)
-                userService.rollbackTicket(userId, ticketId)
-
-                val user = userService.getUserById(userId)
-
-                user.tickets[0].isUsed shouldBeEqual false
-            }
-        }
-    }
 }) {
 
     private companion object {

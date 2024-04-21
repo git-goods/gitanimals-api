@@ -1,6 +1,5 @@
 package org.gitanimals.identity.app
 
-import org.gitanimals.identity.app.event.TicketUsed
 import org.gitanimals.identity.domain.User
 import org.gitanimals.identity.domain.UserService
 import org.rooftop.netx.api.SagaManager
@@ -18,7 +17,4 @@ class UserFacade(
 
         return userService.getUserById(userId)
     }
-
-    fun useTicket(userId: Long, ticketId: Long, behavior: String) =
-        sagaManager.startSync(TicketUsed(userId, ticketId, behavior))
 }
