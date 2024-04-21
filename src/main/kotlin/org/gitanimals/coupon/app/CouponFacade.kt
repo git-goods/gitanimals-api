@@ -12,13 +12,13 @@ class CouponFacade(
     private val identityApi: IdentityApi,
 ) {
 
-    fun useCoupon(token: String, code: String) {
+    fun useCoupon(token: String, code: String, dynamic: String) {
         val user = identityApi.getUserByToken(token)
 
         require(couponService.isValidCoupon(user.id.toLong(), code)) {
             "Cannot use coupon code $code"
         }
 
-        sagaManager.startSync(CouponUsed(user.id.toLong(), code))
+        sagaManager.startSync(CouponUsed(user.id.toLong(), code, dynamic))
     }
 }

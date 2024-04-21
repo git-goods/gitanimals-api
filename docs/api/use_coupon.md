@@ -3,10 +3,15 @@
 code에 해당하는 쿠폰을 사용합니다.
 
 ## Request
-### HTTP METHOD : `GET`
-### url : `https://api.gitanimals.org/coupons?code=${code}`
-### Request parameter
-${code} : 사용할 쿠폰의 코드 
+### HTTP METHOD : `POST`
+### url : `https://api.gitanimals.org/coupons`
+### Request body
+```json
+{ 
+  "code": "NEW_USER_BONUS_PET", 
+  "dynamic": "PENGUIN"  
+}
+``` 
 
 # Response
 
