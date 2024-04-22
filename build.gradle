@@ -5,6 +5,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.jpa' version "${jetbrainKotlinVersion}"
     id "org.springframework.boot" version "${springbootVersion}"
     id "io.spring.dependency-management" version "${springDependencyManagementVersion}"
+    id "io.sentry.jvm.gradle" version "${sentryVersion}"
 }
 
 group = "${group}"
@@ -31,3 +32,11 @@ apply from: "gradle/etc.gradle"
 apply from: "gradle/test.gradle"
 apply from: "gradle/spring.gradle"
 apply from: "gradle/jetbrains.gradle"
+
+sentry {
+    includeSourceContext = true
+
+    org = "devxb"
+    projectName = "gitanimals-api"
+    authToken = System.getProperty("SENTRY_AUTH_TOKEN")
+}
