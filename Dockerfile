@@ -21,7 +21,7 @@ ENV db_url=${DB_URL} \
   oauth_client_id_github=${GH_OAUTH_ID} \
   oauth_client_secret_github=${GH_OAUTH_SECRET}
 
-ENTRYPOINT java -jar gitanimals-render.jar \
+ENTRYPOINT java -jar gitanimals-api.jar \
   --spring.datasource.url=${db_url} \
   --spring.datasource.username=${db_username} \
   --spring.datasource.password=${db_password} \
