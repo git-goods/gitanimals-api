@@ -14,6 +14,8 @@ class GivePointHandlers(
     @SagaCommitListener(GavePoint::class)
     fun givePointHandler(sagaCommitEvent: SagaCommitEvent) {
         val gavePoint = sagaCommitEvent.decodeEvent(GavePoint::class)
-        userService.givePoint(gavePoint.username, gavePoint.point)
+        runCatching {
+            userService.givePoint(gavePoint.username, gavePoint.point)
+        }
     }
 }
