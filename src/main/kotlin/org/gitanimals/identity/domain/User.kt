@@ -35,6 +35,14 @@ class User(
         this.points += point
     }
 
+    fun decreasePoint(point: Long) {
+        this.points -= point
+    }
+
+    fun increasePoint(point: Long) {
+        this.points += point
+    }
+
     companion object {
 
         fun newUser(name: String, points: Long, profileImage: String): User {
