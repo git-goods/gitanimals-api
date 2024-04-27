@@ -6,15 +6,15 @@ import org.gitanimals.gotcha.domain.response.GotchaResponse
 @AggregateRoot
 class Gotcha(
     val type: GotchaType,
-    val capsules: List<Capsule> = type.getCapsules(),
+    val point: Long,
+    private val capsules: List<Capsule>,
 ) {
 
-    fun random(): GotchaResponse {
+    fun random(point: Long): GotchaResponse {
+        require(point >= this.point) {
+            "Not enough point \"$point\" <= \"${this.point}\""
+        }
         val gotchaResult = capsules.random()
-        return GotchaResponse(gotchaResult.name, gotchaResult.ratio.toString())
-    }
-
-    companion object {
-        fun createDefault(): Gotcha = Gotcha(GotchaType.DEFAULT, GotchaType.DEFAULT.getCapsules())
+        return GotchaResponse(gotchaResult.name, gotchaResult.ratio.toString(), point.toString())
     }
 }

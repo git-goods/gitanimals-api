@@ -8,14 +8,14 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class GotchaService {
 
-    fun gotcha(type: GotchaType): GotchaResponse {
+    fun gotcha(point: Long, type: GotchaType): GotchaResponse {
         return when (type) {
-            GotchaType.DEFAULT -> defaultGotcha.random()
+            GotchaType.DEFAULT -> defaultGotcha.random(point)
             else -> throw IllegalArgumentException("Cannot find gotcha by type \"$type\"")
         }
     }
 
     private companion object {
-        val defaultGotcha = Gotcha.createDefault()
+        val defaultGotcha = GotchaType.DEFAULT.createGotcha()
     }
 }

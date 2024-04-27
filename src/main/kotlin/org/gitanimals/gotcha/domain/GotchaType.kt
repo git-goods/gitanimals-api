@@ -1,9 +1,14 @@
 package org.gitanimals.gotcha.domain
 
-enum class GotchaType {
+enum class GotchaType(
+    val point: Long,
+) {
 
-    DEFAULT {
-        override fun getCapsules(): List<Capsule> {
+    DEFAULT(1000L) {
+
+        override fun createGotcha(): Gotcha = Gotcha(this, this.point, getCapsules())
+
+        private fun getCapsules(): List<Capsule> {
             val capsules = mutableListOf<Capsule>()
             capsuleAndRatios.forEach { capsule ->
                 val count = (capsule.ratio * 1000).toInt()
@@ -14,7 +19,7 @@ enum class GotchaType {
     },
     ;
 
-    abstract fun getCapsules(): List<Capsule>
+    abstract fun createGotcha(): Gotcha
 
     private companion object {
         private val capsuleAndRatios = listOf(

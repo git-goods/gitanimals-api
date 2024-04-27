@@ -18,7 +18,7 @@ internal class GotchaServiceTest(
     describe("gotcha 메소드는") {
         context("GotchaType으로 default를 입력받으면,") {
             it("random한 GotchaResponse를 응답한다.") {
-                val result = gotchaService.gotcha(GotchaType.DEFAULT)
+                val result = gotchaService.gotcha(1000L, GotchaType.DEFAULT)
 
                 result.shouldNotBeNull()
             }
