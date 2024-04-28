@@ -21,7 +21,7 @@ class UserController(
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/users/points/decreases")
+    @PostMapping("/internals/users/points/decreases")
     fun decreaseUserPoints(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestParam("point") point: Long,
@@ -31,7 +31,7 @@ class UserController(
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/users/points/increases")
+    @PostMapping("/internals/users/points/increases")
     fun increaseUserPoints(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestParam("point") point: Long,
