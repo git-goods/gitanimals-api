@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class UserService(
     private val userRepository: UserRepository,
+    private val userIdempotencyRepository: UserIdempotencyRepository,
 ) {
 
     fun existsUser(username: String): Boolean = userRepository.existsByName(username)
@@ -31,6 +32,35 @@ class UserService(
             profileImage = profileImage,
         )
         return userRepository.save(user)
+    }
+
+    @Transactional
+    @Retryable(ObjectOptimisticLockingFailureException::class)
+    fun decreasePoint(userId: Long, idempotencyKey: String, point: Long): User {
+        requireIdempotency("decreasePoint:$idempotencyKey")
+
+        val user = getUserById(userId)
+        user.decreasePoint(point)
+        return user
+    }
+
+    @Transactional
+    @Retryable(ObjectOptimisticLockingFailureException::class)
+    fun increasePoint(userId: Long, idempotencyKey: String, point: Long): User {
+        requireIdempotency("increasePoint:$idempotencyKey")
+
+        val user = getUserById(userId)
+        user.increasePoint(point)
+        return user
+    }
+
+    private fun requireIdempotency(idempotencyKey: String) {
+        val userIdempotency =
+            userIdempotencyRepository.findByIdOrNull(idempotencyKey)
+
+        require(userIdempotency == null) { "Duplicated request by idempotency key \"$idempotencyKey\"" }
+
+        userIdempotencyRepository.save(UserIdempotency(idempotencyKey))
     }
 
     private fun Map<Int, Int>.toPoint(): Long {

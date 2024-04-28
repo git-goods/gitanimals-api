@@ -5,6 +5,8 @@ code에 해당하는 쿠폰을 사용합니다.
 ## Request
 ### HTTP METHOD : `POST`
 ### url : `https://api.gitanimals.org/coupons`
+### RequestHeader
+- Authorization: `{token}`
 ### Request body
 ```json
 { 
