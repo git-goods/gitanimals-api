@@ -14,7 +14,7 @@ class RestRenderApi(
 
     override fun addPersona(token: String, idempotencyKey: String, personaName: String): String {
         return restClient.post()
-            .uri("/personas?idempotency-key=$idempotencyKey")
+            .uri("/internals/personas?idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
             .body(
                 mapOf("name" to personaName)
@@ -31,7 +31,7 @@ class RestRenderApi(
 
     override fun deletePersona(token: String, personaId: String) {
         restClient.delete()
-            .uri("/personas?persona-id=$personaId")
+            .uri("/internals/personas?persona-id=$personaId")
             .header(HttpHeaders.AUTHORIZATION, token)
             .exchange { _, response ->
                 require(response.statusCode.is2xxSuccessful) { "Cannot delete persona by personaId \"$personaId\"" }
