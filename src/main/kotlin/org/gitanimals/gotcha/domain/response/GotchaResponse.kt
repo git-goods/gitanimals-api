@@ -8,4 +8,10 @@ data class GotchaResponse(
     val ratio: String,
     val point: String,
     val idempotency: String = UUID.randomUUID().toString(),
-)
+) {
+    constructor(
+        name: String,
+        ratio: String,
+        point: String,
+    ) : this(null, name = name, ratio = ratio, point = point)
+}
