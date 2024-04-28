@@ -53,8 +53,8 @@ class GotchaFacade(
 
                 val personaId =
                     renderApi.addPersona(token, gotchaResponse.idempotency, gotchaResponse.name)
-                context.set("personaId", personaId)
 
+                gotchaResponse.id = personaId
                 gotchaResponse
             }
     }

@@ -22,7 +22,8 @@ class GotchaController(
 
         val gotchaResponse = gotchaFacade.gotcha(token, gotchaType)
 
-        return GotchaResponse(gotchaResponse.name, gotchaResponse.point)
+        checkNotNull(gotchaResponse.id)
+        return GotchaResponse(gotchaResponse.id!!, gotchaResponse.name, gotchaResponse.point)
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
