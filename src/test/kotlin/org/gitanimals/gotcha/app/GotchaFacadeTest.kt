@@ -5,7 +5,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
-import org.gitanimals.Application
+import org.gitanimals.gotcha.GotchaTestRoot
 import org.gitanimals.gotcha.app.response.UserResponse
 import org.gitanimals.gotcha.domain.GotchaType
 import org.junit.jupiter.api.DisplayName
@@ -15,7 +15,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @SpringBootTest(
     classes = [
-        Application::class,
+        GotchaTestRoot::class,
         RedisContainer::class,
         MockUserServer::class,
         MockRenderServer::class,
