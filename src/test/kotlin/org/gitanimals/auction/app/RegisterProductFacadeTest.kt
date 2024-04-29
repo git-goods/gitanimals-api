@@ -36,6 +36,8 @@ internal class RegisterProductFacadeTest(
         productRepository.deleteAll()
     }
 
+    afterEach { productRepository.deleteAll() }
+
     fun registerProduct(): Product {
         mockUserServer.enqueue200(userResponse)
         mockRenderServer.enqueue200(personaResponse)
@@ -101,6 +103,5 @@ internal class RegisterProductFacadeTest(
 
         private val userResponse = IdentityApi.UserResponse("$SELLER_ID", "devxb", "1000")
         private val personaResponse = RenderApi.PersonaResponse("$PERSONA_ID", "CAT", "4949")
-        private val product = Product.of(SELLER_ID, PERSONA_ID, "CAT", 4949, 1_000L)
     }
 }

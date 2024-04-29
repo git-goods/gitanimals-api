@@ -35,9 +35,10 @@ data class ProductResponse(
                     personaLevel = product.persona.personaLevel,
                 ),
                 price = product.price.toString(),
-                paymentState = product.paymentState,
-                receipt = product.receipt?.let {
-                    Receipt(it.buyerId.toString(), it.soldAt)
+                paymentState = product.getPaymentState(),
+                receipt = when (product.getPaymentState() == PaymentState.SOLD_OUT) {
+                    true -> Receipt(product.getBuyerId()!!.toString(), product.getSoldAt()!!)
+                    else -> null
                 }
             )
         }

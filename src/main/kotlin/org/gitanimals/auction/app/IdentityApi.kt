@@ -1,8 +1,12 @@
 package org.gitanimals.auction.app
 
-fun interface IdentityApi {
+interface IdentityApi {
 
     fun getUserByToken(token: String): UserResponse
+
+    fun decreasePoint(token: String, idempotencyKey: String, point: String)
+
+    fun increasePoint(token: String, idempotencyKey: String, point: String)
 
     data class UserResponse(
         val id: String,

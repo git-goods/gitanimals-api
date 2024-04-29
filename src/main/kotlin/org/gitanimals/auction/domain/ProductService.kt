@@ -2,6 +2,9 @@ package org.gitanimals.auction.domain
 
 import org.gitanimals.auction.domain.request.RegisterProductRequest
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.orm.ObjectOptimisticLockingFailureException
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -30,4 +33,28 @@ class ProductService(
             throw IllegalStateException("Cannot register product", it)
         }
     }
+
+    @Transactional
+    @Retryable(ObjectOptimisticLockingFailureException::class, maxAttempts = Int.MAX_VALUE)
+    fun buyProduct(productId: Long, buyerId: Long): Product {
+        val product = getProductById(productId)
+
+        product.buy(buyerId)
+
+        return product
+    }
+
+    @Transactional
+    @Retryable(ObjectOptimisticLockingFailureException::class, maxAttempts = Int.MAX_VALUE)
+    fun rollbackProduct(productId: Long): Product {
+        val product = getProductById(productId)
+
+        product.onSales()
+
+        return product
+    }
+
+    fun getProductById(productId: Long): Product =
+        productRepository.findByIdOrNull(productId)
+            ?: throw IllegalArgumentException("Cannot find matched product by id \"$productId\"")
 }

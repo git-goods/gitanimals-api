@@ -11,4 +11,9 @@ class Receipt(
 
     @Column(name = "sold_at")
     val soldAt: Instant,
-)
+) {
+    companion object {
+        fun from(buyerId: Long): Receipt =
+            Receipt(buyerId, Instant.now())
+    }
+}
