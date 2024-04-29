@@ -7,8 +7,8 @@ import java.time.Instant
 @Embeddable
 class Receipt(
     @Column(name = "buyer_id")
-    private var buyerId: Long,
+    val buyerId: Long,
 
     @Column(name = "sold_at")
-    private var soldAt: Instant,
+    val soldAt: Instant,
 )
