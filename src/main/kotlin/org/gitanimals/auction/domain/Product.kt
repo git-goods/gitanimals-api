@@ -1,13 +1,13 @@
 package org.gitanimals.auction.domain
 
 import jakarta.persistence.*
+import org.gitanimals.auction.core.IdGenerator
 import org.gitanimals.gotcha.core.AggregateRoot
 
 @AggregateRoot
 @Table(
     name = "product", indexes = [
         Index(columnList = "seller_id"),
-        Index(columnList = "persona_id", unique = true),
     ]
 )
 @Entity(name = "product")
@@ -19,8 +19,8 @@ class Product(
     @Column(name = "seller_id", nullable = false)
     val sellerId: Long,
 
-    @Column(name = "persona_id", unique = true, nullable = false)
-    val personaId: Long,
+    @Embedded
+    val persona: Persona,
 
     @Column(name = "price", nullable = false)
     val price: Long,
@@ -34,4 +34,22 @@ class Product(
 
     @Version
     private var version: Long? = null,
-) : AbstractTime()
+) : AbstractTime() {
+
+    companion object {
+
+        fun of(
+            sellerId: Long,
+            personaId: Long,
+            personaType: String,
+            personaLevel: Int,
+            price: Long,
+        ): Product = Product(
+            id = IdGenerator.generate(),
+            sellerId = sellerId,
+            persona = Persona(personaId, personaType, personaLevel),
+            price = price,
+            paymentState = PaymentState.ON_SALE,
+        )
+    }
+}
