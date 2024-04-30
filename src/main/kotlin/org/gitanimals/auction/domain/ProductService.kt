@@ -90,10 +90,14 @@ class ProductService(
     }
 
     @Transactional
-    fun changeProduct(id: Long, changeProductRequest: ChangeProductRequest): Product {
-        val product = getProductById(changeProductRequest.id)
+    fun changeProduct(sellerId: Long, changeProductRequest: ChangeProductRequest): Product {
+        val product = getProductById(changeProductRequest.id.toLong())
 
-        product.changePrice(changeProductRequest.price)
+        require(product.sellerId == sellerId) {
+            "Cannot change product price cause yor not seller"
+        }
+
+        product.changePrice(changeProductRequest.price.toLong())
 
         return product
     }
