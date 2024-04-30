@@ -25,7 +25,7 @@ class Product(
     val persona: Persona,
 
     @Column(name = "price", nullable = false)
-    val price: Long,
+    private var price: Long,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "product_state")
@@ -39,6 +39,8 @@ class Product(
 ) : AbstractTime() {
 
     fun getProductState(): ProductState = this.productState
+
+    fun getPrice(): Long = this.price
 
     @JsonIgnore
     fun getBuyerId(): Long? = receipt?.buyerId
@@ -64,6 +66,10 @@ class Product(
     fun onSales() {
         this.productState = ProductState.ON_SALE
         this.receipt = null
+    }
+
+    fun changePrice(price: Long) {
+        this.price = price
     }
 
     companion object {

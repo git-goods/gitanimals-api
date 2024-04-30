@@ -8,9 +8,9 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.nulls.shouldNotBeNull
 import org.gitanimals.auction.AuctionTestRoot
-import org.gitanimals.auction.domain.ProductState
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductRepository
+import org.gitanimals.auction.domain.ProductState
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.TestPropertySource
@@ -79,7 +79,7 @@ internal class BuyProductFacadeTest(
             it("결제를 진행하지 않는다.") {
                 mockUserServer.enqueue200(poorUserResponse)
                 shouldThrowWithMessage<IllegalArgumentException>(
-                    "Cannot buy product cause buyer does not have enough point \"${product.price}\" >= \"${poorUserResponse.points}\""
+                    "Cannot buy product cause buyer does not have enough point \"${product.getPrice()}\" >= \"${poorUserResponse.points}\""
                 ) { buyProductFacade.buyProduct(VALID_TOKEN, product.id) }
 
                 eventually(5.seconds) {

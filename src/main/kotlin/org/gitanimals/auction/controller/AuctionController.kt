@@ -1,17 +1,20 @@
 package org.gitanimals.auction.controller
 
 import org.gitanimals.auction.app.BuyProductFacade
+import org.gitanimals.auction.app.ChangeProductFacade
 import org.gitanimals.auction.app.DeleteProductFacade
 import org.gitanimals.auction.app.RegisterProductFacade
 import org.gitanimals.auction.controller.request.RegisterProductRequest
 import org.gitanimals.auction.controller.response.ErrorResponse
 import org.gitanimals.auction.controller.response.ProductResponse
+import org.gitanimals.auction.domain.request.ChangeProductRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
 class AuctionController(
+    private val changeProductFacade: ChangeProductFacade,
     private val deleteProductFacade: DeleteProductFacade,
     private val buyProductFacade: BuyProductFacade,
     private val registerProductFacade: RegisterProductFacade,
@@ -39,6 +42,17 @@ class AuctionController(
         @PathVariable("product-id") productId: Long,
     ): ProductResponse {
         val product = buyProductFacade.buyProduct(token, productId)
+
+        return ProductResponse.from(product)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/auctions/products")
+    fun changeProduct(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
+        @RequestBody changeProductRequest: ChangeProductRequest,
+    ): ProductResponse {
+        val product = changeProductFacade.changeProduct(token, changeProductRequest)
 
         return ProductResponse.from(product)
     }

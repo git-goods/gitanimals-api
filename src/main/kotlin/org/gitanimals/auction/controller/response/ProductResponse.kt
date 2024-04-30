@@ -1,7 +1,7 @@
 package org.gitanimals.auction.controller.response
 
-import org.gitanimals.auction.domain.ProductState
 import org.gitanimals.auction.domain.Product
+import org.gitanimals.auction.domain.ProductState
 import java.time.Instant
 
 data class ProductResponse(
@@ -34,7 +34,7 @@ data class ProductResponse(
                     personaType = product.persona.personaType,
                     personaLevel = product.persona.personaLevel,
                 ),
-                price = product.price.toString(),
+                price = product.getPrice().toString(),
                 paymentState = product.getProductState(),
                 receipt = when (product.getProductState() == ProductState.SOLD_OUT) {
                     true -> Receipt(product.getBuyerId()!!.toString(), product.getSoldAt()!!)

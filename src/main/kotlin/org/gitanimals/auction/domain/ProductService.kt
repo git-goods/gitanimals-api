@@ -1,5 +1,6 @@
 package org.gitanimals.auction.domain
 
+import org.gitanimals.auction.domain.request.ChangeProductRequest
 import org.gitanimals.auction.domain.request.RegisterProductRequest
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.PessimisticLockingFailureException
@@ -85,6 +86,15 @@ class ProductService(
         val product = getProductById(productId)
 
         product.waitDelete()
+        return product
+    }
+
+    @Transactional
+    fun changeProduct(id: Long, changeProductRequest: ChangeProductRequest): Product {
+        val product = getProductById(changeProductRequest.id)
+
+        product.changePrice(changeProductRequest.price)
+
         return product
     }
 
