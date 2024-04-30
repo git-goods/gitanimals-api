@@ -8,7 +8,7 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.nulls.shouldNotBeNull
 import org.gitanimals.auction.AuctionTestRoot
-import org.gitanimals.auction.domain.PaymentState
+import org.gitanimals.auction.domain.ProductState
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductRepository
 import org.springframework.boot.test.context.SpringBootTest
@@ -66,7 +66,7 @@ internal class BuyProductFacadeTest(
                     sagaCapture.commitCountShouldBe(1)
                     sagaCapture.rollbackCountShouldBe(0)
 
-                    response.getPaymentState() shouldBeEqual PaymentState.SOLD_OUT
+                    response.getProductState() shouldBeEqual ProductState.SOLD_OUT
                     response.getBuyerId()!! shouldBeEqual 1L
                     response.getSoldAt().shouldNotBeNull()
                 }
@@ -109,7 +109,7 @@ internal class BuyProductFacadeTest(
                     sagaCapture.rollbackCountShouldBe(1)
 
                     productRepository.findByIdOrNull(product.id)!!
-                        .getPaymentState() shouldBeEqual PaymentState.ON_SALE
+                        .getProductState() shouldBeEqual ProductState.ON_SALE
                 }
             }
         }

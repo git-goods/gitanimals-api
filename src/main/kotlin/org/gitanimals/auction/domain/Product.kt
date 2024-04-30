@@ -28,8 +28,8 @@ class Product(
     val price: Long,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_state")
-    private var paymentState: PaymentState,
+    @Column(name = "product_state")
+    private var productState: ProductState,
 
     @Embedded
     private var receipt: Receipt? = null,
@@ -38,7 +38,7 @@ class Product(
     private var version: Long? = null,
 ) : AbstractTime() {
 
-    fun getPaymentState(): PaymentState = this.paymentState
+    fun getProductState(): ProductState = this.productState
 
     @JsonIgnore
     fun getBuyerId(): Long? = receipt?.buyerId
@@ -47,15 +47,22 @@ class Product(
     fun getSoldAt(): Instant? = receipt?.soldAt
 
     fun buy(buyerId: Long) {
-        require(paymentState == PaymentState.ON_SALE) {
-            "Cannot buy product cause it's already \"$paymentState\""
+        require(productState == ProductState.ON_SALE) {
+            "Cannot buy product cause it's already \"$productState\""
         }
-        this.paymentState = PaymentState.SOLD_OUT
+        this.productState = ProductState.SOLD_OUT
         this.receipt = Receipt.from(buyerId)
     }
 
+    fun waitDelete() {
+        require(productState != ProductState.SOLD_OUT) {
+            "Cannot delete product cause it's already \"$productState\""
+        }
+        this.productState = ProductState.WAIT_DELETE
+    }
+
     fun onSales() {
-        this.paymentState = PaymentState.ON_SALE
+        this.productState = ProductState.ON_SALE
         this.receipt = null
     }
 
@@ -72,7 +79,7 @@ class Product(
             sellerId = sellerId,
             persona = Persona(personaId, personaType, personaLevel),
             price = price,
-            paymentState = PaymentState.ON_SALE,
+            productState = ProductState.ON_SALE,
         )
     }
 }

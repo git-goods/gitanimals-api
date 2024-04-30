@@ -1,6 +1,7 @@
 package org.gitanimals.auction.controller
 
 import org.gitanimals.auction.app.BuyProductFacade
+import org.gitanimals.auction.app.DeleteProductFacade
 import org.gitanimals.auction.app.RegisterProductFacade
 import org.gitanimals.auction.controller.request.RegisterProductRequest
 import org.gitanimals.auction.controller.response.ErrorResponse
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class AuctionController(
+    private val deleteProductFacade: DeleteProductFacade,
     private val buyProductFacade: BuyProductFacade,
     private val registerProductFacade: RegisterProductFacade,
 ) {
@@ -40,6 +42,13 @@ class AuctionController(
 
         return ProductResponse.from(product)
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/auctions/products/{product-id}")
+    fun deleteProducts(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
+        @PathVariable("product-id") productId: Long,
+    ): Long = deleteProductFacade.deleteProduct(token, productId)
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException::class)
