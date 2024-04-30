@@ -1,4 +1,4 @@
-# Buy_product
+# Delete_product
 
 productId에 해당하는 product를 삭제합니다.
 
