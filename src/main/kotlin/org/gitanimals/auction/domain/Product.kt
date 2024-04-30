@@ -70,6 +70,11 @@ class Product(
 
     fun changePrice(price: Long) {
         this.price = price
+        require(this.price >= 1) { "Price must be higher than 1" }
+    }
+
+    init {
+        require(this.price >= 1) { "Price must be higher than 1" }
     }
 
     companion object {
