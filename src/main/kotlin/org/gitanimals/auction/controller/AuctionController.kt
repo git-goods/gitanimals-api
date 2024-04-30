@@ -48,7 +48,8 @@ class AuctionController(
     fun deleteProducts(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("product-id") productId: Long,
-    ): Long = deleteProductFacade.deleteProduct(token, productId)
+    ): Map<String, String> =
+        mapOf("id" to deleteProductFacade.deleteProduct(token, productId).toString())
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException::class)
