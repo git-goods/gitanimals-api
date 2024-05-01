@@ -7,6 +7,7 @@ import org.gitanimals.auction.app.RegisterProductFacade
 import org.gitanimals.auction.controller.request.RegisterProductRequest
 import org.gitanimals.auction.controller.response.ErrorResponse
 import org.gitanimals.auction.controller.response.ProductResponse
+import org.gitanimals.auction.controller.response.ProductsResponse
 import org.gitanimals.auction.domain.ProductService
 import org.gitanimals.auction.domain.request.ChangeProductRequest
 import org.springframework.http.HttpHeaders
@@ -26,12 +27,12 @@ class AuctionController(
     @GetMapping("/auctions/products")
     fun getProducts(
         @RequestParam(name = "last-id", defaultValue = "0") lastId: Long,
-        @RequestParam(name = "personaType", defaultValue = "ALL") personaType: String,
+        @RequestParam(name = "persona-type", defaultValue = "ALL") personaType: String,
         @RequestParam(name = "count", defaultValue = "8") count: Int,
-    ): List<ProductResponse> {
+    ): ProductsResponse {
         val products = productService.getProducts(lastId, personaType, count)
 
-        return products.map { ProductResponse.from(it) }
+        return ProductsResponse.from(products)
     }
 
     @ResponseStatus(HttpStatus.OK)
