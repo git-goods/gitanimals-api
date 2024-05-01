@@ -31,6 +31,7 @@ apply from: "gradle/jwt.gradle"
 apply from: "gradle/etc.gradle"
 apply from: "gradle/test.gradle"
 apply from: "gradle/spring.gradle"
+apply from: "gradle/monitor.gradle"
 apply from: "gradle/jetbrains.gradle"
 
 sentry {
