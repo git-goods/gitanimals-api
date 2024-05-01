@@ -48,12 +48,25 @@ class ProductService(
     @Transactional
     @Retryable(
         retryFor = [ObjectOptimisticLockingFailureException::class],
-        maxAttempts = Int.MAX_VALUE,
+        maxAttempts = 5
     )
-    fun buyProduct(productId: Long, buyerId: Long): Product {
+    fun waitBuyProduct(productId: Long, buyerId: Long): Product {
         val product = getProductById(productId)
 
-        product.buy(buyerId)
+        product.waitBuy(buyerId)
+
+        return product
+    }
+
+    @Transactional
+    @Retryable(
+        retryFor = [ObjectOptimisticLockingFailureException::class],
+        maxAttempts = Int.MAX_VALUE,
+    )
+    fun buyProduct(productId: Long): Product {
+        val product = getProductById(productId)
+
+        product.buy()
 
         return product
     }
@@ -77,7 +90,7 @@ class ProductService(
         val product = getProductByIdWithXForce(productId)
 
         require(product.sellerId == sellerId) { "Cannot delete product cause your not seller." }
-        require(product.getProductState() == ProductState.WAIT_DELETE) {
+        require(product.getState() == ProductState.WAIT_DELETE) {
             "Cannot delete product cause product state is not \"WAIT_DELETE\""
         }
 
