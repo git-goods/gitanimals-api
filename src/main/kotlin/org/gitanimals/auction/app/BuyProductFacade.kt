@@ -20,9 +20,9 @@ class BuyProductFacade(
     fun buyProduct(token: String, productId: Long): Product {
         val buyer = identityApi.getUserByToken(token)
         val product = productService.getProductById(productId)
-        
-        require(product.price <= buyer.points.toLong()) {
-            "Cannot buy product cause buyer does not have enough point \"${product.price}\" >= \"${buyer.points}\""
+
+        require(product.getPrice() <= buyer.points.toLong()) {
+            "Cannot buy product cause buyer does not have enough point \"${product.getPrice()}\" >= \"${buyer.points}\""
         }
 
         return orchestrator.sagaSync(
@@ -50,7 +50,7 @@ class BuyProductFacade(
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
-                    identityApi.decreasePoint(token, idempotencyKey, product.price.toString())
+                    identityApi.decreasePoint(token, idempotencyKey, product.getPrice().toString())
 
                     product
                 },
@@ -58,7 +58,7 @@ class BuyProductFacade(
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
-                    identityApi.increasePoint(token, idempotencyKey, product.price.toString())
+                    identityApi.increasePoint(token, idempotencyKey, product.getPrice().toString())
                 }
             )
             .commitWithContext { context, product ->

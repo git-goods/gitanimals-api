@@ -8,9 +8,9 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.nulls.shouldNotBeNull
 import org.gitanimals.auction.AuctionTestRoot
-import org.gitanimals.auction.domain.PaymentState
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductRepository
+import org.gitanimals.auction.domain.ProductState
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.TestPropertySource
@@ -66,7 +66,7 @@ internal class BuyProductFacadeTest(
                     sagaCapture.commitCountShouldBe(1)
                     sagaCapture.rollbackCountShouldBe(0)
 
-                    response.getPaymentState() shouldBeEqual PaymentState.SOLD_OUT
+                    response.getProductState() shouldBeEqual ProductState.SOLD_OUT
                     response.getBuyerId()!! shouldBeEqual 1L
                     response.getSoldAt().shouldNotBeNull()
                 }
@@ -79,7 +79,7 @@ internal class BuyProductFacadeTest(
             it("결제를 진행하지 않는다.") {
                 mockUserServer.enqueue200(poorUserResponse)
                 shouldThrowWithMessage<IllegalArgumentException>(
-                    "Cannot buy product cause buyer does not have enough point \"${product.price}\" >= \"${poorUserResponse.points}\""
+                    "Cannot buy product cause buyer does not have enough point \"${product.getPrice()}\" >= \"${poorUserResponse.points}\""
                 ) { buyProductFacade.buyProduct(VALID_TOKEN, product.id) }
 
                 eventually(5.seconds) {
@@ -109,7 +109,7 @@ internal class BuyProductFacadeTest(
                     sagaCapture.rollbackCountShouldBe(1)
 
                     productRepository.findByIdOrNull(product.id)!!
-                        .getPaymentState() shouldBeEqual PaymentState.ON_SALE
+                        .getProductState() shouldBeEqual ProductState.ON_SALE
                 }
             }
         }

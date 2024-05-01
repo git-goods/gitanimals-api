@@ -25,11 +25,11 @@ class Product(
     val persona: Persona,
 
     @Column(name = "price", nullable = false)
-    val price: Long,
+    private var price: Long,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_state")
-    private var paymentState: PaymentState,
+    @Column(name = "product_state")
+    private var state: ProductState,
 
     @Embedded
     private var receipt: Receipt? = null,
@@ -38,7 +38,9 @@ class Product(
     private var version: Long? = null,
 ) : AbstractTime() {
 
-    fun getPaymentState(): PaymentState = this.paymentState
+    fun getProductState(): ProductState = this.state
+
+    fun getPrice(): Long = this.price
 
     @JsonIgnore
     fun getBuyerId(): Long? = receipt?.buyerId
@@ -47,16 +49,32 @@ class Product(
     fun getSoldAt(): Instant? = receipt?.soldAt
 
     fun buy(buyerId: Long) {
-        require(paymentState == PaymentState.ON_SALE) {
-            "Cannot buy product cause it's already \"$paymentState\""
+        require(state == ProductState.ON_SALE) {
+            "Cannot buy product cause it's already \"$state\""
         }
-        this.paymentState = PaymentState.SOLD_OUT
+        this.state = ProductState.SOLD_OUT
         this.receipt = Receipt.from(buyerId)
     }
 
+    fun waitDelete() {
+        require(state != ProductState.SOLD_OUT) {
+            "Cannot delete product cause it's already \"$state\""
+        }
+        this.state = ProductState.WAIT_DELETE
+    }
+
     fun onSales() {
-        this.paymentState = PaymentState.ON_SALE
+        this.state = ProductState.ON_SALE
         this.receipt = null
+    }
+
+    fun changePrice(price: Long) {
+        this.price = price
+        require(this.price >= 1) { "Price must be higher than 1" }
+    }
+
+    init {
+        require(this.price >= 1) { "Price must be higher than 1" }
     }
 
     companion object {
@@ -72,7 +90,7 @@ class Product(
             sellerId = sellerId,
             persona = Persona(personaId, personaType, personaLevel),
             price = price,
-            paymentState = PaymentState.ON_SALE,
+            state = ProductState.ON_SALE,
         )
     }
 }

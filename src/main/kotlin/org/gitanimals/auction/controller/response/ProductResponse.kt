@@ -1,7 +1,7 @@
 package org.gitanimals.auction.controller.response
 
-import org.gitanimals.auction.domain.PaymentState
 import org.gitanimals.auction.domain.Product
+import org.gitanimals.auction.domain.ProductState
 import java.time.Instant
 
 data class ProductResponse(
@@ -9,7 +9,7 @@ data class ProductResponse(
     val sellerId: String,
     val persona: Persona,
     val price: String,
-    val paymentState: PaymentState,
+    val paymentState: ProductState,
     val receipt: Receipt? = null,
 ) {
 
@@ -34,9 +34,9 @@ data class ProductResponse(
                     personaType = product.persona.personaType,
                     personaLevel = product.persona.personaLevel,
                 ),
-                price = product.price.toString(),
-                paymentState = product.getPaymentState(),
-                receipt = when (product.getPaymentState() == PaymentState.SOLD_OUT) {
+                price = product.getPrice().toString(),
+                paymentState = product.getProductState(),
+                receipt = when (product.getProductState() == ProductState.SOLD_OUT) {
                     true -> Receipt(product.getBuyerId()!!.toString(), product.getSoldAt()!!)
                     else -> null
                 }
