@@ -29,7 +29,7 @@ class Product(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "product_state")
-    private var productState: ProductState,
+    private var state: ProductState,
 
     @Embedded
     private var receipt: Receipt? = null,
@@ -38,7 +38,7 @@ class Product(
     private var version: Long? = null,
 ) : AbstractTime() {
 
-    fun getProductState(): ProductState = this.productState
+    fun getProductState(): ProductState = this.state
 
     fun getPrice(): Long = this.price
 
@@ -49,22 +49,22 @@ class Product(
     fun getSoldAt(): Instant? = receipt?.soldAt
 
     fun buy(buyerId: Long) {
-        require(productState == ProductState.ON_SALE) {
-            "Cannot buy product cause it's already \"$productState\""
+        require(state == ProductState.ON_SALE) {
+            "Cannot buy product cause it's already \"$state\""
         }
-        this.productState = ProductState.SOLD_OUT
+        this.state = ProductState.SOLD_OUT
         this.receipt = Receipt.from(buyerId)
     }
 
     fun waitDelete() {
-        require(productState != ProductState.SOLD_OUT) {
-            "Cannot delete product cause it's already \"$productState\""
+        require(state != ProductState.SOLD_OUT) {
+            "Cannot delete product cause it's already \"$state\""
         }
-        this.productState = ProductState.WAIT_DELETE
+        this.state = ProductState.WAIT_DELETE
     }
 
     fun onSales() {
-        this.productState = ProductState.ON_SALE
+        this.state = ProductState.ON_SALE
         this.receipt = null
     }
 
@@ -90,7 +90,7 @@ class Product(
             sellerId = sellerId,
             persona = Persona(personaId, personaType, personaLevel),
             price = price,
-            productState = ProductState.ON_SALE,
+            state = ProductState.ON_SALE,
         )
     }
 }

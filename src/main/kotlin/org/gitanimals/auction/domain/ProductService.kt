@@ -4,6 +4,7 @@ import org.gitanimals.auction.domain.request.ChangeProductRequest
 import org.gitanimals.auction.domain.request.RegisterProductRequest
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.PessimisticLockingFailureException
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.retry.annotation.Retryable
@@ -15,6 +16,14 @@ import org.springframework.transaction.annotation.Transactional
 class ProductService(
     private val productRepository: ProductRepository,
 ) {
+
+    fun getProducts(lastId: Long, personaType: String, count: Int): List<Product> {
+        require(count <= 100) { "Maximum count must be under 100" }
+
+        val limit = Pageable.ofSize(count)
+
+        return productRepository.findAllProducts(lastId, personaType, limit).sortedBy { it.id }
+    }
 
     @Transactional
     fun registerProduct(request: RegisterProductRequest): Product {
