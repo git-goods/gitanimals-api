@@ -18,13 +18,6 @@ class BuyProductFacade(
     private lateinit var orchestrator: Orchestrator<Long, Product>
 
     fun buyProduct(token: String, productId: Long): Product {
-        val buyer = identityApi.getUserByToken(token)
-        val product = productService.getProductById(productId)
-
-        require(product.getPrice() <= buyer.points.toLong()) {
-            "Cannot buy product cause buyer does not have enough point \"${product.getPrice()}\" >= \"${buyer.points}\""
-        }
-
         return orchestrator.sagaSync(
             productId,
             mapOf(
@@ -38,10 +31,14 @@ class BuyProductFacade(
         this.orchestrator = orchestratorFactory.create<Long>("buy product orchestrator")
             .startWithContext(
                 contextOrchestrate = { context, productId ->
-                    val token = context.decodeContext("token", String::class)
-                    val buyer = identityApi.getUserByToken(token)
+                    val buyer = identityApi.getUserByToken(context.decodeContext("token", String::class))
+                    val product = productService.getProductById(productId)
 
-                    productService.buyProduct(productId, buyer.id.toLong())
+                    require(product.getPrice() <= buyer.points.toLong()) {
+                        "Cannot buy product cause buyer does not have enough point \"${product.getPrice()}\" >= \"${buyer.points}\""
+                    }
+
+                    productService.waitBuyProduct(productId, buyer.id.toLong())
                 },
                 contextRollback = { _, productId -> productService.rollbackProduct(productId) }
             )
@@ -61,19 +58,26 @@ class BuyProductFacade(
                     identityApi.increasePoint(token, idempotencyKey, product.getPrice().toString())
                 }
             )
-            .commitWithContext { context, product ->
-                val token = context.decodeContext("token", String::class)
-                val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
+            .joinWithContext(
+                contextOrchestrate = { context, product ->
+                    val token = context.decodeContext("token", String::class)
+                    val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
-                renderApi.addPersona(
-                    token,
-                    idempotencyKey,
-                    product.persona.personaId,
-                    product.persona.personaLevel,
-                    product.persona.personaType,
-                )
+                    renderApi.addPersona(
+                        token,
+                        idempotencyKey,
+                        product.persona.personaId,
+                        product.persona.personaLevel,
+                        product.persona.personaType,
+                    )
 
-                product
-            }
+                    product
+                },
+                contextRollback = { context, product ->
+                    val token = context.decodeContext("token", String::class)
+
+                    renderApi.deletePersonaById(token, product.persona.personaId)
+                }
+            ).commit { product -> productService.buyProduct(product.id) }
     }
 }

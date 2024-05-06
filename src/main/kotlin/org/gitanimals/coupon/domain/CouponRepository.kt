@@ -12,4 +12,6 @@ interface CouponRepository : JpaRepository<Coupon, Long> {
     fun deleteByUserIdAndCode(@Param("userId") userId: Long, @Param("code") code: String)
 
     fun existsByUserIdAndCode(userId: Long, code: String): Boolean
+
+    fun findAllByUserId(userId: Long): List<Coupon>
 }

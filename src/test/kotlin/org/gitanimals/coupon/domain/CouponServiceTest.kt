@@ -3,7 +3,9 @@ package org.gitanimals.coupon.domain
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equals.shouldBeEqual
+import io.kotest.matchers.should
 import org.junit.jupiter.api.DisplayName
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -91,6 +93,22 @@ internal class CouponServiceTest(
 
                 val coupons = couponRepository.findAll()
                 coupons.isEmpty() shouldBeEqual true
+            }
+        }
+    }
+
+    describe("getCouponsByUserId 메소드는") {
+        context("userId 를 입력받으면,") {
+            val userId = 1L
+            couponService.useCoupon(userId, VALID_COUPON_CODE)
+
+            it("userId에 해당하는 유저가 사용한 Coupon 을 반환한다.") {
+                val coupons = couponService.getCouponsByUserId(userId)
+
+                coupons.shouldHaveSize(1)
+                    .should {
+                        it.first().userId shouldBeEqual userId
+                    }
             }
         }
     }

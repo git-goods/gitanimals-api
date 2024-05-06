@@ -30,4 +30,36 @@ interface ProductRepository : JpaRepository<Product, Long> {
         @Param("personaType") personaType: String,
         limit: Pageable,
     ): List<Product>
+
+    @Query(
+        """
+        select p from product as p where
+          p.id > :lastId
+          and p.state = ProductState.ON_SALE
+          and p.sellerId = :userId
+        """
+    )
+    fun findAllProductsByUserId(
+        @Param("userId") userId: Long,
+        @Param("lastId") lastId: Long,
+        limit: Pageable
+    ): List<Product>
+
+    @Query(
+        """
+        select p from product as p where 
+          p.id > :lastId 
+          and p.state = ProductState.SOLD_OUT 
+          and p.persona.personaType like 
+            case 
+              when :personaType = 'ALL' then '%' 
+              else :personaType 
+            end
+        """
+    )
+    fun findAllProductHistories(
+        @Param("lastId") lastId: Long,
+        @Param("personaType") personaType: String,
+        limit: Pageable,
+    ): List<Product>
 }

@@ -54,7 +54,7 @@ internal class BuyProductFacadeTest(
         context("토큰에 해당하는 유저가 충분한 돈을 갖고있다면,") {
             val product = registerProduct()
 
-            mockUserServer.enqueue200(userResponse, userResponse)
+            mockUserServer.enqueue200(userResponse)
             mockUserServer.enqueue200()
             mockRenderServer.enqueue200()
             it("product 구매에 성공한다.") {
@@ -62,11 +62,11 @@ internal class BuyProductFacadeTest(
 
                 eventually(5.seconds) {
                     sagaCapture.startCountShouldBe(1)
-                    sagaCapture.joinCountShouldBe(1)
+                    sagaCapture.joinCountShouldBe(2)
                     sagaCapture.commitCountShouldBe(1)
                     sagaCapture.rollbackCountShouldBe(0)
 
-                    response.getProductState() shouldBeEqual ProductState.SOLD_OUT
+                    response.getState() shouldBeEqual ProductState.SOLD_OUT
                     response.getBuyerId()!! shouldBeEqual 1L
                     response.getSoldAt().shouldNotBeNull()
                 }
@@ -83,10 +83,10 @@ internal class BuyProductFacadeTest(
                 ) { buyProductFacade.buyProduct(VALID_TOKEN, product.id) }
 
                 eventually(5.seconds) {
-                    sagaCapture.startCountShouldBe(0)
+                    sagaCapture.startCountShouldBe(1)
                     sagaCapture.joinCountShouldBe(0)
                     sagaCapture.commitCountShouldBe(0)
-                    sagaCapture.rollbackCountShouldBe(0)
+                    sagaCapture.rollbackCountShouldBe(1)
                 }
             }
         }
@@ -95,7 +95,7 @@ internal class BuyProductFacadeTest(
             val product = registerProduct()
 
             it("결제를 중단하고, Products의 상태를 ON_SALE로 변경한다.") {
-                mockUserServer.enqueue200(userResponse, userResponse)
+                mockUserServer.enqueue200(userResponse)
                 mockUserServer.enqueue400()
 
                 shouldThrow<IllegalArgumentException> {
@@ -109,7 +109,7 @@ internal class BuyProductFacadeTest(
                     sagaCapture.rollbackCountShouldBe(1)
 
                     productRepository.findByIdOrNull(product.id)!!
-                        .getProductState() shouldBeEqual ProductState.ON_SALE
+                        .getState() shouldBeEqual ProductState.ON_SALE
                 }
             }
         }

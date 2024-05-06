@@ -1,9 +1,6 @@
 package org.gitanimals.auction.controller
 
-import org.gitanimals.auction.app.BuyProductFacade
-import org.gitanimals.auction.app.ChangeProductFacade
-import org.gitanimals.auction.app.DeleteProductFacade
-import org.gitanimals.auction.app.RegisterProductFacade
+import org.gitanimals.auction.app.*
 import org.gitanimals.auction.controller.request.RegisterProductRequest
 import org.gitanimals.auction.controller.response.ErrorResponse
 import org.gitanimals.auction.controller.response.ProductResponse
@@ -21,6 +18,7 @@ class AuctionController(
     private val deleteProductFacade: DeleteProductFacade,
     private val buyProductFacade: BuyProductFacade,
     private val registerProductFacade: RegisterProductFacade,
+    private val getProductFacade: GetProductFacade,
 ) {
 
     @ResponseStatus(HttpStatus.OK)
@@ -31,6 +29,30 @@ class AuctionController(
         @RequestParam(name = "count", defaultValue = "8") count: Int,
     ): ProductsResponse {
         val products = productService.getProducts(lastId, personaType, count)
+
+        return ProductsResponse.from(products)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/auctions/products/users")
+    fun getProducts(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
+        @RequestParam(name = "last-id", defaultValue = "0") lastId: Long,
+        @RequestParam(name = "count", defaultValue = "8") count: Int,
+    ): ProductsResponse {
+        val products = getProductFacade.getProductsByToken(token, lastId, count)
+
+        return ProductsResponse.from(products)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/auctions/products/histories")
+    fun getHistory(
+        @RequestParam(name = "last-id", defaultValue = "0") lastId: Long,
+        @RequestParam(name = "persona-type", defaultValue = "ALL") personaType: String,
+        @RequestParam(name = "count", defaultValue = "8") count: Int,
+    ): ProductsResponse {
+        val products = productService.getProductHistories(lastId, personaType, count)
 
         return ProductsResponse.from(products)
     }

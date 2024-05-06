@@ -77,7 +77,7 @@ internal class DeleteProductFacadeTest(
 
                 eventually(5.seconds) {
                     productRepository.findByIdOrNull(product.id).shouldNotBeNull()
-                        .getProductState() shouldBeEqual ProductState.ON_SALE
+                        .getState() shouldBeEqual ProductState.ON_SALE
                 }
             }
         }

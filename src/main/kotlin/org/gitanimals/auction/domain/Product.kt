@@ -38,7 +38,7 @@ class Product(
     private var version: Long? = null,
 ) : AbstractTime() {
 
-    fun getProductState(): ProductState = this.state
+    fun getState(): ProductState = this.state
 
     fun getPrice(): Long = this.price
 
@@ -48,12 +48,19 @@ class Product(
     @JsonIgnore
     fun getSoldAt(): Instant? = receipt?.soldAt
 
-    fun buy(buyerId: Long) {
+    fun waitBuy(buyerId: Long) {
         require(state == ProductState.ON_SALE) {
-            "Cannot buy product cause it's already \"$state\""
+            "Cannot buy product cause it's not \"${ProductState.ON_SALE}\" state"
+        }
+        this.state = ProductState.WAIT_SOLD_OUT
+        this.receipt = Receipt.from(buyerId)
+    }
+
+    fun buy() {
+        require(state == ProductState.WAIT_SOLD_OUT) {
+            "Cannot buy product cause it's not \"${ProductState.WAIT_SOLD_OUT}\" state"
         }
         this.state = ProductState.SOLD_OUT
-        this.receipt = Receipt.from(buyerId)
     }
 
     fun waitDelete() {
@@ -69,8 +76,13 @@ class Product(
     }
 
     fun changePrice(price: Long) {
+        require(this.state != ProductState.SOLD_OUT || this.state != ProductState.WAIT_SOLD_OUT) {
+            "Cannot change product cause product state is \"${this.state}\""
+        }
+        require(price >= 1) { "Price must be higher than 1" }
+
         this.price = price
-        require(this.price >= 1) { "Price must be higher than 1" }
+        this.state = ProductState.ON_SALE
     }
 
     init {

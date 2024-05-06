@@ -1,6 +1,8 @@
 package org.gitanimals.coupon.app
 
 import org.gitanimals.coupon.app.event.CouponUsed
+import org.gitanimals.coupon.controller.response.CouponResponses
+import org.gitanimals.coupon.domain.Coupon
 import org.gitanimals.coupon.domain.CouponService
 import org.rooftop.netx.api.SagaManager
 import org.springframework.stereotype.Service
@@ -20,5 +22,11 @@ class CouponFacade(
         }
 
         sagaManager.startSync(CouponUsed(user.id.toLong(), code, dynamic))
+    }
+
+    fun getUsedCoupons(token: String): List<Coupon> {
+        val user = identityApi.getUserByToken(token)
+
+        return couponService.getCouponsByUserId(user.id.toLong())
     }
 }

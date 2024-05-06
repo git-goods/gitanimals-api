@@ -16,13 +16,34 @@ import org.springframework.transaction.annotation.Transactional
 class ProductService(
     private val productRepository: ProductRepository,
 ) {
-
     fun getProducts(lastId: Long, personaType: String, count: Int): List<Product> {
-        require(count <= 100) { "Maximum count must be under 100" }
+        validCount(count)
 
         val limit = Pageable.ofSize(count)
 
         return productRepository.findAllProducts(lastId, personaType, limit).sortedBy { it.id }
+    }
+
+    fun getProductsByUserId(userId: Long, lastId: Long, count: Int): List<Product> {
+        validCount(count)
+
+        val limit = Pageable.ofSize(count)
+
+        return productRepository.findAllProductsByUserId(userId, lastId, limit)
+            .sortedBy { it.id }
+    }
+
+    fun getProductHistories(lastId: Long, personaType: String, count: Int): List<Product> {
+        validCount(count)
+
+        val limit = Pageable.ofSize(count)
+
+        return productRepository.findAllProductHistories(lastId, personaType, limit)
+            .sortedBy { it.id }
+    }
+
+    private fun validCount(count: Int) {
+        require(count <= 100) { "Maximum count must be under 100" }
     }
 
     @Transactional
@@ -48,12 +69,25 @@ class ProductService(
     @Transactional
     @Retryable(
         retryFor = [ObjectOptimisticLockingFailureException::class],
-        maxAttempts = Int.MAX_VALUE,
+        maxAttempts = 5
     )
-    fun buyProduct(productId: Long, buyerId: Long): Product {
+    fun waitBuyProduct(productId: Long, buyerId: Long): Product {
         val product = getProductById(productId)
 
-        product.buy(buyerId)
+        product.waitBuy(buyerId)
+
+        return product
+    }
+
+    @Transactional
+    @Retryable(
+        retryFor = [ObjectOptimisticLockingFailureException::class],
+        maxAttempts = Int.MAX_VALUE,
+    )
+    fun buyProduct(productId: Long): Product {
+        val product = getProductById(productId)
+
+        product.buy()
 
         return product
     }
@@ -77,7 +111,7 @@ class ProductService(
         val product = getProductByIdWithXForce(productId)
 
         require(product.sellerId == sellerId) { "Cannot delete product cause your not seller." }
-        require(product.getProductState() == ProductState.WAIT_DELETE) {
+        require(product.getState() == ProductState.WAIT_DELETE) {
             "Cannot delete product cause product state is not \"WAIT_DELETE\""
         }
 
@@ -111,7 +145,7 @@ class ProductService(
         return product
     }
 
-    fun getProductByIdWithXForce(productId: Long): Product {
+    private fun getProductByIdWithXForce(productId: Long): Product {
         return productRepository.findByIdWithXForce(productId)
             ?: throw IllegalArgumentException("cannot find matched product by id \"$productId\"")
     }

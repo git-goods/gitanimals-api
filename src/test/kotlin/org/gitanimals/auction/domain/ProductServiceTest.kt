@@ -4,6 +4,7 @@ import io.kotest.core.annotation.DisplayName
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.should
 import org.gitanimals.auction.core.IdGenerator
@@ -69,6 +70,23 @@ internal class ProductServiceTest(
                     .should { products ->
                         products.first().id shouldBeGreaterThan lastId
                         products.filter { it.persona.personaType != personaType }.shouldBeEmpty()
+                    }
+            }
+        }
+    }
+
+    describe("getProductsByUserId 메소드는") {
+        context("userId가 입력되면,") {
+            val userId = products[0].sellerId
+            val lastId = 0L
+            val count = 10
+
+            it("userId에 해당하는 seller의 Products를 모두 반환한다.") {
+                val result = productService.getProductsByUserId(userId, lastId, count)
+
+                result.shouldHaveSize(1)
+                    .should { products ->
+                        products.first().sellerId shouldBeEqual userId
                     }
             }
         }
