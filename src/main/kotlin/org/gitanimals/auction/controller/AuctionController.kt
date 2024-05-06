@@ -3,8 +3,10 @@ package org.gitanimals.auction.controller
 import org.gitanimals.auction.app.*
 import org.gitanimals.auction.controller.request.RegisterProductRequest
 import org.gitanimals.auction.controller.response.ErrorResponse
+import org.gitanimals.auction.controller.response.PersonaTypeResponses
 import org.gitanimals.auction.controller.response.ProductResponse
 import org.gitanimals.auction.controller.response.ProductsResponse
+import org.gitanimals.auction.domain.PersonaType
 import org.gitanimals.auction.domain.ProductService
 import org.gitanimals.auction.domain.request.ChangeProductRequest
 import org.springframework.http.HttpHeaders
@@ -56,6 +58,11 @@ class AuctionController(
 
         return ProductsResponse.from(products)
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/auctions/products/types")
+    fun getPersonaTypes(): PersonaTypeResponses =
+        PersonaTypeResponses.from(PersonaType.entries.toTypedArray())
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/auctions/products")
