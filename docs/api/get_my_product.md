@@ -1,21 +1,22 @@
-## Get products
+## Get my products
 
-상품들을 조회합니다.
+토큰에 해당하는 유저가 올린 상품들을 조회합니다.
 
 ## Request
 
 ### HTTP METHOD : `GET`
 
-### url : `https://api.gitanimals.org/auctions/products`
+### url : `https://api.gitanimals.org/auctions/products/users`
+
+### RequestHeader
+
+- Authorization: `{token}`
 
 ### Request param
 
 - `last-id` : last-id를 입력하면, lastId이후의 products들을 조회합니다. (lastId에 해당하는 products는 포함하지 않습니다.) 만약,
-  입력하지 않을 경우, 가장 처음 products부터 count개 반환합니다.   
-- `persona-type` : persona-type에 해당하는 products들을 반환합니다. 입력 가능한
-  persona-type들은 [확률표](https://github.com/devxb/gitanimals#%EB%93%B1%EC%9E%A5-%EA%B0%80%EB%8A%A5%ED%95%9C-%ED%8E%AB%EB%93%A4)
-  의 name과 일치합니다. 어떠한, 값도 입력하지 않을경우, 모든 persona-type에 해당하는 product 들을 조회합니다.   
-- `count` : `last-id` 이후의 product를 count개 조회합니다. 입력하지 않을 경우, 8개를 조회합니다.   
+  입력하지 않을 경우, 가장 처음 products부터 count개 반환합니다.
+- `count` : `last-id` 이후의 product를 count개 조회합니다. 입력하지 않을 경우, 8개를 조회합니다.
 
 ## Response
 

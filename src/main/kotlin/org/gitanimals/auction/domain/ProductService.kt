@@ -124,7 +124,7 @@ class ProductService(
         return product
     }
 
-    fun getProductByIdWithXForce(productId: Long): Product {
+    private fun getProductByIdWithXForce(productId: Long): Product {
         return productRepository.findByIdWithXForce(productId)
             ?: throw IllegalArgumentException("cannot find matched product by id \"$productId\"")
     }
@@ -132,4 +132,12 @@ class ProductService(
     fun getProductById(productId: Long): Product =
         productRepository.findByIdOrNull(productId)
             ?: throw IllegalArgumentException("Cannot find matched product by id \"$productId\"")
+
+    fun getProductsByUserId(userId: Long, lastId: Long, count: Int): List<Product> {
+        require(count <= 100) { "Maximum count must be under 100" }
+
+        val limit = Pageable.ofSize(count)
+
+        return productRepository.findAllProductsByUserId(userId, lastId, limit)
+    }
 }
