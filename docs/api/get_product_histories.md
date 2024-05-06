@@ -1,4 +1,4 @@
-## Get my products
+## Get products histories
 
 상품의 판매 내역을 조회합니다.
 

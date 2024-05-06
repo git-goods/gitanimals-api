@@ -153,4 +153,8 @@ class ProductService(
     fun getProductById(productId: Long): Product =
         productRepository.findByIdOrNull(productId)
             ?: throw IllegalArgumentException("Cannot find matched product by id \"$productId\"")
+
+    fun getPersonaTypeResponses(): List<PersonaType> {
+        TODO("Not yet implemented")
+    }
 }
