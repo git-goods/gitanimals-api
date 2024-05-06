@@ -46,6 +46,18 @@ class AuctionController(
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/auctions/products/histories")
+    fun getHistory(
+        @RequestParam(name = "last-id", defaultValue = "0") lastId: Long,
+        @RequestParam(name = "persona-type", defaultValue = "ALL") personaType: String,
+        @RequestParam(name = "count", defaultValue = "8") count: Int,
+    ): ProductsResponse {
+        val products = productService.getProductHistories(lastId, personaType, count)
+
+        return ProductsResponse.from(products)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/auctions/products")
     fun registerProducts(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,

@@ -44,4 +44,22 @@ interface ProductRepository : JpaRepository<Product, Long> {
         @Param("lastId") lastId: Long,
         limit: Pageable
     ): List<Product>
+
+    @Query(
+        """
+        select p from product as p where 
+          p.id > :lastId 
+          and p.state = ProductState.SOLD_OUT 
+          and p.persona.personaType like 
+            case 
+              when :personaType = 'ALL' then '%' 
+              else :personaType 
+            end
+        """
+    )
+    fun findAllProductHistories(
+        @Param("lastId") lastId: Long,
+        @Param("personaType") personaType: String,
+        limit: Pageable,
+    ): List<Product>
 }

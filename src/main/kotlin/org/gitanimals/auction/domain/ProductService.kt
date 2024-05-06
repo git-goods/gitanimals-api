@@ -16,13 +16,34 @@ import org.springframework.transaction.annotation.Transactional
 class ProductService(
     private val productRepository: ProductRepository,
 ) {
-
     fun getProducts(lastId: Long, personaType: String, count: Int): List<Product> {
-        require(count <= 100) { "Maximum count must be under 100" }
+        validCount(count)
 
         val limit = Pageable.ofSize(count)
 
         return productRepository.findAllProducts(lastId, personaType, limit).sortedBy { it.id }
+    }
+
+    fun getProductsByUserId(userId: Long, lastId: Long, count: Int): List<Product> {
+        validCount(count)
+
+        val limit = Pageable.ofSize(count)
+
+        return productRepository.findAllProductsByUserId(userId, lastId, limit)
+            .sortedBy { it.id }
+    }
+
+    fun getProductHistories(lastId: Long, personaType: String, count: Int): List<Product> {
+        validCount(count)
+
+        val limit = Pageable.ofSize(count)
+
+        return productRepository.findAllProductHistories(lastId, personaType, limit)
+            .sortedBy { it.id }
+    }
+
+    private fun validCount(count: Int) {
+        require(count <= 100) { "Maximum count must be under 100" }
     }
 
     @Transactional
@@ -132,12 +153,4 @@ class ProductService(
     fun getProductById(productId: Long): Product =
         productRepository.findByIdOrNull(productId)
             ?: throw IllegalArgumentException("Cannot find matched product by id \"$productId\"")
-
-    fun getProductsByUserId(userId: Long, lastId: Long, count: Int): List<Product> {
-        require(count <= 100) { "Maximum count must be under 100" }
-
-        val limit = Pageable.ofSize(count)
-
-        return productRepository.findAllProductsByUserId(userId, lastId, limit)
-    }
 }
