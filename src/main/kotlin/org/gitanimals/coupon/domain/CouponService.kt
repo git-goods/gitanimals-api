@@ -43,4 +43,8 @@ class CouponService(
         }
         return !couponRepository.existsByUserIdAndCode(userId, code)
     }
+
+    fun getCouponsByUserId(userId: Long): List<Coupon> {
+        return couponRepository.findAllByUserId(userId)
+    }
 }

@@ -3,6 +3,7 @@ package org.gitanimals.coupon.domain
 import jakarta.persistence.*
 import org.gitanimals.coupon.core.IdGenerator
 import org.gitanimals.identity.core.AggregateRoot
+import java.time.Instant
 
 @AggregateRoot
 @Entity(name = "coupon")
@@ -17,6 +18,9 @@ class Coupon(
 
     @Column(name = "code", columnDefinition = "VARCHAR(100)", length = 100, nullable = false)
     val code: String,
+
+    @Column(name = "used_at", columnDefinition = "TIMESTAMP(6)", nullable = false)
+    val usedAt: Instant,
 ) {
 
     init {
@@ -29,7 +33,8 @@ class Coupon(
             return Coupon(
                 id = IdGenerator.generate(),
                 userId = userId,
-                code = code
+                code = code,
+                usedAt = Instant.now(),
             )
         }
     }
