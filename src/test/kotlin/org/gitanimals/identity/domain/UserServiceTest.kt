@@ -55,7 +55,7 @@ internal class UserServiceTest(
         context("username과 년별 contribution 내역을 받으면,") {
             val username = "NEW_USER"
             val contributionPerYears = mapOf(2024 to 100, 2023 to 100)
-            val expectedPoint = 200 * 100L
+            val expectedPoint = 200 * 10L
 
             it("contribution * 100의 포인트를 갖고있는 새로운 user를 생성한다.") {
                 val user =
