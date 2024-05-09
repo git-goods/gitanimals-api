@@ -35,7 +35,7 @@ class Oauth2Controller(
         return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
             .header(
                 "Location",
-                "https://localhost:3000/jwt?jwt=$token"
+                "http://localhost:3000/jwt?jwt=$token"
             )
             .build()
     }
