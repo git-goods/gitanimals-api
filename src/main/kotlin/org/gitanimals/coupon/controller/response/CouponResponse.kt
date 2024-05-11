@@ -2,6 +2,7 @@ package org.gitanimals.coupon.controller.response
 
 import org.gitanimals.coupon.domain.Coupon
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 data class CouponResponse(
     val id: String,
@@ -16,7 +17,7 @@ data class CouponResponse(
                 id = coupon.id.toString(),
                 userId = coupon.userId.toString(),
                 code = coupon.code,
-                usedAt = LocalDateTime.from(coupon.usedAt),
+                usedAt = LocalDateTime.ofInstant(coupon.usedAt, ZoneOffset.UTC),
             )
     }
 }
