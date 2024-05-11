@@ -1,13 +1,13 @@
 package org.gitanimals.coupon.controller.response
 
 import org.gitanimals.coupon.domain.Coupon
-import java.time.Instant
+import java.time.LocalDateTime
 
 data class CouponResponse(
     val id: String,
     val userId: String,
     val code: String,
-    val usedAt: Instant,
+    val usedAt: LocalDateTime,
 ) {
 
     companion object {
@@ -16,7 +16,7 @@ data class CouponResponse(
                 id = coupon.id.toString(),
                 userId = coupon.userId.toString(),
                 code = coupon.code,
-                usedAt = coupon.usedAt,
+                usedAt = LocalDateTime.from(coupon.usedAt),
             )
     }
 }
