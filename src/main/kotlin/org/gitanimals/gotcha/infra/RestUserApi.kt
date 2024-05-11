@@ -17,8 +17,11 @@ class RestUserApi(
             .uri("/users")
             .header(HttpHeaders.AUTHORIZATION, token)
             .exchange { _, response ->
-                response.bodyTo(UserResponse::class.java)
-                    ?: throw IllegalArgumentException("Authorization failed")
+                runCatching {
+                    response.bodyTo(UserResponse::class.java)
+                }.getOrElse {
+                    throw IllegalArgumentException("Authorization failed", it)
+                }
             }
     }
 

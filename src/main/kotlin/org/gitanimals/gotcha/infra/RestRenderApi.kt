@@ -21,9 +21,16 @@ class RestRenderApi(
             )
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
-                    return@exchange response.bodyTo(object :
-                        ParameterizedTypeReference<Map<String, String>>() {})?.get("id")
-                        ?: throw IllegalStateException("Create persona success but, cannot get persona-id")
+                    return@exchange runCatching {
+                        response.bodyTo(object :
+                            ParameterizedTypeReference<Map<String, String>>() {})?.get("id")
+                    }.getOrElse {
+                        throw IllegalStateException(
+                            "Create persona success but, cannot get persona-id", it
+                        )
+                    } ?: throw IllegalStateException(
+                        "Create persona success but, cannot get persona-id cause it's null"
+                    )
                 }
                 throw IllegalArgumentException("Cannot add persona name \"$personaName\" to user")
             }
