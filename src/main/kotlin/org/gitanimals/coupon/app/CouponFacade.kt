@@ -21,7 +21,7 @@ class CouponFacade(
             "Cannot use coupon code $code"
         }
 
-        sagaManager.startSync(CouponUsed(user.id.toLong(), code, dynamic))
+        sagaManager.startSync(CouponUsed(user.id.toLong(), user.username, code, dynamic))
     }
 
     fun getUsedCoupons(token: String): List<Coupon> {
