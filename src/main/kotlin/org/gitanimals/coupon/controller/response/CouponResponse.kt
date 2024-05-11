@@ -9,7 +9,7 @@ data class CouponResponse(
     val id: String,
     val userId: String,
     val code: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-ddTHH:mm:ssZ", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     val usedAt: LocalDateTime,
 ) {
 
