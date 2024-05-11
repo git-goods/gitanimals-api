@@ -25,6 +25,7 @@ class CouponController(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
     ): CouponResponses = CouponResponses.from(couponFacade.getUsedCoupons(token))
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(illegalArgumentException: IllegalArgumentException): ErrorResponse {
         return ErrorResponse.from(illegalArgumentException)
