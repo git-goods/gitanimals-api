@@ -18,167 +18,248 @@
     {
       "id": "1",
       "type": "LITTLE_CHICK_SUNGLASSES",
-      "level": "6"
+      "level": "8",
+      "visible": true
     },
     {
       "id": "2",
       "type": "LITTLE_CHICK_SUNGLASSES",
-      "level": "5"
+      "level": "7",
+      "visible": true
     },
     {
       "id": "3",
       "type": "LITTLE_CHICK_SUNGLASSES",
-      "level": "5"
+      "level": "11",
+      "visible": true
     },
     {
       "id": "4",
       "type": "LITTLE_CHICK",
-      "level": "5"
+      "level": "11",
+      "visible": true
     },
     {
       "id": "5",
-      "type": "PENGUIN_SUNGLASSES",
-      "level": "10"
+      "type": "GOBLIN_BAG",
+      "level": "15",
+      "visible": true
     },
     {
       "id": "6",
       "type": "LITTLE_CHICK_SUNGLASSES",
-      "level": "7"
+      "level": "14",
+      "visible": true
     },
     {
       "id": "7",
       "type": "GOOSE",
-      "level": "4"
+      "level": "11",
+      "visible": true
     },
     {
       "id": "8",
-      "type": "LITTLE_CHICK",
-      "level": "8"
+      "type": "FISH_MAN",
+      "level": "14",
+      "visible": true
     },
     {
       "id": "9",
       "type": "GOBLIN",
-      "level": "10"
+      "level": "16",
+      "visible": true
     },
     {
       "id": "10",
       "type": "LITTLE_CHICK_SUNGLASSES",
-      "level": "8"
+      "level": "20",
+      "visible": true
     },
     {
       "id": "11",
       "type": "LITTLE_CHICK",
-      "level": "9"
+      "level": "13",
+      "visible": true
     },
     {
       "id": "12",
       "type": "LITTLE_CHICK",
-      "level": "5"
+      "level": "12",
+      "visible": true
     },
     {
       "id": "13",
       "type": "LITTLE_CHICK",
-      "level": "6"
+      "level": "10",
+      "visible": true
     },
     {
       "id": "14",
       "type": "LITTLE_CHICK",
-      "level": "3"
+      "level": "14",
+      "visible": true
     },
     {
       "id": "15",
       "type": "LITTLE_CHICK",
-      "level": "7"
+      "level": "12",
+      "visible": true
     },
     {
       "id": "16",
-      "type": "LITTLE_CHICK",
-      "level": "6"
+      "type": "CAT",
+      "level": "12",
+      "visible": true
     },
     {
       "id": "17",
-      "type": "LITTLE_CHICK",
-      "level": "8"
+      "type": "CHEESE_CAT",
+      "level": "16",
+      "visible": true
     },
     {
       "id": "18",
-      "type": "LITTLE_CHICK",
-      "level": "7"
+      "type": "WHITE_CAT",
+      "level": "15",
+      "visible": true
     },
     {
       "id": "19",
-      "type": "LITTLE_CHICK",
-      "level": "4"
+      "type": "GALCHI_CAT",
+      "level": "12",
+      "visible": true
     },
     {
       "id": "20",
       "type": "LITTLE_CHICK",
-      "level": "7"
+      "level": "14",
+      "visible": true
     },
     {
       "id": "21",
       "type": "GOOSE_SUNGLASSES",
-      "level": "4"
+      "level": "11",
+      "visible": true
     },
     {
       "id": "22",
       "type": "LITTLE_CHICK_KOTLIN",
-      "level": "11"
+      "level": "18",
+      "visible": true
     },
     {
       "id": "23",
       "type": "LITTLE_CHICK_SPRING",
-      "level": "7"
+      "level": "15",
+      "visible": true
     },
     {
       "id": "80",
       "type": "GOOSE",
-      "level": "4"
+      "level": "7",
+      "visible": true
     },
     {
       "id": "103",
       "type": "PENGUIN_SUNGLASSES",
-      "level": "6"
+      "level": "11",
+      "visible": true
     },
     {
       "id": "107",
       "type": "GOOSE",
-      "level": "4"
+      "level": "10",
+      "visible": true
     },
     {
       "id": "121",
       "type": "GOOSE",
-      "level": "3"
+      "level": "10",
+      "visible": true
     },
     {
       "id": "123",
       "type": "LITTLE_CHICK",
-      "level": "2"
+      "level": "9",
+      "visible": true
     },
     {
       "id": "125",
       "type": "FLAMINGO",
-      "level": "0"
+      "level": "5",
+      "visible": true
     },
     {
       "id": "126",
       "type": "SLIME_GREEN",
-      "level": "7"
+      "level": "10",
+      "visible": true
     },
     {
       "id": "558",
       "type": "TEN_MM",
-      "level": "1"
+      "level": "10",
+      "visible": false
     },
     {
       "id": "665",
       "type": "LITTLE_CHICK",
-      "level": "0"
+      "level": "8",
+      "visible": false
     },
     {
       "id": "809",
       "type": "PIG_SUNGLASSES",
-      "level": "0"
+      "level": "4",
+      "visible": false
+    },
+    {
+      "id": "931",
+      "type": "BBIBBI",
+      "level": "7",
+      "visible": false
+    },
+    {
+      "id": "1057",
+      "type": "PENGUIN",
+      "level": "3",
+      "visible": false
+    },
+    {
+      "id": "1312",
+      "type": "PENGUIN",
+      "level": "4",
+      "visible": false
+    },
+    {
+      "id": "572776226651772644",
+      "type": "SLIME_RED",
+      "level": "3",
+      "visible": false
+    },
+    {
+      "id": "573403400047652224",
+      "type": "SLIME_BLUE",
+      "level": "2",
+      "visible": false
+    },
+    {
+      "id": "577021491896761288",
+      "type": "GOOSE",
+      "level": "0",
+      "visible": false
+    },
+    {
+      "id": "577034234682723382",
+      "type": "SLIME_BLUE",
+      "level": "0",
+      "visible": false
+    },
+    {
+      "id": "577374918153174745",
+      "type": "LITTLE_CHICK_SUNGLASSES",
+      "level": "0",
+      "visible": false
     }
   ]
 }
