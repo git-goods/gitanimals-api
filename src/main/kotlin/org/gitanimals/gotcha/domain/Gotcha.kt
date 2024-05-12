@@ -15,6 +15,10 @@ class Gotcha(
             "Not enough point \"$point\" <= \"${this.point}\""
         }
         val gotchaResult = capsules.random()
-        return GotchaResponse(gotchaResult.name, gotchaResult.ratio.toString(), point.toString())
+        return GotchaResponse(
+            gotchaResult.name,
+            gotchaResult.ratio.toString(),
+            type.point.toString(),
+        )
     }
 }

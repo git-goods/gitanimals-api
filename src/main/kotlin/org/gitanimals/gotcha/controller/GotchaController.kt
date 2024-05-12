@@ -32,7 +32,7 @@ class GotchaController(
         ErrorResponse.from(illegalArgumentException)
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(IllegalArgumentException::class)
+    @ExceptionHandler(IllegalStateException::class)
     fun handleIllegalStateException(illegalStateException: IllegalStateException): ErrorResponse =
         ErrorResponse("Oops! Something went wrong.")
 }
