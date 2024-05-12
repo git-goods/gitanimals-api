@@ -2,6 +2,7 @@ package org.gitanimals.auction.infra
 
 import org.gitanimals.auction.app.RenderApi
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
@@ -9,6 +10,7 @@ import org.springframework.web.client.RestClient
 @Component("auction.RestRenderApi")
 class RestRenderApi(
     @Qualifier("auction.renderRestClient") private val restClient: RestClient,
+    @Value("\${internal.secret}") private val internalSecret: String,
 ) : RenderApi {
 
     override fun getPersonaById(token: String, personaId: Long): RenderApi.PersonaResponse {
@@ -32,6 +34,7 @@ class RestRenderApi(
         return restClient.delete()
             .uri("/internals/personas?persona-id=$personaId")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header("Internal-Secret", internalSecret)
             .exchange { _, response ->
                 require(response.statusCode.is2xxSuccessful) { "Cannot delete persona by personaId \"$personaId\"" }
             }
@@ -47,6 +50,7 @@ class RestRenderApi(
         return restClient.post()
             .uri("/internals/personas?idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header("Internal-Secret", internalSecret)
             .body(
                 mapOf(
                     "id" to personaId,

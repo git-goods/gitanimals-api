@@ -2,6 +2,7 @@ package org.gitanimals.auction.infra
 
 import org.gitanimals.auction.app.IdentityApi
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
@@ -9,6 +10,7 @@ import org.springframework.web.client.RestClient
 @Component("auction.RestIdentityApi")
 class RestIdentityApi(
     @Qualifier("auction.identityRestClient") private val restClient: RestClient,
+    @Value("\${internal.secret}") private val internalSecret: String,
 ) : IdentityApi {
 
     override fun getUserByToken(token: String): IdentityApi.UserResponse {
@@ -30,6 +32,7 @@ class RestIdentityApi(
         return restClient.post()
             .uri("/internals/users/points/decreases?point=$point&idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header("Internal-Secret", internalSecret)
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     return@exchange
@@ -44,6 +47,7 @@ class RestIdentityApi(
         return restClient.post()
             .uri("/internals/users/points/increases?point=$point&idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header("Internal-Secret", internalSecret)
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     return@exchange
