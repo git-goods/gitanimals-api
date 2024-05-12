@@ -70,6 +70,7 @@ jobs:
             "REDIS_PORT=${{ secrets.REDIS_PORT }}"
             "GH_OAUTH_ID=${{ secrets.GH_OAUTH_ID }}"
             "GH_OAUTH_SECRET=${{ secrets.GH_OAUTH_SECRET }}"
+            "INTERNAL_SECRET=${{ secrets.INTERNAL_SECRET }}"
 
   deploy:
     needs: build
