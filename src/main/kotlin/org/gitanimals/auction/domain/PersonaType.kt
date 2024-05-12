@@ -55,4 +55,6 @@ enum class PersonaType {
     SLIME_RED_LINUX,
     SLIME_GREEN,
     SLIME_BLUE,
+    FISH_MAN,
+    FISH_MAN_GLASSES,
 }

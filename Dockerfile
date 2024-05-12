@@ -8,6 +8,7 @@ ARG REDIS_HOST
 ARG REDIS_PORT
 ARG GH_OAUTH_ID
 ARG GH_OAUTH_SECRET
+ARG INTERNAL_SECRET
 
 ARG JAR_FILE=./build/libs/*.jar
 COPY ${JAR_FILE} gitanimals-api.jar
@@ -19,7 +20,8 @@ ENV db_url=${DB_URL} \
   redis_host=${REDIS_HOST} \
   redis_port=${REDIS_PORT} \
   oauth_client_id_github=${GH_OAUTH_ID} \
-  oauth_client_secret_github=${GH_OAUTH_SECRET}
+  oauth_client_secret_github=${GH_OAUTH_SECRET} \
+  internal_secret=${INTERNAL_SECRET}
 
 ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --spring.datasource.url=${db_url} \
@@ -29,4 +31,5 @@ ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --netx.port=${redis_port} \
   --github.token=${github_token} \
   --oauth.client.id.github=${oauth_client_id_github} \
-  --oauth.client.secret.github=${oauth_client_secret_github}
+  --oauth.client.secret.github=${oauth_client_secret_github} \
+  --internal.secret=${internal_secret}
