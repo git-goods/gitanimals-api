@@ -78,6 +78,6 @@ class UserService(
         ?: throw IllegalArgumentException("Cannot find exists user by id \"$userId\"")
 
     private companion object {
-        private const val CONTRIBUTION_POINT_RATIO = 10
+        private const val CONTRIBUTION_POINT_RATIO = 100
     }
 }
