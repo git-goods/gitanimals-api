@@ -48,6 +48,7 @@ class RegisterProductFacade(
                     contextRollback = { context, request ->
                         val token = context.decodeContext("token", String::class)
                         val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
+                        println(">>> $request")
                         renderApi.addPersona(
                             token,
                             idempotencyKey,
