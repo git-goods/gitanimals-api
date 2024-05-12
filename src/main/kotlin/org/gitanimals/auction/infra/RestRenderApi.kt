@@ -51,17 +51,17 @@ class RestRenderApi(
             .uri("/internals/personas?idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
             .header("Internal-Secret", internalSecret)
-            .body(
-                mapOf(
-                    "id" to personaId,
-                    "name" to personaType,
-                    "level" to personaLevel,
-                )
-            )
+            .body(AddPersonaRequest(personaId, personaType, personaLevel))
             .exchange { _, response ->
                 require(response.statusCode.is2xxSuccessful) {
                     "Cannot add persona \"$personaId\", \"$personaLevel\", \"$personaType\" to user"
                 }
             }
     }
+
+    private data class AddPersonaRequest(
+        val id: Long,
+        val name: String,
+        val level: Int,
+    )
 }
