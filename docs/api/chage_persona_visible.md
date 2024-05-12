@@ -19,3 +19,12 @@
 ## Response
 
 200 OK
+
+```json
+{
+  "id": "5",
+  "type": "GOBLIN_BAG",
+  "level": "15",
+  "visible": true
+}
+```
