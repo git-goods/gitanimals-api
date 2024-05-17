@@ -17,10 +17,11 @@ class JwtAdvice {
         ErrorResponse.from(signatureException)
 
     @ExceptionHandler(MalformedJwtException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun handleMalformedJwtException(malformedJwtException: MalformedJwtException): ErrorResponse =
         ErrorResponse.from(malformedJwtException)
 
     @ExceptionHandler(JwtException::class)
-    fun handleJwtException(jwtException: JwtException): ErrorResponse =
-        ErrorResponse("Invalid jwt")
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun handleJwtException(jwtException: JwtException): ErrorResponse = ErrorResponse("Invalid jwt")
 }

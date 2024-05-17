@@ -1,5 +1,7 @@
 package org.gitanimals.gotcha.infra
 
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.JwtException
 import org.gitanimals.gotcha.app.UserApi
 import org.gitanimals.gotcha.app.response.UserResponse
 import org.springframework.beans.factory.annotation.Qualifier
@@ -22,7 +24,7 @@ class RestUserApi(
                 runCatching {
                     response.bodyTo(UserResponse::class.java)
                 }.getOrElse {
-                    throw IllegalArgumentException("Authorization failed", it)
+                    throw JwtException("Authorization failed", it)
                 }
             }
     }

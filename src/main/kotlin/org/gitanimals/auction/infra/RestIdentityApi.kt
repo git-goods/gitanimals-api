@@ -1,5 +1,6 @@
 package org.gitanimals.auction.infra
 
+import io.jsonwebtoken.JwtException
 import org.gitanimals.auction.app.IdentityApi
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -21,7 +22,9 @@ class RestIdentityApi(
                 runCatching {
                     response.bodyTo(IdentityApi.UserResponse::class.java)
                 }.getOrElse {
-                    require(!response.statusCode.is4xxClientError) { "Authorization failed" }
+                    if (response.statusCode.is4xxClientError) {
+                        throw JwtException("Authorization failed")
+                    }
 
                     throw IllegalStateException(it)
                 }
