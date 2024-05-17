@@ -24,7 +24,7 @@ class JwtTokenManager : TokenManager {
             .add(USER_ID, user.id)
             .add(USER_NAME, user.name)
             .issuedAt(Date.from(Instant.now()))
-            .expiration(Date.from(Instant.now().plus(24, ChronoUnit.HOURS)))
+            .expiration(Date.from(Instant.now().plus(24 * 7, ChronoUnit.HOURS)))
             .and()
             .signWith(key)
             .compact()
