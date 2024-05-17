@@ -1,5 +1,6 @@
 package org.gitanimals.coupon.infra
 
+import io.jsonwebtoken.JwtException
 import org.gitanimals.coupon.app.IdentityApi
 import org.gitanimals.coupon.app.response.UserResponse
 import org.springframework.http.HttpHeaders
@@ -19,7 +20,7 @@ class RestIdentityApi : IdentityApi {
                 runCatching {
                     response.bodyTo(UserResponse::class.java)
                 }.getOrElse {
-                    throw IllegalArgumentException("Authorization failed", it)
+                    throw JwtException("Authorization failed", it)
                 }
             }
     }
