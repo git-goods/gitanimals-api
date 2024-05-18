@@ -77,6 +77,9 @@ enum class GotchaType(
             Capsule.of("WHITE_CAT", 0.06),
             Capsule.of("FISH_MAN", 0.001),
             Capsule.of("FISH_MAN_GLASSES", 0.001),
+            Capsule.of("QUOKKA", 0.3),
+            Capsule.of("QUOKKA_LEAF", 0.1),
+            Capsule.of("QUOKKA_SUNGLASSES", 0.05),
         )
     }
 }
