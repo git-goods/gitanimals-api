@@ -57,4 +57,7 @@ enum class PersonaType {
     SLIME_BLUE,
     FISH_MAN,
     FISH_MAN_GLASSES,
+    QUOKKA,
+    QUOKKA_LEAF,
+    QUOKKA_SUNGLASSES,
 }
