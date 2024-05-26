@@ -60,4 +60,6 @@ enum class PersonaType {
     QUOKKA,
     QUOKKA_LEAF,
     QUOKKA_SUNGLASSES,
+    MOLE,
+    MOLE_GRASS,
 }
