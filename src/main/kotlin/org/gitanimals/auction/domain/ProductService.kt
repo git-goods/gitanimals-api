@@ -4,6 +4,7 @@ import org.gitanimals.auction.domain.request.ChangeProductRequest
 import org.gitanimals.auction.domain.request.RegisterProductRequest
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.PessimisticLockingFailureException
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.orm.ObjectOptimisticLockingFailureException
@@ -16,30 +17,28 @@ import org.springframework.transaction.annotation.Transactional
 class ProductService(
     private val productRepository: ProductRepository,
 ) {
-    fun getProducts(lastId: Long, personaType: String, count: Int): List<Product> {
+    fun getProducts(pageNumber: Int, personaType: String, count: Int): Page<Product> {
         validCount(count)
 
-        val limit = Pageable.ofSize(count)
+        val page = Pageable.ofSize(count).withPage(pageNumber)
 
-        return productRepository.findAllProducts(lastId, personaType, limit).sortedBy { it.id }
+        return productRepository.findAllProducts(personaType, page)
     }
 
-    fun getProductsByUserId(userId: Long, lastId: Long, count: Int): List<Product> {
+    fun getProductsByUserId(userId: Long, pageNumber: Int, count: Int): Page<Product> {
         validCount(count)
 
-        val limit = Pageable.ofSize(count)
+        val page = Pageable.ofSize(count).withPage(pageNumber)
 
-        return productRepository.findAllProductsByUserId(userId, lastId, limit)
-            .sortedBy { it.id }
+        return productRepository.findAllProductsByUserId(userId, page)
     }
 
-    fun getProductHistories(lastId: Long, personaType: String, count: Int): List<Product> {
+    fun getProductHistories(pageNumber: Int, personaType: String, count: Int): Page<Product> {
         validCount(count)
 
-        val limit = Pageable.ofSize(count)
+        val page = Pageable.ofSize(count).withPage(pageNumber)
 
-        return productRepository.findAllProductHistories(lastId, personaType, limit)
-            .sortedBy { it.id }
+        return productRepository.findAllProductHistories(personaType, page)
     }
 
     private fun validCount(count: Int) {

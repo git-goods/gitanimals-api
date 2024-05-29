@@ -5,7 +5,6 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equals.shouldBeEqual
-import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.should
 import org.gitanimals.auction.core.IdGenerator
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -29,46 +28,30 @@ internal class ProductServiceTest(
     val products = productRepository.saveAllAndFlush(products)
 
     describe("getProducts 메소드는") {
-        context("lastId, personaType, count 를 입력받으면,") {
-            val lastId = 0L
+        context("pageNumber, personaType, count 를 입력받으면,") {
+            val pageNumber = 0
             val personaType = "ALL"
             val count = 10
 
-            it("personaType이 일치하는 ON_SALE 상태의 product를 lastId이후로 count개 반환한다.") {
-                val result = productService.getProducts(lastId, personaType, count)
+            it("personaType이 일치하는 ON_SALE 상태의 product를 count개 반환한다.") {
+                val result = productService.getProducts(pageNumber, personaType, count)
 
                 result.shouldHaveSize(count)
                     .should { products ->
-                        products.first().id shouldBeGreaterThan lastId
+                        products.forEach { it.getState() shouldBeEqual ProductState.ON_SALE }
                     }
             }
         }
 
         context("personaType이 ALL이 아니면,") {
-            val lastId = 0L
+            val pageNumber = 0
             val personaType = "CAT"
             val count = 10
             it("personaType과 일치하는 ON_SALE 상태의 product를 count개 반환한다.") {
-                val result = productService.getProducts(lastId, personaType, count)
+                val result = productService.getProducts(pageNumber, personaType, count)
 
                 result.shouldHaveSize(3)
                     .should { products ->
-                        products.first().id shouldBeGreaterThan lastId
-                        products.filter { it.persona.personaType != personaType }.shouldBeEmpty()
-                    }
-            }
-        }
-
-        context("lastId가 설정되면,") {
-            val lastId = products[products.size - 2].id
-            val personaType = "CAT"
-            val count = 10
-            it("lastId 이후의 products 만 조회한다.") {
-                val result = productService.getProducts(lastId, personaType, count)
-
-                result.shouldHaveSize(1)
-                    .should { products ->
-                        products.first().id shouldBeGreaterThan lastId
                         products.filter { it.persona.personaType != personaType }.shouldBeEmpty()
                     }
             }
@@ -78,11 +61,11 @@ internal class ProductServiceTest(
     describe("getProductsByUserId 메소드는") {
         context("userId가 입력되면,") {
             val userId = products[0].sellerId
-            val lastId = 0L
+            val pageNumber = 0
             val count = 10
 
             it("userId에 해당하는 seller의 Products를 모두 반환한다.") {
-                val result = productService.getProductsByUserId(userId, lastId, count)
+                val result = productService.getProductsByUserId(userId, pageNumber, count)
 
                 result.shouldHaveSize(1)
                     .should { products ->

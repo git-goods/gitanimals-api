@@ -1,6 +1,7 @@
 package org.gitanimals.auction.domain
 
 import jakarta.persistence.LockModeType
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Lock
@@ -15,9 +16,8 @@ interface ProductRepository : JpaRepository<Product, Long> {
 
     @Query(
         """
-        select p from product as p where 
-          p.id > :lastId 
-          and p.state = ProductState.ON_SALE 
+        select p from product as p where
+          p.state = ProductState.ON_SALE 
           and p.persona.personaType like 
             case 
               when :personaType = 'ALL' then '%' 
@@ -26,30 +26,26 @@ interface ProductRepository : JpaRepository<Product, Long> {
         """
     )
     fun findAllProducts(
-        @Param("lastId") lastId: Long,
         @Param("personaType") personaType: String,
-        limit: Pageable,
-    ): List<Product>
+        page: Pageable,
+    ): Page<Product>
 
     @Query(
         """
         select p from product as p where
-          p.id > :lastId
-          and p.state = ProductState.ON_SALE
+          p.state = ProductState.ON_SALE
           and p.sellerId = :userId
         """
     )
     fun findAllProductsByUserId(
         @Param("userId") userId: Long,
-        @Param("lastId") lastId: Long,
         limit: Pageable
-    ): List<Product>
+    ): Page<Product>
 
     @Query(
         """
         select p from product as p where 
-          p.id > :lastId 
-          and p.state = ProductState.SOLD_OUT 
+          p.state = ProductState.SOLD_OUT 
           and p.persona.personaType like 
             case 
               when :personaType = 'ALL' then '%' 
@@ -58,8 +54,7 @@ interface ProductRepository : JpaRepository<Product, Long> {
         """
     )
     fun findAllProductHistories(
-        @Param("lastId") lastId: Long,
         @Param("personaType") personaType: String,
         limit: Pageable,
-    ): List<Product>
+    ): Page<Product>
 }
