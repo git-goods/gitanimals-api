@@ -26,7 +26,7 @@ class AuctionController(
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/auctions/products")
     fun getProducts(
-        @RequestParam(name = "page-number", defaultValue = "1") pageNumber: Int,
+        @RequestParam(name = "page-number", defaultValue = "0") pageNumber: Int,
         @RequestParam(name = "persona-type", defaultValue = "ALL") personaType: String,
         @RequestParam(name = "count", defaultValue = "8") count: Int,
     ): ProductsResponse {
@@ -39,7 +39,7 @@ class AuctionController(
     @GetMapping("/auctions/products/users")
     fun getProducts(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
-        @RequestParam(name = "page-number", defaultValue = "1") pageNumber: Int,
+        @RequestParam(name = "page-number", defaultValue = "0") pageNumber: Int,
         @RequestParam(name = "count", defaultValue = "8") count: Int,
     ): ProductsResponse {
         val products = getProductFacade.getProductsByToken(token, pageNumber, count)
@@ -50,7 +50,7 @@ class AuctionController(
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/auctions/products/histories")
     fun getHistory(
-        @RequestParam(name = "page-number", defaultValue = "1") pageNumber: Int,
+        @RequestParam(name = "page-number", defaultValue = "0") pageNumber: Int,
         @RequestParam(name = "persona-type", defaultValue = "ALL") personaType: String,
         @RequestParam(name = "count", defaultValue = "8") count: Int,
     ): ProductsResponse {
