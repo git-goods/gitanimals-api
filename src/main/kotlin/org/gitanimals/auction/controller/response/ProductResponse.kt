@@ -1,8 +1,10 @@
 package org.gitanimals.auction.controller.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductState
-import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 data class ProductResponse(
     val id: String,
@@ -21,7 +23,12 @@ data class ProductResponse(
 
     data class Receipt(
         private var buyerId: String,
-        private var soldAt: Instant,
+        @JsonFormat(
+            shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "UTC"
+        )
+        private var soldAt: LocalDateTime,
     )
 
     companion object {
@@ -37,7 +44,11 @@ data class ProductResponse(
                 price = product.getPrice().toString(),
                 paymentState = product.getState(),
                 receipt = when (product.getState() == ProductState.SOLD_OUT) {
-                    true -> Receipt(product.getBuyerId()!!.toString(), product.getSoldAt()!!)
+                    true -> Receipt(
+                        product.getBuyerId()!!.toString(),
+                        LocalDateTime.ofInstant(product.getSoldAt()!!, ZoneOffset.UTC)
+                    )
+
                     else -> null
                 }
             )
