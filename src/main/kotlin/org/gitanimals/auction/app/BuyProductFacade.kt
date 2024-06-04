@@ -78,6 +78,23 @@ class BuyProductFacade(
 
                     renderApi.deletePersonaById(token, product.persona.personaId)
                 }
-            ).commit { product -> productService.buyProduct(product.id) }
+            )
+            .joinWithContext(
+                contextOrchestrate = { context, product ->
+                    val sellerId = product.sellerId
+                    val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
+
+                    identityApi.increasePointById(sellerId, idempotencyKey, product.getPrice().toString())
+
+                    product
+                },
+                contextRollback = { context, product ->
+                    val sellerId = product.sellerId
+                    val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
+
+                    identityApi.decreasePointById(sellerId, idempotencyKey, product.getPrice().toString())
+                }
+            )
+            .commit { product -> productService.buyProduct(product.id) }
     }
 }

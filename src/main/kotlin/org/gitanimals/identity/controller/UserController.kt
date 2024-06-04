@@ -3,6 +3,7 @@ package org.gitanimals.identity.controller
 import org.gitanimals.identity.app.Token
 import org.gitanimals.identity.app.UserFacade
 import org.gitanimals.identity.controller.response.UserResponse
+import org.gitanimals.identity.domain.UserService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class UserController(
     private val userFacade: UserFacade,
+    private val userService: UserService,
 ) {
 
     @GetMapping("/users")
@@ -38,5 +40,25 @@ class UserController(
         @RequestParam("idempotency-key") idempotencyKey: String,
     ) {
         userFacade.increasePoint(Token.from(token), idempotencyKey, point)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/internals/users/points/decreases/{user-id}")
+    fun decreaseUserPointsById(
+        @PathVariable("user-id") userId: Long,
+        @RequestParam("point") point: Long,
+        @RequestParam("idempotency-key") idempotencyKey: String,
+    ) {
+        userService.decreasePoint(userId, idempotencyKey, point)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/internals/users/points/increases/{user-id}")
+    fun increaseUserPointsById(
+        @PathVariable("user-id") userId: Long,
+        @RequestParam("point") point: Long,
+        @RequestParam("idempotency-key") idempotencyKey: String,
+    ) {
+        userService.increasePoint(userId, idempotencyKey, point)
     }
 }

@@ -56,13 +56,14 @@ internal class BuyProductFacadeTest(
 
             mockUserServer.enqueue200(userResponse)
             mockUserServer.enqueue200()
+            mockUserServer.enqueue200()
             mockRenderServer.enqueue200()
             it("product 구매에 성공한다.") {
                 val response = buyProductFacade.buyProduct(VALID_TOKEN, product.id)
 
                 eventually(5.seconds) {
                     sagaCapture.startCountShouldBe(1)
-                    sagaCapture.joinCountShouldBe(2)
+                    sagaCapture.joinCountShouldBe(3)
                     sagaCapture.commitCountShouldBe(1)
                     sagaCapture.rollbackCountShouldBe(0)
 

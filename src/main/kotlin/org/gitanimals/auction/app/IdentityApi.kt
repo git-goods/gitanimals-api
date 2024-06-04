@@ -8,6 +8,10 @@ interface IdentityApi {
 
     fun increasePoint(token: String, idempotencyKey: String, point: String)
 
+    fun increasePointById(userId: Long, idempotencyKey: String, point: String)
+
+    fun decreasePointById(userId: Long, idempotencyKey: String, point: String)
+
     data class UserResponse(
         val id: String,
         val username: String,
