@@ -60,4 +60,32 @@ class RestIdentityApi(
                 )
             }
     }
+
+    override fun decreasePointById(userId: Long, idempotencyKey: String, point: String) {
+        return restClient.post()
+            .uri("/internals/users/points/decreases/$userId?point=$point&idempotency-key=$idempotencyKey")
+            .header("Internal-Secret", internalSecret)
+            .exchange { _, response ->
+                if (response.statusCode.is2xxSuccessful) {
+                    return@exchange
+                }
+                throw IllegalArgumentException(
+                    "Cannot decrease points cause \"${response.bodyTo(String::class.java)}\""
+                )
+            }
+    }
+
+    override fun increasePointById(userId: Long, idempotencyKey: String, point: String) {
+        return restClient.post()
+            .uri("/internals/users/points/increases/$userId?point=$point&idempotency-key=$idempotencyKey")
+            .header("Internal-Secret", internalSecret)
+            .exchange { _, response ->
+                if (response.statusCode.is2xxSuccessful) {
+                    return@exchange
+                }
+                throw IllegalArgumentException(
+                    "Cannot decrease points cause \"${response.bodyTo(String::class.java)}\""
+                )
+            }
+    }
 }

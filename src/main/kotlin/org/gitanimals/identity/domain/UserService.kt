@@ -37,7 +37,7 @@ class UserService(
     @Transactional
     @Retryable(ObjectOptimisticLockingFailureException::class)
     fun decreasePoint(userId: Long, idempotencyKey: String, point: Long): User {
-        requireIdempotency("decreasePoint:$idempotencyKey")
+        requireIdempotency("decreasePoint:$userId:$idempotencyKey")
 
         val user = getUserById(userId)
         user.decreasePoint(point)
@@ -47,7 +47,7 @@ class UserService(
     @Transactional
     @Retryable(ObjectOptimisticLockingFailureException::class)
     fun increasePoint(userId: Long, idempotencyKey: String, point: Long): User {
-        requireIdempotency("increasePoint:$idempotencyKey")
+        requireIdempotency("increasePoint:$userId:$idempotencyKey")
 
         val user = getUserById(userId)
         user.increasePoint(point)
