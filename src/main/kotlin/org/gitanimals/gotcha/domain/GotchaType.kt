@@ -80,6 +80,8 @@ enum class GotchaType(
             Capsule.of("QUOKKA", 0.3),
             Capsule.of("QUOKKA_LEAF", 0.1),
             Capsule.of("QUOKKA_SUNGLASSES", 0.05),
+            Capsule.of("MOLE", 0.3),
+            Capsule.of("MOLE_GRASS", 0.1),
         )
     }
 }

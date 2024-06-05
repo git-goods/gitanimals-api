@@ -17,10 +17,20 @@ class GotchaFacade(
 
     private lateinit var gotchaOrchestrator: Orchestrator<String, GotchaResponse>
 
-    fun gotcha(token: String, gotchaType: GotchaType): GotchaResponse {
-        return gotchaOrchestrator
-            .sagaSync(gotchaType.name, mapOf("token" to token))
-            .decodeResultOrThrow(GotchaResponse::class)
+    fun gotcha(token: String, gotchaType: GotchaType, count: Int): List<GotchaResponse> {
+        require(count in 1..10) { "Gotcha count must between 1..10" }
+
+        val gotchaResponses = mutableListOf<GotchaResponse>()
+
+        repeat(count) {
+            gotchaResponses.add(
+                gotchaOrchestrator
+                    .sagaSync(gotchaType.name, mapOf("token" to token))
+                    .decodeResultOrThrow(GotchaResponse::class)
+            )
+        }
+
+        return gotchaResponses
     }
 
     init {
