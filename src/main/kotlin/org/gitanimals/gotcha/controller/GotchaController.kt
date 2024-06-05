@@ -20,10 +20,31 @@ class GotchaController(
     ): GotchaResponse {
         val gotchaType = GotchaType.valueOf(type.uppercase())
 
-        val gotchaResponse = gotchaFacade.gotcha(token, gotchaType)
+        val gotchaResponses = gotchaFacade.gotcha(token, gotchaType, 1)
 
-        checkNotNull(gotchaResponse.id)
-        return GotchaResponse(gotchaResponse.id!!, gotchaResponse.name, gotchaResponse.point)
+        checkNotNull(gotchaResponses[0].id)
+        return GotchaResponse(
+            gotchaResponses[0].id!!,
+            gotchaResponses[0].name,
+            gotchaResponses[0].point
+        )
+    }
+
+    @PostMapping(path = ["/gotchas"], headers = ["ApiVersion=2"])
+    fun gotchaV2(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
+        @RequestParam(name = "type", defaultValue = "DEFAULT") type: String,
+        @RequestParam(name = "count", defaultValue = "1") count: Int,
+    ): Map<String, List<GotchaResponse>> {
+        val gotchaType = GotchaType.valueOf(type.uppercase())
+
+        val gotchaResponses = gotchaFacade.gotcha(token, gotchaType, count)
+
+        return mapOf(
+            "gotchaResults" to gotchaResponses.map {
+                GotchaResponse(it.id!!, it.name, it.point)
+            }.toList()
+        )
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

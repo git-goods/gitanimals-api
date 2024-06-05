@@ -38,7 +38,7 @@ class GotchaFacadeTest(
             mockRenderServer.enqueue200(addPersonaResponse)
 
             it("gotcha를 성공한다.") {
-                val gotchaResponse = gotchaFacade.gotcha("token", GotchaType.DEFAULT)
+                val gotchaResponse = gotchaFacade.gotcha("token", GotchaType.DEFAULT, 1)
 
                 gotchaResponse.shouldNotBeNull()
             }
@@ -49,8 +49,22 @@ class GotchaFacadeTest(
 
             it("IllegalArgumentException을 던진다.") {
                 shouldThrowWithMessage<IllegalArgumentException>("Not enough point \"0\" <= \"1000\"") {
-                    gotchaFacade.gotcha("token", GotchaType.DEFAULT)
+                    gotchaFacade.gotcha("token", GotchaType.DEFAULT, 1)
                 }
+            }
+        }
+
+        context("포인트가 충분한 유저가 Gotcha를 10번 연속 한다면,") {
+            repeat(10) {
+                mockUserServer.enqueue200(richUser)
+                mockUserServer.enqueue200()
+                mockRenderServer.enqueue200(addPersonaResponse)
+            }
+
+            it("gotcha를 성공한다.") {
+                val gotchaResponse = gotchaFacade.gotcha("token", GotchaType.DEFAULT, 10)
+
+                gotchaResponse.shouldNotBeNull()
             }
         }
 
@@ -62,7 +76,7 @@ class GotchaFacadeTest(
 
             it("point를 다시 증가시킨다.") {
                 shouldThrow<IllegalArgumentException> {
-                    gotchaFacade.gotcha("token", GotchaType.DEFAULT)
+                    gotchaFacade.gotcha("token", GotchaType.DEFAULT, 1)
                 }
 
                 eventually(5.seconds) {
@@ -74,7 +88,7 @@ class GotchaFacadeTest(
 }) {
 
     private companion object {
-        private val richUser = UserResponse("1", "rich_guy", "1000", "image-url.png")
+        private val richUser = UserResponse("1", "rich_guy", "100000", "image-url.png")
         private val poorUser = UserResponse("1", "poor_guy", "0", "image-url.png")
         private val addPersonaResponse = mapOf("id" to "1")
     }
