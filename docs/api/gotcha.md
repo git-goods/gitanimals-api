@@ -29,18 +29,18 @@ pet을 뽑기 할 수 있습니다.
 
 ``` json
 {
-gotchaResults: [
+  "gotchaResults": [
     {
-        "id" : "1",
-        "name" : "CAT",
-        "ratio" : "0.2"
+      "id" : "1",
+      "name" : "CAT",
+      "ratio" : "0.2"
     },
     {
-        "id" : "2",
-        "name" : "LITTLE_CHICK",
-        "ratio" : "0.9"
+      "id" : "2",
+      "name" : "LITTLE_CHICK",
+      "ratio" : "0.9"
     }
-    ]
+  ]
 }
 ```
 
