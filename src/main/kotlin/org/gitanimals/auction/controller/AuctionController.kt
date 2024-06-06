@@ -29,20 +29,26 @@ class AuctionController(
         @RequestParam(name = "page-number", defaultValue = "0") pageNumber: Int,
         @RequestParam(name = "persona-type", defaultValue = "ALL") personaType: String,
         @RequestParam(name = "count", defaultValue = "8") count: Int,
+        @RequestParam(name = "order-type", defaultValue = "CREATED_AT") orderType: String,
+        @RequestParam(name = "sort-direction", defaultValue = "DESC") sortDirection: String,
     ): ProductsResponse {
-        val products = productService.getProducts(pageNumber, personaType, count)
+        val products =
+            productService.getProducts(pageNumber, personaType, count, orderType, sortDirection)
 
         return ProductsResponse.from(products)
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/auctions/products/users")
-    fun getProducts(
+    fun getUsersProducts(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestParam(name = "page-number", defaultValue = "0") pageNumber: Int,
         @RequestParam(name = "count", defaultValue = "8") count: Int,
+        @RequestParam(name = "order-type", defaultValue = "CREATED_AT") orderType: String,
+        @RequestParam(name = "sort-direction", defaultValue = "DESC") sortDirection: String,
     ): ProductsResponse {
-        val products = getProductFacade.getProductsByToken(token, pageNumber, count)
+        val products =
+            getProductFacade.getProductsByToken(token, pageNumber, count, orderType, sortDirection)
 
         return ProductsResponse.from(products)
     }
@@ -53,8 +59,16 @@ class AuctionController(
         @RequestParam(name = "page-number", defaultValue = "0") pageNumber: Int,
         @RequestParam(name = "persona-type", defaultValue = "ALL") personaType: String,
         @RequestParam(name = "count", defaultValue = "8") count: Int,
+        @RequestParam(name = "order-type", defaultValue = "CREATED_AT") orderType: String,
+        @RequestParam(name = "sort-direction", defaultValue = "DESC") sortDirection: String,
     ): ProductsResponse {
-        val products = productService.getProductHistories(pageNumber, personaType, count)
+        val products = productService.getProductHistories(
+            pageNumber,
+            personaType,
+            count,
+            orderType,
+            sortDirection,
+        )
 
         return ProductsResponse.from(products)
     }
