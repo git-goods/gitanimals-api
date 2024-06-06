@@ -59,7 +59,7 @@ class AuctionController(
         @RequestParam(name = "page-number", defaultValue = "0") pageNumber: Int,
         @RequestParam(name = "persona-type", defaultValue = "ALL") personaType: String,
         @RequestParam(name = "count", defaultValue = "8") count: Int,
-        @RequestParam(name = "order-type", defaultValue = "CREATED_AT") orderType: String,
+        @RequestParam(name = "order-type", defaultValue = "SOLD_AT") orderType: String,
         @RequestParam(name = "sort-direction", defaultValue = "DESC") sortDirection: String,
     ): ProductsResponse {
         val products = productService.getProductHistories(
