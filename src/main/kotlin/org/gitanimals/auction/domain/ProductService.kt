@@ -41,10 +41,24 @@ class ProductService(
         return productRepository.findAllProducts(personaType, page)
     }
 
-    fun getProductsByUserId(userId: Long, pageNumber: Int, count: Int): Page<Product> {
+    fun getProductsByUserId(
+        userId: Long,
+        pageNumber: Int,
+        count: Int,
+        orderType: String,
+        sortDirection: String,
+    ): Page<Product> {
         validCount(count)
 
-        val page = Pageable.ofSize(count).withPage(pageNumber)
+        val page =
+            PageRequest.of(
+                pageNumber,
+                count,
+                Sort.by(
+                    Sort.Direction.fromString(sortDirection),
+                    ProductOrderType.fromString(orderType),
+                )
+            )
 
         return productRepository.findAllProductsByUserId(userId, page)
     }

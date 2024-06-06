@@ -40,12 +40,14 @@ class AuctionController(
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/auctions/products/users")
-    fun getProducts(
+    fun getUsersProducts(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestParam(name = "page-number", defaultValue = "0") pageNumber: Int,
         @RequestParam(name = "count", defaultValue = "8") count: Int,
+        @RequestParam(name = "order-type", defaultValue = "CREATED_AT") orderType: String,
+        @RequestParam(name = "sort-direction", defaultValue = "DESC") sortDirection: String,
     ): ProductsResponse {
-        val products = getProductFacade.getProductsByToken(token, pageNumber, count)
+        val products = getProductFacade.getProductsByToken(token, pageNumber, count, orderType, sortDirection)
 
         return ProductsResponse.from(products)
     }

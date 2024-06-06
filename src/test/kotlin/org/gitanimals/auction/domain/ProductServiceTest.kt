@@ -80,9 +80,17 @@ internal class ProductServiceTest(
             val userId = products[0].sellerId
             val pageNumber = 0
             val count = 10
+            val orderType = "CREATED_AT"
+            val sortDirection = "ASC"
 
             it("userId에 해당하는 seller의 Products를 모두 반환한다.") {
-                val result = productService.getProductsByUserId(userId, pageNumber, count)
+                val result = productService.getProductsByUserId(
+                    userId,
+                    pageNumber,
+                    count,
+                    orderType,
+                    sortDirection,
+                )
 
                 result.shouldHaveSize(1)
                     .should { products ->
