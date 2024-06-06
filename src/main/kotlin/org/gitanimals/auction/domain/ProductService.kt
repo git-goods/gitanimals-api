@@ -6,7 +6,6 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.PessimisticLockingFailureException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.orm.ObjectOptimisticLockingFailureException
@@ -63,10 +62,24 @@ class ProductService(
         return productRepository.findAllProductsByUserId(userId, page)
     }
 
-    fun getProductHistories(pageNumber: Int, personaType: String, count: Int): Page<Product> {
+    fun getProductHistories(
+        pageNumber: Int,
+        personaType: String,
+        count: Int,
+        orderType: String,
+        sortDirection: String,
+    ): Page<Product> {
         validCount(count)
 
-        val page = Pageable.ofSize(count).withPage(pageNumber)
+        val page =
+            PageRequest.of(
+                pageNumber,
+                count,
+                Sort.by(
+                    Sort.Direction.fromString(sortDirection),
+                    ProductOrderType.fromString(orderType),
+                )
+            )
 
         return productRepository.findAllProductHistories(personaType, page)
     }

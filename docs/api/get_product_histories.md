@@ -14,7 +14,9 @@
 - `persona-type` : persona-type에 해당하는 products들을 반환합니다. 입력 가능한
   persona-type들은 [확률표](https://github.com/devxb/gitanimals#%EB%93%B1%EC%9E%A5-%EA%B0%80%EB%8A%A5%ED%95%9C-%ED%8E%AB%EB%93%A4)
   의 name과 일치합니다. 어떠한, 값도 입력하지 않을경우, 모든 persona-type에 해당하는 product 들을 조회합니다.
-- `count` : product를 count개 조회합니다. 입력하지 않을 경우, 8개를 조회합니다.   
+- `count` : product를 count개 조회합니다. 입력하지 않을 경우, 8개를 조회합니다.
+- `order-type` : 정렬 타입을 입력합니다. (PRICE, SOLD_AT, LEVEL)
+- `sort-direction`: 내림차순, 오름차순을 입력합니다. 입력하지 않으면 내림차순 정렬이 됩니다. (ASC, DESC)
 
 ## Response
 
