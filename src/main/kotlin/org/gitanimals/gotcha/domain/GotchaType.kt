@@ -1,5 +1,7 @@
 package org.gitanimals.gotcha.domain
 
+import kotlin.math.max
+
 enum class GotchaType(
     val point: Long,
 ) {
@@ -11,7 +13,7 @@ enum class GotchaType(
         private fun getCapsules(): List<Capsule> {
             val capsules = mutableListOf<Capsule>()
             capsuleAndRatios.forEach { capsule ->
-                val count = (capsule.ratio * 1000).toInt()
+                val count = max(1, (capsule.ratio * 1000).toInt())
                 repeat(count) { capsules.add(capsule) }
             }
             return capsules

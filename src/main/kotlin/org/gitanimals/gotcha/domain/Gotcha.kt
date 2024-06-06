@@ -16,9 +16,9 @@ class Gotcha(
         }
         val gotchaResult = capsules.random()
         return GotchaResponse(
-            gotchaResult.name,
-            gotchaResult.ratio.toString(),
-            type.point.toString(),
+            name = gotchaResult.name,
+            ratio = gotchaResult.ratio.toString(),
+            point = type.point.toString(),
         )
     }
 }
