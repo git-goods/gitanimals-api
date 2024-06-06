@@ -28,13 +28,21 @@ internal class ProductServiceTest(
     val products = productRepository.saveAllAndFlush(products)
 
     describe("getProducts 메소드는") {
-        context("pageNumber, personaType, count 를 입력받으면,") {
+        context("pageNumber, personaType, count, sortDirection, orderType 를 입력받으면,") {
             val pageNumber = 0
             val personaType = "ALL"
             val count = 10
+            val orderType = "PRICE"
+            val sortDirection = "DESC"
 
             it("personaType이 일치하는 ON_SALE 상태의 product를 count개 반환한다.") {
-                val result = productService.getProducts(pageNumber, personaType, count)
+                val result = productService.getProducts(
+                    pageNumber,
+                    personaType,
+                    count,
+                    orderType,
+                    sortDirection,
+                )
 
                 result.shouldHaveSize(count)
                     .should { products ->
@@ -47,8 +55,17 @@ internal class ProductServiceTest(
             val pageNumber = 0
             val personaType = "CAT"
             val count = 10
+            val orderType = "LEVEL"
+            val sortDirection = "DESC"
+
             it("personaType과 일치하는 ON_SALE 상태의 product를 count개 반환한다.") {
-                val result = productService.getProducts(pageNumber, personaType, count)
+                val result = productService.getProducts(
+                    pageNumber,
+                    personaType,
+                    count,
+                    orderType,
+                    sortDirection
+                )
 
                 result.shouldHaveSize(3)
                     .should { products ->
