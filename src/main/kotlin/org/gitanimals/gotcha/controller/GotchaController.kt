@@ -22,11 +22,9 @@ class GotchaController(
 
         val gotchaResponses = gotchaFacade.gotcha(token, gotchaType, 1)
 
-        checkNotNull(gotchaResponses[0].id)
         return GotchaResponse(
-            gotchaResponses[0].id!!,
             gotchaResponses[0].name,
-            gotchaResponses[0].point
+            gotchaResponses[0].ratio
         )
     }
 
@@ -42,7 +40,7 @@ class GotchaController(
 
         return mapOf(
             "gotchaResults" to gotchaResponses.map {
-                GotchaResponse(it.id!!, it.name, it.point)
+                GotchaResponse(it.name, it.ratio)
             }.toList()
         )
     }

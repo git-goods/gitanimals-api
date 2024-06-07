@@ -25,23 +25,19 @@ pet을 뽑기 할 수 있습니다.
 
 # Response
 
-성공시, 응답으로 뽑힌 펫의 id, 이름, 비율(뽑히는 확률)을 반환합니다.
+성공시, 이름, 비율(뽑히는 확률)을 반환합니다.
 
 ``` json
 {
   "gotchaResults": [
     {
-      "id" : "1",
       "name" : "CAT",
       "ratio" : "0.2"
     },
     {
-      "id" : "2",
       "name" : "LITTLE_CHICK",
       "ratio" : "0.9"
     }
   ]
 }
 ```
-
-펫의 id는 `https://render.gitanimals.org/lines/{username}?pet-id={id}` 와 같이 요청하면서, pet의 정보를 가져올 수 있습니다.
