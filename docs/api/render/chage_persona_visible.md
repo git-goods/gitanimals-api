@@ -25,6 +25,7 @@
   "id": "5",
   "type": "GOBLIN_BAG",
   "level": "15",
-  "visible": true
+  "visible": true,
+  "dropRate": "10%"
 }
 ```
