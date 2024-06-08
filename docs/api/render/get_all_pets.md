@@ -5,8 +5,6 @@
 ## Request
 ### HTTP METHOD : `GET`
 ### url : `https://render.gitanimals.org/personas/infos`
-### PathVariable
-- {username}: 사용자의 이름
 
 ## Response
 
