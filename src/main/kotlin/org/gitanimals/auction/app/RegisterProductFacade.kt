@@ -31,6 +31,7 @@ class RegisterProductFacade(
         )
 
         return orchestrator.sagaSync(
+            100000,
             request,
             mapOf("token" to token, "idempotencyKey" to UUID.randomUUID().toString()),
         ).decodeResultOrThrow(Product::class)

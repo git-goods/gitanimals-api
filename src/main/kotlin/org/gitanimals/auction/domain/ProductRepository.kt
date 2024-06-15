@@ -10,6 +10,9 @@ import org.springframework.data.repository.query.Param
 
 interface ProductRepository : JpaRepository<Product, Long> {
 
+    @Query("select p from product as p where p.persona.personaId = :personaId and p.state != ProductState.SOLD_OUT")
+    fun findByPersonaId(@Param("personaId") personaId: Long): Product?
+
     @Lock(LockModeType.PESSIMISTIC_FORCE_INCREMENT)
     @Query("select p from product as p where p.id = :productId")
     fun findByIdWithXForce(@Param("productId") productId: Long): Product?
