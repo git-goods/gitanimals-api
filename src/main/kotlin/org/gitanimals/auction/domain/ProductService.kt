@@ -2,7 +2,6 @@ package org.gitanimals.auction.domain
 
 import org.gitanimals.auction.domain.request.ChangeProductRequest
 import org.gitanimals.auction.domain.request.RegisterProductRequest
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.PessimisticLockingFailureException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -97,15 +96,11 @@ class ProductService(
             request.personaLevel,
             request.price,
         )
-        return runCatching {
-            productRepository.saveAndFlush(product)
-        }.getOrElse {
-            require(it !is DataIntegrityViolationException) {
-                "Already registered personaId \"${request.personaId}\""
-            }
 
-            throw IllegalStateException("Cannot register product", it)
+        productRepository.findByPersonaId(request.personaId)?.let {
+            throw IllegalArgumentException("Already registered personaId \"${request.personaId}\"")
         }
+        return productRepository.saveAndFlush(product)
     }
 
     @Transactional

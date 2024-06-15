@@ -34,7 +34,7 @@ internal class UserServiceTest(
         context("username에 해당하는 user가 존재할경우,") {
             val point = 100L
             it("입력받은 point를 지급한다.") {
-                userService.givePoint(USER_NAME, point)
+                userService.givePoint(USER_NAME, point, "FOR_TEST")
 
                 val user = userRepository.findByName(USER_NAME)!!
 
@@ -45,7 +45,7 @@ internal class UserServiceTest(
         context("username에 해당하는 user가 존재하지 않을경우,") {
             it("IllegalArgumentException을 던진다.") {
                 shouldThrowExactly<IllegalArgumentException> {
-                    userService.givePoint(NOT_EXIST_USER_NAME, 100)
+                    userService.givePoint(NOT_EXIST_USER_NAME, 100, "FOR_TEST")
                 }
             }
         }

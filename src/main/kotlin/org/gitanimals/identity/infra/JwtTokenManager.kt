@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.gitanimals.identity.app.Token
 import org.gitanimals.identity.app.TokenManager
+import org.gitanimals.identity.core.instant
 import org.gitanimals.identity.domain.User
 import org.springframework.stereotype.Component
 import java.time.Instant
@@ -23,8 +24,8 @@ class JwtTokenManager : TokenManager {
             .claims()
             .add(USER_ID, user.id)
             .add(USER_NAME, user.name)
-            .issuedAt(Date.from(Instant.now()))
-            .expiration(Date.from(Instant.now().plus(24 * 7, ChronoUnit.HOURS)))
+            .issuedAt(Date.from(instant()))
+            .expiration(Date.from(instant().plus(24 * 7, ChronoUnit.HOURS)))
             .and()
             .signWith(key)
             .compact()
