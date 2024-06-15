@@ -17,8 +17,8 @@ class UserService(
 
     @Retryable(retryFor = [ObjectOptimisticLockingFailureException::class])
     @Transactional
-    fun givePoint(username: String, point: Long) {
-        getUserByName(username).givePoint(point)
+    fun givePoint(username: String, point: Long, reason: String) {
+        getUserByName(username).givePoint(point, reason)
     }
 
     @Transactional

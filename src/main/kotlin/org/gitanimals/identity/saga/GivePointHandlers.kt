@@ -15,7 +15,7 @@ class GivePointHandlers(
     fun givePointHandler(sagaCommitEvent: SagaCommitEvent) {
         val gavePoint = sagaCommitEvent.decodeEvent(GavePoint::class)
         runCatching {
-            userService.givePoint(gavePoint.username, gavePoint.point)
+            userService.givePoint(gavePoint.username, gavePoint.point, "FOR_COMMIT")
         }
     }
 }
