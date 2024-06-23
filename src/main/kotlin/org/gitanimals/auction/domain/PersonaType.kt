@@ -62,4 +62,9 @@ enum class PersonaType {
     QUOKKA_SUNGLASSES,
     MOLE,
     MOLE_GRASS,
+    RABBIT,
+    DESSERT_FOX,
+    SLOTH,
+    SLOTH_KING,
+    SLOTH_SUNGLASSES,
 }
