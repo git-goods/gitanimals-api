@@ -22,7 +22,7 @@ class DropPersona(
     val droppedUserId: Long,
 
     @Column(name = "given_point", nullable = false)
-    val given_point: Long
+    val givenPoint: Long
 
 ) {
 
@@ -34,7 +34,7 @@ class DropPersona(
                 id = IdGenerator.generate(),
                 personaId = personaId,
                 droppedUserId = droppedUserId,
-                given_point = DEFAULT_GIVEN_POINT
+                givenPoint = DEFAULT_GIVEN_POINT
             )
         }
     }

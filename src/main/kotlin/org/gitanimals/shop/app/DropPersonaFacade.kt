@@ -57,7 +57,7 @@ class DropPersonaFacade(
                 val token = context.decodeContext("token", String::class)
                 val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
-                identityApi.increasePoint(token, idempotencyKey, dropPersona.given_point.toString())
+                identityApi.increasePoint(token, idempotencyKey, dropPersona.givenPoint.toString())
                 dropPersona
             }
 
