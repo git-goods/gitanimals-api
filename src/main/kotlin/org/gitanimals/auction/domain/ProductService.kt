@@ -2,10 +2,10 @@ package org.gitanimals.auction.domain
 
 import org.gitanimals.auction.domain.request.ChangeProductRequest
 import org.gitanimals.auction.domain.request.RegisterProductRequest
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.PessimisticLockingFailureException
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.retry.annotation.Retryable
@@ -17,26 +17,68 @@ import org.springframework.transaction.annotation.Transactional
 class ProductService(
     private val productRepository: ProductRepository,
 ) {
-    fun getProducts(pageNumber: Int, personaType: String, count: Int): Page<Product> {
+    fun getProducts(
+        pageNumber: Int,
+        personaType: String,
+        count: Int,
+        orderType: String,
+        sortDirection: String,
+    ): Page<Product> {
         validCount(count)
 
-        val page = Pageable.ofSize(count).withPage(pageNumber)
+        val page =
+            PageRequest.of(
+                pageNumber,
+                count,
+                Sort.by(
+                    Sort.Direction.fromString(sortDirection),
+                    ProductOrderType.fromString(orderType),
+                )
+            )
 
         return productRepository.findAllProducts(personaType, page)
     }
 
-    fun getProductsByUserId(userId: Long, pageNumber: Int, count: Int): Page<Product> {
+    fun getProductsByUserId(
+        userId: Long,
+        pageNumber: Int,
+        count: Int,
+        orderType: String,
+        sortDirection: String,
+    ): Page<Product> {
         validCount(count)
 
-        val page = Pageable.ofSize(count).withPage(pageNumber)
+        val page =
+            PageRequest.of(
+                pageNumber,
+                count,
+                Sort.by(
+                    Sort.Direction.fromString(sortDirection),
+                    ProductOrderType.fromString(orderType),
+                )
+            )
 
         return productRepository.findAllProductsByUserId(userId, page)
     }
 
-    fun getProductHistories(pageNumber: Int, personaType: String, count: Int): Page<Product> {
+    fun getProductHistories(
+        pageNumber: Int,
+        personaType: String,
+        count: Int,
+        orderType: String,
+        sortDirection: String,
+    ): Page<Product> {
         validCount(count)
 
-        val page = Pageable.ofSize(count).withPage(pageNumber)
+        val page =
+            PageRequest.of(
+                pageNumber,
+                count,
+                Sort.by(
+                    Sort.Direction.fromString(sortDirection),
+                    ProductOrderType.fromString(orderType),
+                )
+            )
 
         return productRepository.findAllProductHistories(personaType, page)
     }
@@ -54,15 +96,11 @@ class ProductService(
             request.personaLevel,
             request.price,
         )
-        return runCatching {
-            productRepository.saveAndFlush(product)
-        }.getOrElse {
-            require(it !is DataIntegrityViolationException) {
-                "Already registered personaId \"${request.personaId}\""
-            }
 
-            throw IllegalStateException("Cannot register product", it)
+        productRepository.findByPersonaId(request.personaId)?.let {
+            throw IllegalArgumentException("Already registered personaId \"${request.personaId}\"")
         }
+        return productRepository.saveAndFlush(product)
     }
 
     @Transactional

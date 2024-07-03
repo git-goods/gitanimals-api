@@ -10,6 +10,10 @@ import java.time.Instant
 @Table(
     name = "product", indexes = [
         Index(columnList = "seller_id"),
+        Index(columnList = "sold_at"),
+        Index(columnList = "price"),
+        Index(columnList = "persona_level"),
+        Index(columnList = "persona_type"),
     ]
 )
 @Entity(name = "product")

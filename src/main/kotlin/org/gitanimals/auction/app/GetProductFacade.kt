@@ -10,9 +10,21 @@ class GetProductFacade(
     private val identityApi: IdentityApi,
     private val productService: ProductService,
 ) {
-    fun getProductsByToken(token: String, pageNumber: Int, count: Int): Page<Product> {
+    fun getProductsByToken(
+        token: String,
+        pageNumber: Int,
+        count: Int,
+        orderType: String,
+        sortDirection: String,
+    ): Page<Product> {
         val user = identityApi.getUserByToken(token)
 
-        return productService.getProductsByUserId(user.id.toLong(), pageNumber, count)
+        return productService.getProductsByUserId(
+            user.id.toLong(),
+            pageNumber,
+            count,
+            orderType,
+            sortDirection,
+        )
     }
 }
