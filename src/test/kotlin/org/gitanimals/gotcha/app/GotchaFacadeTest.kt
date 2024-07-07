@@ -8,6 +8,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import org.gitanimals.gotcha.GotchaTestRoot
 import org.gitanimals.gotcha.app.response.UserResponse
 import org.gitanimals.gotcha.domain.GotchaType
+import org.gitanimals.gotcha.infra.RestRenderApi
 import org.junit.jupiter.api.DisplayName
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestPropertySource
@@ -35,7 +36,7 @@ class GotchaFacadeTest(
         context("token에 해당하는 유저와 GotchaType에 해당하는 Gotcha가 존재한다면,") {
             mockUserServer.enqueue200(richUser)
             mockUserServer.enqueue200()
-            mockRenderServer.enqueue200(addPersonaResponse)
+            mockRenderServer.enqueue200(listOf(addPersonaResponse))
 
             it("gotcha를 성공한다.") {
                 val gotchaResponse = gotchaFacade.gotcha("token", GotchaType.DEFAULT, 1)
@@ -55,11 +56,22 @@ class GotchaFacadeTest(
         }
 
         context("포인트가 충분한 유저가 Gotcha를 10번 연속 한다면,") {
-            repeat(10) {
-                mockUserServer.enqueue200(richUser)
-                mockUserServer.enqueue200()
-                mockRenderServer.enqueue200(addPersonaResponse)
-            }
+            mockUserServer.enqueue200(richUser)
+            mockUserServer.enqueue200()
+            mockRenderServer.enqueue200(
+                (listOf(
+                    addPersonaResponse,
+                    addPersonaResponse,
+                    addPersonaResponse,
+                    addPersonaResponse,
+                    addPersonaResponse,
+                    addPersonaResponse,
+                    addPersonaResponse,
+                    addPersonaResponse,
+                    addPersonaResponse,
+                    addPersonaResponse,
+                ))
+            )
 
             it("gotcha를 성공한다.") {
                 val gotchaResponse = gotchaFacade.gotcha("token", GotchaType.DEFAULT, 10)
@@ -90,6 +102,7 @@ class GotchaFacadeTest(
     private companion object {
         private val richUser = UserResponse("1", "rich_guy", "100000", "image-url.png")
         private val poorUser = UserResponse("1", "poor_guy", "0", "image-url.png")
-        private val addPersonaResponse = mapOf("id" to "1")
+        private val addPersonaResponse =
+            RestRenderApi.PersonaResponse("1", "GOOSE", "1", true, "0.1")
     }
 }

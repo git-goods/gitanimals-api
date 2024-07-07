@@ -1,10 +1,10 @@
 package org.gitanimals.gotcha.app
 
+import org.gitanimals.gotcha.app.GotchaFacade.GotchaResponsesOrchestrate
 import org.gitanimals.gotcha.domain.GotchaService
 import org.gitanimals.gotcha.domain.GotchaType
 import org.gitanimals.gotcha.domain.response.GotchaResponse
-import org.rooftop.netx.api.Orchestrator
-import org.rooftop.netx.api.OrchestratorFactory
+import org.rooftop.netx.api.*
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,22 +15,14 @@ class GotchaFacade(
     private val renderApi: RenderApi,
 ) {
 
-    private lateinit var gotchaOrchestrator: Orchestrator<String, GotchaResponse>
+    private lateinit var gotchaOrchestrator: Orchestrator<String, List<GotchaResponse>>
 
     fun gotcha(token: String, gotchaType: GotchaType, count: Int): List<GotchaResponse> {
         require(count in 1..10) { "Gotcha count must between 1..10" }
 
-        val gotchaResponses = mutableListOf<GotchaResponse>()
-
-        repeat(count) {
-            gotchaResponses.add(
-                gotchaOrchestrator
-                    .sagaSync(gotchaType.name, mapOf("token" to token))
-                    .decodeResultOrThrow(GotchaResponse::class)
-            )
-        }
-
-        return gotchaResponses
+        return gotchaOrchestrator
+            .sagaSync(gotchaType.name, mapOf("token" to token, "count" to count))
+            .decodeResultOrThrow(object : TypeReference<List<GotchaResponse>>() {})
     }
 
     init {
@@ -38,34 +30,68 @@ class GotchaFacade(
             .startWithContext(contextOrchestrate = { context, gotchaTypeName ->
                 val token = context.decodeContext("token", String::class)
                 val user = userApi.getUserByToken(token)
+                val count = context.decodeContext("count", Int::class)
                 context.set("user", user)
 
                 val gotchaType = GotchaType.valueOf(gotchaTypeName)
 
-                gotchaService.gotcha(user.points.toLong(), gotchaType)
+                val gotchaResponses = mutableListOf<GotchaResponse>()
+                repeat(count) {
+                    gotchaResponses.add(gotchaService.gotcha(user.points.toLong(), gotchaType))
+                }
+                gotchaResponses.toList()
             })
             .joinWithContext(
-                contextOrchestrate = { context, gotchaResponse ->
+                contextOrchestrate = GotchaResponsesOrchestrate { context, gotchaResponses ->
                     val token = context.decodeContext("token", String::class)
 
-                    userApi.decreasePoint(token, gotchaResponse.idempotency, gotchaResponse.point)
+                    userApi.decreasePoint(
+                        token,
+                        gotchaResponses[0].idempotency,
+                        gotchaResponses[0].point * gotchaResponses.size
+                    )
 
-                    gotchaResponse
+                    gotchaResponses
                 },
-                contextRollback = { context, gotchaResponse ->
+                contextRollback = GotChaResponsesRollback { context, gotchaResponses ->
                     val token = context.decodeContext("token", String::class)
 
-                    userApi.increasePoint(token, gotchaResponse.idempotency, gotchaResponse.point)
+                    userApi.increasePoint(
+                        token,
+                        gotchaResponses[0].idempotency,
+                        gotchaResponses[0].point * gotchaResponses.size
+                    )
                 }
             )
-            .commitWithContext { context, gotchaResponse ->
+            .commitWithContext(GotchaResponsesOrchestrate { context, gotchaResponses ->
                 val token = context.decodeContext("token", String::class)
 
-                val personaId =
-                    renderApi.addPersona(token, gotchaResponse.idempotency, gotchaResponse.name)
+                val personaIds =
+                    renderApi.addPersonas(
+                        token,
+                        gotchaResponses.map { it.idempotency },
+                        gotchaResponses.map { it.name },
+                    )
 
-                gotchaResponse.id = personaId
-                gotchaResponse
-            }
+                for (i in gotchaResponses.indices) {
+                    gotchaResponses[i].id = personaIds[i]
+                }
+
+                gotchaResponses
+            })
+    }
+
+    private fun interface GotchaResponsesOrchestrate :
+        ContextOrchestrate<List<GotchaResponse>, List<GotchaResponse>> {
+
+        override fun reified(): TypeReference<List<GotchaResponse>> =
+            object : TypeReference<List<GotchaResponse>>() {}
+    }
+
+    private fun interface GotChaResponsesRollback
+        : ContextRollback<List<GotchaResponse>, Unit> {
+
+        override fun reified(): TypeReference<List<GotchaResponse>> =
+            object : TypeReference<List<GotchaResponse>>() {}
     }
 }

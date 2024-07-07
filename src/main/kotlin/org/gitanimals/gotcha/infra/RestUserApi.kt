@@ -29,7 +29,7 @@ class RestUserApi(
             }
     }
 
-    override fun decreasePoint(token: String, idempotencyKey: String, point: String) {
+    override fun decreasePoint(token: String, idempotencyKey: String, point: Long) {
         return restClient.post()
             .uri("/internals/users/points/decreases?point=$point&idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
@@ -44,7 +44,7 @@ class RestUserApi(
             }
     }
 
-    override fun increasePoint(token: String, idempotencyKey: String, point: String) {
+    override fun increasePoint(token: String, idempotencyKey: String, point: Long) {
         return restClient.post()
             .uri("/internals/users/points/increases?point=$point&idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)

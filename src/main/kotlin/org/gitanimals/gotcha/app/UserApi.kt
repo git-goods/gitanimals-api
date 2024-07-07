@@ -6,7 +6,7 @@ interface UserApi {
 
     fun getUserByToken(token: String): UserResponse
 
-    fun decreasePoint(token: String, idempotencyKey: String, point: String)
+    fun decreasePoint(token: String, idempotencyKey: String, point: Long)
 
-    fun increasePoint(token: String, idempotencyKey: String, point: String)
+    fun increasePoint(token: String, idempotencyKey: String, point: Long)
 }
