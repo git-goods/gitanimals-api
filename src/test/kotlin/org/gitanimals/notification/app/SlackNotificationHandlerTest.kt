@@ -25,7 +25,7 @@ internal class SlackNotificationHandlerTest(
     xdescribe("handleNewUserCreatedEvent 클래스는") {
         context("NewUserCreated 이벤트가 실행되었을때,") {
             it("슬랙에 알람을 보낸다.") {
-                sagaManager.startSync(NewUserCreated(1L, "devxb"))
+                sagaManager.startSync(NewUserCreated(1L, "devxb", true))
 
                 Thread.sleep(100000)
             }
