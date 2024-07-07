@@ -30,7 +30,7 @@ class RestRenderApi(
         }
 
         return restClient.post()
-            .uri("/internals/personas")
+            .uri("/internals/personas/multiply")
             .header(HttpHeaders.AUTHORIZATION, token)
             .header("Internal-Secret", internalSecret)
             .contentType(MediaType.APPLICATION_JSON)
