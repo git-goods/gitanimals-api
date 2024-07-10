@@ -4,9 +4,6 @@ import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.core.annotation.DisplayName
 import io.kotest.core.spec.style.DescribeSpec
 import org.gitanimals.auction.AuctionTestRoot
-import org.gitanimals.notification.app.SlackNotificationHandler
-import org.gitanimals.notification.infra.GitAnimalsDailyReportSlackNotification
-import org.gitanimals.notification.infra.GitAnimalsNewUserSlackNotification
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestPropertySource
 import kotlin.time.Duration.Companion.seconds
@@ -38,5 +35,4 @@ internal class ProductStatisticScheduleTest(
             }
         }
     }
-}) {
-}
+})

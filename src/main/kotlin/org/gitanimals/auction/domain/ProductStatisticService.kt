@@ -16,9 +16,9 @@ class ProductStatisticService(
         val startDay = current.atTime(0, 0, 0).toInstant(ZoneOffset.UTC)
         val endDay = current.atTime(23, 59, 59).toInstant(ZoneOffset.UTC)
         return productStatisticRepository.getDailyCountPerState(startDay, endDay)
-            .map { it.state to it.count }.toMap()
+            .associate { it.state to it.count }
     }
 
     fun getProductTotalStatistic(): Map<ProductState, Long> =
-        productStatisticRepository.getTotalCountPerState().map { it.state to it.count }.toMap()
+        productStatisticRepository.getTotalCountPerState().associate { it.state to it.count }
 }
