@@ -26,3 +26,8 @@ sealed class SlackNotification(
 class GitAnimalsNewUserSlackNotification(
     @Value(value = "\${slack.token}") token: String,
 ) : SlackNotification(token, "C079NJ6PVBQ")
+
+@Component
+class GitAnimalsDailyReportSlackNotification(
+    @Value(value = "\${slack.token}") token: String,
+): SlackNotification(token, "C07BPB42R8D")
