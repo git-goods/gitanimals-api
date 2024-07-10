@@ -7,7 +7,7 @@ import java.time.Instant
 
 interface UserStatisticRepository : JpaRepository<User, Long> {
 
-    @Query("select count(u.id) from users u where u.created_at between :startDay and :endDay")
+    @Query("select count(u.id) from users u where u.createdAt between :startDay and :endDay")
     fun getDailyUserCount(
         @Param("startDay") startDay: Instant,
         @Param("endDay") endDay: Instant,

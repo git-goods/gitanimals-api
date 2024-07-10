@@ -30,7 +30,7 @@ class SlackNotificationHandler(
 
         dailyReportSlackNotification.notify(
             """
-                :불꽃놀이: ${userYesterdayReport.serverName} 서버의 ${userYesterdayReport.date} daily user reports :불꽃놀이:
+                :pepefireworks: *${userYesterdayReport.serverName} 서버 ${userYesterdayReport.date.toLocalDate()} daily user reports* :pepefireworks:
                 어제 하루동안 가입자 수 : ${userYesterdayReport.yesterdayNewUserCount}
                 총 가입자 수 : ${userYesterdayReport.totalUserCount}
             """.trimIndent()

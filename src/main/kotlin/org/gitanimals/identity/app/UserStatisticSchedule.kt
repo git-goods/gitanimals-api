@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class UserSchedule(
+class UserStatisticSchedule(
     private val sagaManager: SagaManager,
     private val userStatisticService: UserStatisticService,
 ) {
