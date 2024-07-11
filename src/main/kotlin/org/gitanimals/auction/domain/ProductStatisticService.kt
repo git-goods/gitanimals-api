@@ -12,9 +12,9 @@ class ProductStatisticService(
 ) {
 
     fun getProductYesterdayStatistic(): Map<ProductState, Long> {
-        val current = LocalDate.now()
-        val startDay = current.atTime(0, 0, 0).toInstant(ZoneOffset.UTC)
-        val endDay = current.atTime(23, 59, 59).toInstant(ZoneOffset.UTC)
+        val yesterday = LocalDate.now().minusDays(1)
+        val startDay = yesterday.atTime(0, 0, 0).toInstant(ZoneOffset.UTC)
+        val endDay = yesterday.atTime(23, 59, 59).toInstant(ZoneOffset.UTC)
         return productStatisticRepository.getDailyCountPerState(startDay, endDay)
             .associate { it.state to it.count }
     }
