@@ -28,7 +28,7 @@ application {
 
 apply from: "gradle/db.gradle"
 apply from: "gradle/jwt.gradle"
-apply from: "gradle/etc.gradle"
+apply from: "gradle/core.gradle"
 apply from: "gradle/test.gradle"
 apply from: "gradle/slack.gradle"
 apply from: "gradle/spring.gradle"
