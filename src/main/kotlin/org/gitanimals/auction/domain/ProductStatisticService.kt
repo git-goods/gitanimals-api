@@ -1,5 +1,6 @@
 package org.gitanimals.auction.domain
 
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -19,6 +20,7 @@ class ProductStatisticService(
             .associate { it.state to it.count }
     }
 
+    @Cacheable(value = ["product_total_statistic"], cacheManager = "auctionCacheManager")
     fun getProductTotalStatistic(): Map<ProductState, Long> =
         productStatisticRepository.getTotalCountPerState().associate { it.state to it.count }
 }

@@ -17,6 +17,6 @@ class UserStatisticService(
         return userStatisticRepository.getDailyUserCount(startDay, endDay)
     }
 
-    @Cacheable(cacheNames = ["total_user_count_cache"])
+    @Cacheable(cacheNames = ["total_user_count_cache"], cacheManager = "identityCacheManager")
     fun getTotalUserCount(): Long = userStatisticRepository.count()
 }

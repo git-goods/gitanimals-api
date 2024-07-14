@@ -1,4 +1,4 @@
-package org.gitanimals.identity.infra
+package org.gitanimals.auction.infra
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.springframework.cache.CacheManager
@@ -11,14 +11,14 @@ import kotlin.time.toJavaDuration
 @Configuration
 class CacheConfigurer {
 
-    @Bean("identityCacheManager")
+    @Bean("auctionCacheManager")
     fun cacheManager(caffeine: Caffeine<Any, Any>): CacheManager {
         val caffeineCacheManager = CaffeineCacheManager()
         caffeineCacheManager.setCaffeine(caffeine)
         return caffeineCacheManager
     }
 
-    @Bean("identityCaffeineConfig")
+    @Bean("auctionCaffeineConfig")
     fun caffeineConfig(): Caffeine<Any, Any> =
         Caffeine.newBuilder().expireAfterWrite(1.hours.toJavaDuration())
 }
