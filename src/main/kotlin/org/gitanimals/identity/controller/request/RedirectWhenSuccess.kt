@@ -6,11 +6,11 @@ enum class RedirectWhenSuccess(
 ) {
     HOME(
         "https://api.gitanimals.org/logins/oauth/github/tokens/HOME",
-        "https://www.gitanimals.org/jwt={jwt}",
+        "https://www.gitanimals.org?jwt={jwt}",
     ),
     ADMIN(
         "https://api.gitanimals.org/logins/oauth/github/tokens/ADMIN",
-        "https://admin.gitanimals.org/jwt={jwt}",
+        "https://admin.gitanimals.org?jwt={jwt}",
     ),
     ;
 
