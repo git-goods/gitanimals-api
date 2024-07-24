@@ -3,14 +3,16 @@
 ## Request
 ### HTTP METHOD : `GET` 
 ### url : `https://api.gitanimals.org/logins/oauth/github`
+### Header
+- Redirect-When-Success : `HOME`, `ADMIN`, `LOCAL`, `LOCAL_ADMIN` 중 하나를 입력해주세요. HOME은 로그인 성공시 홈페이지로 로그인, ADMIN은 로그인 성공시 어드민 페이지로 리다이렉트 됩니다. LOCAL은 `http://localhost:3000?jwt={jwt}` 로 리다이렉트 됩니다. 
 
 # Response
 로그인 성공시 등록한 url로 jwt를 전달합니다.   
-예시로, `https://www.naver.com`가 등록되었다면, 인증이 끝난후 다음과 같이 브라우저가 redirect 됩니다.
+ADMIN : `https://admin.gitanimals.org?jwt={jwtToken}`   
+HOME : `https://www.gitanimals.org?jwt={jwtToken}`
+LOCAL : `http://localhost:3000?jwt={jwtToken}`
+LOCAL_ADMIN : `http://localhost:5173?jwt={jwtToken}`
 
-```http
-https://www.naver.com?jwt={jwtToken}
-```
 
 ## Sequence
 
