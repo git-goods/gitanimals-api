@@ -12,9 +12,9 @@ import kotlin.time.toJavaDuration
 class CacheConfigurer {
 
     @Bean("auctionCacheManager")
-    fun cacheManager(caffeine: Caffeine<Any, Any>): CacheManager {
+    fun cacheManager(): CacheManager {
         val caffeineCacheManager = CaffeineCacheManager()
-        caffeineCacheManager.setCaffeine(caffeine)
+        caffeineCacheManager.setCaffeine(caffeineConfig())
         return caffeineCacheManager
     }
 
