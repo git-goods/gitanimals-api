@@ -24,7 +24,7 @@ class Oauth2Controller(
         return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
             .header(
                 "Location",
-                "https://github.com/login/oauth/authorize?client_id=$githubClientId?redirect_uri=${redirectWhenSuccess.callbackUri}"
+                "https://github.com/login/oauth/authorize?client_id=$githubClientId&redirect_uri=${redirectWhenSuccess.callbackUri}"
             )
             .build()
     }
