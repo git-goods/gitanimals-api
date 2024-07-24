@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.toJavaDuration
 
-@Configuration
+@Configuration("auctionCacheConfigurer")
 class CacheConfigurer {
 
     @Bean("auctionCacheManager")
