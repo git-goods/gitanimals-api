@@ -1,4 +1,4 @@
-# Get total user count
+# Get total product count
 
 총 상품수를 조회합니다
 
