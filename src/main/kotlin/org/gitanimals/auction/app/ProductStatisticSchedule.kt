@@ -16,7 +16,7 @@ class ProductStatisticSchedule(
     private val productStatisticService: ProductStatisticService,
 ) {
 
-    @Scheduled(cron = EVERY_9AM, zone = "Asia/Seoul")
+    @Scheduled(cron = EVERY_9AM_1MINUTES, zone = "Asia/Seoul")
     fun sendDailyProductReport() {
         val yesterday = instant().toKr().minusDays(1)
         val totalReport = productStatisticService.getProductTotalStatistic()
@@ -34,6 +34,6 @@ class ProductStatisticSchedule(
     }
 
     private companion object {
-        private const val EVERY_9AM = "0 0 9 * * ?"
+        private const val EVERY_9AM_1MINUTES = "0 1 9 * * ?"
     }
 }
