@@ -67,4 +67,5 @@ enum class PersonaType {
     SLOTH,
     SLOTH_KING,
     SLOTH_SUNGLASSES,
+    TURTLE,
 }
