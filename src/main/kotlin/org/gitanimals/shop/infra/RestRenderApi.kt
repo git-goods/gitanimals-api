@@ -3,7 +3,9 @@ package org.gitanimals.shop.infra
 import org.gitanimals.shop.app.RenderApi
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 
@@ -59,9 +61,61 @@ class RestRenderApi(
             }
     }
 
+    override fun addPersonas(
+        token: String,
+        idempotencyKeys: List<String>,
+        personaNames: List<String>
+    ): List<String> {
+        val request = mutableListOf<AddMultiplePersonaRequest>()
+        for (nameWithIndex in personaNames.withIndex()) {
+            request.add(
+                AddMultiplePersonaRequest(
+                    idempotencyKeys[nameWithIndex.index], nameWithIndex.value,
+                )
+            )
+        }
+
+        return restClient.post()
+            .uri("/internals/personas/multiply")
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .header("Internal-Secret", internalSecret)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(request)
+            .exchange { _, response ->
+                if (response.statusCode.is2xxSuccessful) {
+                    return@exchange runCatching {
+                        val personaResponses = response.bodyTo(object :
+                            ParameterizedTypeReference<List<PersonaResponse>>() {})
+
+                        personaResponses?.map { it.id }
+                    }.getOrElse {
+                        throw IllegalStateException(
+                            "Create persona success but, cannot get persona-id", it
+                        )
+                    } ?: throw IllegalStateException(
+                        "Create persona success but, cannot get persona-id cause it's null"
+                    )
+                }
+                throw IllegalArgumentException("Cannot add persona \"$personaNames\" to user")
+            }
+    }
+
     private data class AddPersonaRequest(
         val id: Long,
         val name: String,
         val level: Int,
+    )
+
+    private data class AddMultiplePersonaRequest(
+        val idempotencyKey: String,
+        val personaName: String,
+    )
+
+    data class PersonaResponse(
+        val id: String,
+        val type: String,
+        val level: String,
+        val visible: Boolean,
+        val dropRate: String,
     )
 }
