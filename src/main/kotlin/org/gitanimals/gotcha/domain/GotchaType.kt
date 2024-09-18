@@ -89,6 +89,7 @@ enum class GotchaType(
             Capsule.of("SLOTH", 0.7),
             Capsule.of("SLOTH_KING", 0.05),
             Capsule.of("SLOTH_SUNGLASSES", 0.06),
+            Capsule.of("TURTLE", 0.03),
         )
     }
 }

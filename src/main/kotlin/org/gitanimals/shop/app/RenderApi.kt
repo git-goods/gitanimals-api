@@ -14,6 +14,12 @@ interface RenderApi {
         personaType: String,
     )
 
+    fun addPersonas(
+        token: String,
+        idempotencyKeys: List<String>,
+        personaNames: List<String>,
+    ): List<String>
+
     data class PersonaResponse(
         val id: String,
         val type: String,
