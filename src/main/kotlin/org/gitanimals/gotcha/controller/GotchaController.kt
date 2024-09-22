@@ -28,7 +28,7 @@ class GotchaController(
         )
     }
 
-    @PostMapping(path = ["/gotchas"], headers = ["ApiVersion=2"])
+    @PostMapping(path = ["/gotchas"], headers = ["Api-Version=2"])
     fun gotchaV2(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestParam(name = "type", defaultValue = "DEFAULT") type: String,
