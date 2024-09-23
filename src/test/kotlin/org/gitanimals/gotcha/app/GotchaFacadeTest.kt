@@ -1,5 +1,6 @@
 package org.gitanimals.gotcha.app
 
+import io.jsonwebtoken.JwtException
 import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowWithMessage
@@ -93,6 +94,16 @@ class GotchaFacadeTest(
 
                 eventually(5.seconds) {
                     sagaCapture.rollbackCountShouldBe(1)
+                }
+            }
+        }
+
+        context("JwtException이 발생하면,") {
+            mockUserServer.enqueue401()
+
+            it("10초안에 예외를 반환한다") {
+                shouldThrow<JwtException> {
+                    gotchaFacade.gotcha("token", GotchaType.DEFAULT, 1)
                 }
             }
         }

@@ -6,15 +6,17 @@ import org.gitanimals.identity.app.Token
 import org.gitanimals.identity.app.TokenManager
 import org.gitanimals.identity.core.instant
 import org.gitanimals.identity.domain.User
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Component
-class JwtTokenManager : TokenManager {
+class JwtTokenManager(
+    @Value("\${jwt.key}") key: String
+) : TokenManager {
 
-    private val key = Keys.hmacShaKeyFor(UUID.randomUUID().toString().toByteArray());
+    private val key = Keys.hmacShaKeyFor(key.toByteArray());
 
     override fun createToken(user: User): Token {
         val value = Jwts.builder()
