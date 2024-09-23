@@ -7,9 +7,11 @@ import org.gitanimals.identity.app.TokenManager
 import org.gitanimals.identity.domain.user
 import org.junit.jupiter.api.DisplayName
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 
-@ContextConfiguration(classes = [JwtTokenManager::class])
 @DisplayName("JwtTokenManager 클래스의")
+@TestPropertySource("classpath:test.properties")
+@ContextConfiguration(classes = [JwtTokenManager::class])
 internal class JwtTokenManagerTest(
     private val tokenManager: TokenManager
 ) : DescribeSpec({

@@ -31,7 +31,4 @@ internal class UserStatisticScheduleTest(
             }
         }
     }
-}) {
-
-
-}
+})

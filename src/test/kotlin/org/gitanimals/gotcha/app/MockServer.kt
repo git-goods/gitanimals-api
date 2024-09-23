@@ -40,4 +40,12 @@ abstract class MockServer(
             MockResponse().setResponseCode(400)
         )
     }
+
+    fun enqueue401() {
+        mockWebSerer.enqueue(
+            MockResponse()
+                .setResponseCode(401)
+                .setBody("{\"message\": \"Invalid Jwt\"}")
+        )
+    }
 }
