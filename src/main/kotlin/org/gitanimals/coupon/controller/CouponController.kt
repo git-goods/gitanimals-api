@@ -17,7 +17,7 @@ class CouponController(
     fun useCoupon(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestBody couponRequest: CouponRequest,
-    ) = couponFacade.useCoupon(token, couponRequest.code, couponRequest.dynamic)
+    ) = couponFacade.useCoupon(token, couponRequest.code, couponRequest.dynamic)?.toResponse()
 
     @GetMapping("/coupons/users")
     @ResponseStatus(HttpStatus.OK)
