@@ -1,7 +1,7 @@
 package org.gitanimals.shop.controller
 
 import org.gitanimals.shop.app.DropPersonaFacade
-import org.gitanimals.shop.domain.DropPersona
+import org.gitanimals.shop.controller.response.DropPersonaResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,5 +17,6 @@ class DropPersonaController(
     fun dropPersona(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("persona-id") personaId: Long,
-    ): DropPersona = dropPersonaFacade.dropPersona(token, personaId)
+    ): DropPersonaResponse =
+        DropPersonaResponse.from(dropPersonaFacade.dropPersona(token, personaId))
 }
