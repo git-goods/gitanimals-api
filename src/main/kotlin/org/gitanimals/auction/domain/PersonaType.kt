@@ -68,4 +68,10 @@ enum class PersonaType {
     SLOTH_KING,
     SLOTH_SUNGLASSES,
     TURTLE,
+    SLIME_PUMPKIN_1,
+    SLIME_PUMPKIN_2,
+    GHOST,
+    GHOST_KING,
+    SCREAM,
+    SCREAM_GHOST,
 }
