@@ -1,11 +1,13 @@
 package org.gitanimals.shop.controller
 
 import org.gitanimals.shop.app.BuyBackgroundFacade
+import org.gitanimals.shop.controller.response.ErrorResponse
 import org.gitanimals.shop.controller.request.BuyBackgroundRequest
 import org.gitanimals.shop.controller.response.BackgroundResponse
 import org.gitanimals.shop.domain.SaleService
 import org.gitanimals.shop.domain.SaleType
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -18,7 +20,6 @@ class BuySaleController(
     fun getBackgrounds(): BackgroundResponse =
         BackgroundResponse.from(saleService.findAllByType(SaleType.BACKGROUND))
 
-
     @PostMapping("/shops/backgrounds")
     fun buyBackground(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
@@ -26,4 +27,8 @@ class BuySaleController(
     ) {
         buyBackgroundFacade.buyBackground(token, buyBackgroundRequest.type)
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(exception: IllegalArgumentException): ErrorResponse = ErrorResponse.from(exception)
 }
