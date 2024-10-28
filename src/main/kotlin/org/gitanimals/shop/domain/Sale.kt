@@ -5,18 +5,14 @@ import org.gitanimals.shop.core.AggregateRoot
 
 @AggregateRoot
 @Entity(name = "sale")
-@Table(
-    name = "sale", indexes = [
-        Index(name = "sale_idx_type", columnList = "type", unique = true)
-    ]
-)
+@Table(name = "sale")
 class Sale(
     @Id
     @Column(name = "id")
     val id: Long,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, unique = true)
+    @Column(name = "type", nullable = false)
     val type: SaleType,
 
     @Column(name = "item", nullable = false)
