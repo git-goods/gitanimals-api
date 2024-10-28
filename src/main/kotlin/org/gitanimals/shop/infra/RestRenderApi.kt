@@ -48,7 +48,12 @@ class RestRenderApi(
             .header(HttpHeaders.AUTHORIZATION, token)
             .header("Internal-Secret", internalSecret)
             .exchange { _, response ->
-                require(response.statusCode.is2xxSuccessful) { "Cannot add background by backgroundName: \"$backgroundName\"" }
+                if (response.statusCode.is4xxClientError) {
+                    response.bodyTo(ErrorResponse::class.java)?.let {
+                        throw IllegalArgumentException(it.message)
+                    }
+                }
+                check(response.statusCode.is2xxSuccessful) { "Cannot add background by backgroundName: \"$backgroundName\"" }
             }
     }
 
@@ -137,5 +142,9 @@ class RestRenderApi(
         val level: String,
         val visible: Boolean,
         val dropRate: String,
+    )
+
+    data class ErrorResponse(
+        val message: String,
     )
 }
