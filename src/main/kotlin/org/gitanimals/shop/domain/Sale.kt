@@ -15,7 +15,7 @@ class Sale(
     @Column(name = "id")
     val id: Long,
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, unique = true)
     val type: SaleType,
 
