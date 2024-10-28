@@ -4,6 +4,10 @@ interface RenderApi {
 
     fun getPersonaById(token: String, personaId: Long): PersonaResponse
 
+    fun addBackground(token: String, idempotencyKey: String, backgroundName: String)
+
+    fun deleteBackground(token: String, idempotencyKey: String, backgroundName: String)
+
     fun deletePersonaById(token: String, personaId: Long)
 
     fun addPersona(

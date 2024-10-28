@@ -42,6 +42,26 @@ class RestRenderApi(
             }
     }
 
+    override fun addBackground(token: String, idempotencyKey: String, backgroundName: String) {
+        return restClient.post()
+            .uri("/internals/backgrounds?name=$backgroundName")
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .header("Internal-Secret", internalSecret)
+            .exchange { _, response ->
+                require(response.statusCode.is2xxSuccessful) { "Cannot add background by backgroundName: \"$backgroundName\"" }
+            }
+    }
+
+    override fun deleteBackground(token: String, idempotencyKey: String, backgroundName: String) {
+        return restClient.delete()
+            .uri("/internals/backgrounds?name=$backgroundName")
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .header("Internal-Secret", internalSecret)
+            .exchange { _, response ->
+                require(response.statusCode.is2xxSuccessful) { "Cannot delete background by backgroundName: \"$backgroundName\"" }
+            }
+    }
+
     override fun addPersona(
         token: String,
         idempotencyKey: String,
