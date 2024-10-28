@@ -12,7 +12,7 @@
 
 - Authorization: `{token}`
 
-### Response Body
+### Request Body
 
 200 OK
 

@@ -13,7 +13,7 @@
 ### RequestHeader
 - Authorization: `{token}`
 
-## Response
+## Request
 
 ```json
 {
