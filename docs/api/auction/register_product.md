@@ -1,6 +1,6 @@
 # Register product
 
-shop에 product를 등록한다.
+shop에 product를 등록합니다.
 
 ## Request
 
