@@ -1,6 +1,6 @@
 ## Get my products
 
-선택가능한 persona type들을 반환합ㅂ니다.
+선택가능한 persona type들을 반환합니다.
 
 ## Request
 

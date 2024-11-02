@@ -56,9 +56,17 @@ class User(
 
     fun decreasePoint(point: Long) {
         this.points -= point
+
+        require(points >= 0) {
+            "cannot decrease points cause point is \"${this.points}\""
+        }
     }
 
     fun increasePoint(point: Long) {
+        if (point < 0) {
+            continue
+        }
+
         this.points += point
     }
 
