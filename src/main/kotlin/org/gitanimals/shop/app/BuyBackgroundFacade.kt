@@ -27,11 +27,16 @@ class BuyBackgroundFacade(
 
     init {
         backgroundBuyOrchestrator = orchestratorFactory.create<String>("buy background facade")
-            .start({
-                val sale = saleService.getByTypeAndItem(SaleType.BACKGROUND, it)
+            .startWithContext({ context, item ->
+                val sale = saleService.getByTypeAndItem(SaleType.BACKGROUND, item)
+                val user = identityApi.getUserByToken(context.decodeContext("token", String::class))
 
                 require(sale.getCount() > 0) {
                     "Cannot buy item : \"${sale.type}\" cause its count : \"${sale.getCount()}\" == 0"
+                }
+
+                require(user.points.toLong() >= sale.price) {
+                    "Cannot buy item: \"${sale.type}\" cause not enough points"
                 }
 
                 sale
