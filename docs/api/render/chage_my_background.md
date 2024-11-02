@@ -1,6 +1,6 @@
 ## Change my background
 
-배경을 변경합니다
+배경을 변경합니다.
 
 ## Request
 ### HTTP METHOD : `PUT`
