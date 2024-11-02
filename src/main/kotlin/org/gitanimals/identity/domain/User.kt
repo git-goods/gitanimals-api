@@ -64,7 +64,7 @@ class User(
 
     fun increasePoint(point: Long) {
         if (point < 0) {
-            continue
+            return
         }
 
         this.points += point
