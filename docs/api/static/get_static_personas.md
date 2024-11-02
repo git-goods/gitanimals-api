@@ -7,7 +7,7 @@ persona들의 정적 파일을 조회합니다.
 ### url : `https://static.gitanimals.org/personas/{persona-type}`
 
 ### Path variable
-- persona-type: 정적파일을 조회할 persona의 tytpe을 지정합니다.
+- persona-type: 정적파일을 조회할 persona의 type을 지정합니다.
 
 ## Response
 
