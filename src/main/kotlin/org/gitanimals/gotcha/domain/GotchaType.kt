@@ -96,6 +96,11 @@ enum class GotchaType(
             Capsule.of("SCREAM_GHOST", 0.001),
             Capsule.of("SLIME_PUMPKIN_1", 0.08),
             Capsule.of("SLIME_PUMPKIN_2", 0.08),
+            Capsule.of("HAMSTER", 0.8),
+            Capsule.of("HAMSTER_SPRING", 0.01),
+            Capsule.of("HAMSTER_JAVA", 0.01),
+            Capsule.of("HAMSTER_KOTLIN", 0.01),
+            Capsule.of("HAMSTER_JS", 0.01),
         )
     }
 }
