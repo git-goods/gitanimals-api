@@ -14,10 +14,20 @@ ex. A펫, B펫이 있고, B펫이 재물일때, B펫의 레벨만큼 A펫 레벨
 ``` json
 {
     "increasePersonaId": "1",
-    "decreasePersonaId": "2"
+    "deletePersonaId": "2"
 }
 ```
 
 ## Response
 
 200 OK
+
+```json
+{
+    "id": "12345", // increase된 pet의 id
+    "type": "GOOSE", // persona의 type
+    "level": "12345", // 상승된 펫의 id
+    "visible": true, // farms에서 보이는여부
+    "dropRate": "드롭될 확률"
+}
+```

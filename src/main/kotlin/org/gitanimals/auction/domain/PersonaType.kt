@@ -74,4 +74,9 @@ enum class PersonaType {
     GHOST_KING,
     SCREAM,
     SCREAM_GHOST,
+    HAMSTER,
+    HAMSTER_SPRING,
+    HAMSTER_JAVA,
+    HAMSTER_KOTLIN,
+    HAMSTER_JS,
 }
