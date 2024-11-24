@@ -13,9 +13,12 @@ class InboxFacade(
     fun findAllUnreadByToken(token: String): InboxApplication {
         val userId = identityApi.getUserByToken(token).id.toLong()
 
-        val inboxApplication = inboxService.findAllUnreadByUserId(userId)
-        inboxService.readAllByUserId(userId)
+        return inboxService.findAllUnreadByUserId(userId)
+    }
 
-        return inboxApplication
+    fun readInboxByTokenAndId(token: String, id: Long) {
+        val userId = identityApi.getUserByToken(token).id.toLong()
+
+        return inboxService.readById(userId, id)
     }
 }

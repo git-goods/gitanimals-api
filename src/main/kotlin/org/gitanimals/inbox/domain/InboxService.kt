@@ -10,30 +10,39 @@ class InboxService(
     private val inboxRepository: InboxRepository,
 ) {
 
-    fun findAllUnreadByUserId(userId: Long): InboxApplication =
-        inboxRepository.findAllUnReadByUserId(userId)
+    fun findAllUnreadByUserId(userId: Long): InboxApplication {
+        val inboxes = inboxRepository.findAllUnReadByUserId(userId)
+
+        return InboxApplication(userId, inboxes)
+    }
 
     @Transactional
-    fun readAllByUserId(userId: Long) {
-        val inboxApplication = inboxRepository.findAllUnReadByUserId(userId)
+    fun readById(userId: Long, id: Long) {
+        val inbox = inboxRepository.findByIdAndUserId(id = id, userId = userId)
 
-        inboxApplication.readAll()
+        inbox?.read()
     }
 
     @Transactional
     fun inputInbox(
         userId: Long,
+        type: InboxType,
         title: String,
         body: String,
+        image: String,
+        redirectTo: String,
         publisher: String,
         publishedAt: Instant,
     ) {
         val newInbox = Inbox.of(
             userId = userId,
+            type = type,
+            image = image,
             title = title,
             body = body,
             publisher = publisher,
             publishedAt = publishedAt,
+            redirectTo = redirectTo,
         )
 
         inboxRepository.save(newInbox)

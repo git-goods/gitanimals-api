@@ -8,10 +8,19 @@ interface InboxRepository: JpaRepository<Inbox, Long> {
 
     @Query(
         """
-            select InboxApplcation(i.userId, i) from inbox as i
+            select i from inbox as i
             where i.userId = :userId 
             and i.readAt is null
         """
     )
-    fun findAllUnReadByUserId(@Param("userId") userId: Long): InboxApplication
+    fun findAllUnReadByUserId(@Param("userId") userId: Long): List<Inbox>
+
+    @Query(
+        """
+            select i from inbox as i
+            where i.id = :id
+            and i.userId = :userId
+        """
+    )
+    fun findByIdAndUserId(@Param("id") id: Long, @Param("userId") userId: Long): Inbox?
 }

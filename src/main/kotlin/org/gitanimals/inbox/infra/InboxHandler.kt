@@ -18,8 +18,11 @@ class InboxHandler(
 
         inboxService.inputInbox(
             userId = inboxInputEvent.inboxData.userId,
+            type = inboxInputEvent.inboxData.type,
             title = inboxInputEvent.inboxData.title,
             body = inboxInputEvent.inboxData.body,
+            image = inboxInputEvent.inboxData.image,
+            redirectTo = inboxInputEvent.inboxData.redirectTo,
             publisher = inboxInputEvent.publisher.publisher,
             publishedAt = inboxInputEvent.publisher.publishedAt,
         )

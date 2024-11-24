@@ -10,11 +10,15 @@
 
 ## Response
 ```json
-{
-  "id": "1234678128323414", 
-  "image": "https://static.gitanimals.org/inbox/images/guild-join.png",
-  "title": "길드 가입요청이 왔어요.", 
-  "body": "devxb에게 git-goods 길드가입 요청이 왔어요.",
-  "redirectTo": "/auctions/"
-}
+inboxes = [
+  {
+    "id": "1234678128323414", 
+    "image": "https://static.gitanimals.org/inbox/images/guild-join.png",
+    "title": "길드 가입요청이 왔어요.", 
+    "body": "devxb에게 git-goods 길드가입 요청이 왔어요.",
+    "redirectTo": "/auctions/",
+    "type": "INBOX" // (INBOX, NOTICE...)
+  }
+  ...
+]
 ```

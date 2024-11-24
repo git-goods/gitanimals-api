@@ -1,9 +1,9 @@
 package org.gitanimals.inbox.infra.event
 
+import org.gitanimals.inbox.domain.InboxType
 import java.time.Instant
 
 data class InboxInputEvent(
-    val title: String,
     val inboxData: InboxData,
     val publisher: Publisher,
 ) {
@@ -15,7 +15,10 @@ data class InboxInputEvent(
 
     data class InboxData(
         val userId: Long,
+        val type: InboxType,
         val title: String,
         val body: String,
+        val image: String,
+        val redirectTo: String,
     )
 }

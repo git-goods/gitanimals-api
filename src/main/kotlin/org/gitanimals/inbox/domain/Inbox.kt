@@ -1,11 +1,9 @@
 package org.gitanimals.inbox.domain
 
 import jakarta.persistence.*
-import org.gitanimals.inbox.core.AggregateRoot
 import org.gitanimals.inbox.core.IdGenerator
 import java.time.Instant
 
-@AggregateRoot
 @Entity(name = "inbox")
 @Table(
     name = "inbox",
@@ -19,11 +17,21 @@ class Inbox(
     @Column(name = "user_id")
     val userId: Long,
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    val type: InboxType,
+
+    @Column(name = "image")
+    val image: String,
+
     @Column(name = "title")
     val title: String,
 
     @Column(name = "body")
     val body: String,
+
+    @Column(name = "redirect_to")
+    val redirectTo: String,
 
     @Embedded
     val publisher: Publisher,
@@ -43,6 +51,9 @@ class Inbox(
             body: String,
             publisher: String,
             publishedAt: Instant,
+            type: InboxType,
+            redirectTo: String,
+            image: String,
         ): Inbox {
             return Inbox(
                 id = IdGenerator.generate(),
@@ -54,6 +65,9 @@ class Inbox(
                 readAt = null,
                 title = title,
                 body = body,
+                type = type,
+                redirectTo = redirectTo,
+                image = image,
             )
         }
     }

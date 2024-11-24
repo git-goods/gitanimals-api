@@ -1,11 +1,11 @@
 package org.gitanimals.inbox.controller
 
 import org.gitanimals.inbox.app.InboxFacade
+import org.gitanimals.inbox.controller.response.ErrorResponse
 import org.gitanimals.inbox.controller.response.InboxResponse
 import org.springframework.http.HttpHeaders
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class InboxController(
@@ -13,11 +13,31 @@ class InboxController(
 ) {
 
     @GetMapping("/inboxes")
+    @ResponseStatus(HttpStatus.OK)
     fun getAllInboxes(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
     ): InboxResponse {
         val inboxApplication = inboxFacade.findAllUnreadByToken(token)
 
         return InboxResponse.from(inboxApplication)
+    }
+
+    @GetMapping("/inboxes/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun readInboxByTokenAndId(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
+        @PathVariable("id") id: Long,
+    ) = inboxFacade.readInboxByTokenAndId(token, id)
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleIllegalArgumentException(illegalArgumentException: IllegalArgumentException): ErrorResponse {
+        return ErrorResponse.from(illegalArgumentException)
+    }
+
+    @ExceptionHandler(IllegalStateException::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun handleIllegalStateException(illegalStateException: IllegalStateException): ErrorResponse {
+        return ErrorResponse.from(illegalStateException)
     }
 }
