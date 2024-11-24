@@ -64,6 +64,17 @@ class RestRenderApi(
             }
     }
 
+    override fun getAllPersonas(): RenderApi.PersonaWithDropRateResponse {
+        return restClient.get()
+            .uri("/personas/infos")
+            .exchange { _, response ->
+                check(response.statusCode.is2xxSuccessful) { "Cannot get all pets \"/personas/infos\"" }
+
+                response.bodyTo(RenderApi.PersonaWithDropRateResponse::class.java)
+                    ?: throw IllegalStateException("Cannot deserialize response to \"PersonaWithDropRateResponse\"")
+            }
+    }
+
     data class AddPersonaRequest(
         val idempotencyKey: String,
         val personaName: String,
