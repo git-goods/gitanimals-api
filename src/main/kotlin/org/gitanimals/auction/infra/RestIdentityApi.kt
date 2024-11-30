@@ -31,11 +31,28 @@ class RestIdentityApi(
             }
     }
 
+    override fun getUserById(userId: Long): IdentityApi.UserResponse {
+        return restClient.get()
+            .uri("/users/$userId")
+            .header(INTERNAL_SECRET_KEY, internalSecret)
+            .exchange { _, response ->
+                runCatching {
+                    response.bodyTo(IdentityApi.UserResponse::class.java)
+                }.getOrElse {
+                    if (response.statusCode.is4xxClientError) {
+                        throw IllegalArgumentException("Cannot find user by id \"$userId\"")
+                    }
+
+                    throw IllegalStateException(it)
+                }
+            }
+    }
+
     override fun decreasePoint(token: String, idempotencyKey: String, point: String) {
         return restClient.post()
             .uri("/internals/users/points/decreases?point=$point&idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
-            .header("Internal-Secret", internalSecret)
+            .header(INTERNAL_SECRET_KEY, internalSecret)
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     return@exchange
@@ -50,7 +67,7 @@ class RestIdentityApi(
         return restClient.post()
             .uri("/internals/users/points/increases?point=$point&idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
-            .header("Internal-Secret", internalSecret)
+            .header(INTERNAL_SECRET_KEY, internalSecret)
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     return@exchange
@@ -64,7 +81,7 @@ class RestIdentityApi(
     override fun decreasePointById(userId: Long, idempotencyKey: String, point: String) {
         return restClient.post()
             .uri("/internals/users/points/decreases/$userId?point=$point&idempotency-key=$idempotencyKey")
-            .header("Internal-Secret", internalSecret)
+            .header(INTERNAL_SECRET_KEY, internalSecret)
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     return@exchange
@@ -78,7 +95,7 @@ class RestIdentityApi(
     override fun increasePointById(userId: Long, idempotencyKey: String, point: String) {
         return restClient.post()
             .uri("/internals/users/points/increases/$userId?point=$point&idempotency-key=$idempotencyKey")
-            .header("Internal-Secret", internalSecret)
+            .header(INTERNAL_SECRET_KEY, internalSecret)
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     return@exchange
@@ -87,5 +104,9 @@ class RestIdentityApi(
                     "Cannot decrease points cause \"${response.bodyTo(String::class.java)}\""
                 )
             }
+    }
+
+    private companion object {
+        private const val INTERNAL_SECRET_KEY = "Internal-Secret"
     }
 }

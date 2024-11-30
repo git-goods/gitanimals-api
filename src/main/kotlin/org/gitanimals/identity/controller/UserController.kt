@@ -14,11 +14,21 @@ class UserController(
     private val userService: UserService,
 ) {
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/users")
     fun getUserByToken(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
     ): UserResponse {
         val user = userFacade.getUserByToken(Token.from(token))
+        return UserResponse.from(user)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/internals/users/{user-id}")
+    fun getUserById(
+        @PathVariable("user-id") userId: Long,
+    ): UserResponse {
+        val user = userService.getUserById(userId)
         return UserResponse.from(user)
     }
 
