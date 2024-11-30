@@ -1,9 +1,11 @@
 package org.gitanimals.auction.app
 
+import org.gitanimals.auction.app.event.InboxInputEvent
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductService
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
+import org.rooftop.netx.api.SagaManager
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -12,19 +14,30 @@ class BuyProductFacade(
     private val renderApi: RenderApi,
     private val identityApi: IdentityApi,
     private val productService: ProductService,
+    private val sagaManager: SagaManager,
     orchestratorFactory: OrchestratorFactory,
 ) {
 
     private lateinit var orchestrator: Orchestrator<Long, Product>
 
     fun buyProduct(token: String, productId: Long): Product {
-        return orchestrator.sagaSync(
+        val result = orchestrator.sagaSync(
             productId,
             mapOf(
                 "token" to token,
                 "idempotencyKey" to UUID.randomUUID().toString()
             )
         ).decodeResultOrThrow(Product::class)
+
+        publishSoldOutEvent(result)
+
+        return result
+    }
+
+    private fun publishSoldOutEvent(product: Product) {
+        val user = identityApi.getUserById(product.sellerId)
+
+        sagaManager.startSync(InboxInputEvent.createSoldOutInbox(user.username, product))
     }
 
     init {
