@@ -36,12 +36,19 @@ class Inbox(
     @Embedded
     val publisher: Publisher,
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private var status: InboxStatus,
+
     @Column(name = "read_at")
     private var readAt: Instant?,
 ) : AbstractTime() {
 
+    fun getStatus(): InboxStatus = status
+
     fun read() {
         readAt = Instant.now()
+        status = InboxStatus.READ
     }
 
     companion object {
@@ -68,6 +75,7 @@ class Inbox(
                 type = type,
                 redirectTo = redirectTo,
                 image = image,
+                status = InboxStatus.UNREAD,
             )
         }
     }
