@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class InboxTestController(
     private val sagaManager: SagaManager,
-    @Value("\$test.secret") private val testSecret: String,
+    @Value("\${test.secret}") private val testSecret: String,
 ) {
 
     @PostMapping("test/input-inbox")
@@ -18,7 +18,7 @@ class InboxTestController(
         @RequestHeader("Test-Secret") testSecret: String,
         @RequestBody inboxInputEvent: InboxInputEvent,
     ) {
-        require(testSecret == this.testSecret) { "Invalid testSecret" }
+        require(testSecret == this.testSecret) { "Invalid testSecret testSecret" }
         sagaManager.startSync(inboxInputEvent)
     }
 }
