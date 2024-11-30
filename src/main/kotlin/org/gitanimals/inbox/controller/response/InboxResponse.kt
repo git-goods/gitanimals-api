@@ -1,6 +1,7 @@
 package org.gitanimals.inbox.controller.response
 
 import org.gitanimals.inbox.domain.InboxApplication
+import org.gitanimals.inbox.domain.InboxStatus
 import org.gitanimals.inbox.domain.InboxType
 
 data class InboxResponse(
@@ -14,6 +15,7 @@ data class InboxResponse(
         val body: String,
         val redirectTo: String,
         val type: InboxType,
+        val status: InboxStatus,
     )
 
     companion object {
@@ -28,6 +30,7 @@ data class InboxResponse(
                         body = it.body,
                         redirectTo = it.redirectTo,
                         type = it.type,
+                        status = it.getStatus(),
                     )
                 }
             )

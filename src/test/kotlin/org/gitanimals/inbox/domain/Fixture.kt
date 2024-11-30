@@ -12,6 +12,7 @@ fun inbox(
     type: InboxType = InboxType.INBOX,
     redirectTo: String = "/",
     image: String = "/inboxes/default.png",
+    status: InboxStatus = InboxStatus.UNREAD,
 ): Inbox {
     return Inbox(
         id = IdGenerator.generate(),
@@ -26,5 +27,6 @@ fun inbox(
         type = type,
         redirectTo = redirectTo,
         image = image,
+        status = status,
     )
 }

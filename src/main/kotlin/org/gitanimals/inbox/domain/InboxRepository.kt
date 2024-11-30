@@ -9,11 +9,10 @@ interface InboxRepository: JpaRepository<Inbox, Long> {
     @Query(
         """
             select i from inbox as i
-            where i.userId = :userId 
-            and i.readAt is null
+            where i.userId = :userId
         """
     )
-    fun findAllUnReadByUserId(@Param("userId") userId: Long): List<Inbox>
+    fun findByUserId(@Param("userId") userId: Long): List<Inbox>
 
     @Query(
         """

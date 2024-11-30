@@ -10,8 +10,8 @@ class InboxService(
     private val inboxRepository: InboxRepository,
 ) {
 
-    fun findAllUnreadByUserId(userId: Long): InboxApplication {
-        val inboxes = inboxRepository.findAllUnReadByUserId(userId)
+    fun findAllByUserId(userId: Long): InboxApplication {
+        val inboxes = inboxRepository.findByUserId(userId)
 
         return InboxApplication(userId, inboxes)
     }
