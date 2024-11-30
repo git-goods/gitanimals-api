@@ -11,6 +11,7 @@ ARG GH_OAUTH_SECRET
 ARG INTERNAL_SECRET
 ARG SLACK_TOKEN
 ARG JWT_KEY
+ARG TEST_SECRET
 
 ARG JAR_FILE=./build/libs/*.jar
 COPY ${JAR_FILE} gitanimals-api.jar
@@ -25,7 +26,8 @@ ENV db_url=${DB_URL} \
   oauth_client_secret_github=${GH_OAUTH_SECRET} \
   internal_secret=${INTERNAL_SECRET} \
   slack_token=${SLACK_TOKEN} \
-  jwt_key=${JWT_KEY}
+  jwt_key=${JWT_KEY} \
+  test_secret=${TEST_SECRET}
 
 ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --spring.datasource.url=${db_url} \
@@ -38,4 +40,5 @@ ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --oauth.client.secret.github=${oauth_client_secret_github} \
   --internal.secret=${internal_secret} \
   --slack.token=${slack_token} \
-  --jwt.key=${jwt_key}
+  --jwt.key=${jwt_key} \
+  --test.secret=${test_secret}
