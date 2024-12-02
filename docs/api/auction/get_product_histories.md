@@ -35,7 +35,7 @@
       "paymentState": "SOLD_OUT",
       "receipt": {
         "buyerId": "12345677123123123123",
-        "soldAt": "2024-05-06T12:30:45Z"
+        "soldAt": "2024-05-06 12:30:45"
       }
     },
     {
@@ -50,7 +50,7 @@
       "paymentState": "SOLD_OUT",
       "receipt": {
         "buyerId": "12345677123123123123",
-        "soldAt": "2024-05-06T12:30:45Z"
+        "soldAt": "2024-05-06 12:30:45"
       }
     },
     {
@@ -65,7 +65,7 @@
       "paymentState": "SOLD_OUT",
       "receipt": {
         "buyerId": "12345677123123123123",
-        "soldAt": "2024-05-06T12:30:45Z"
+        "soldAt": "2024-05-06 12:30:45"
       }
     }
   ],

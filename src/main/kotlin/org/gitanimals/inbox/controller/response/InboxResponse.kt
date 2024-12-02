@@ -1,5 +1,6 @@
 package org.gitanimals.inbox.controller.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import org.gitanimals.inbox.domain.InboxApplication
 import org.gitanimals.inbox.domain.InboxStatus
 import org.gitanimals.inbox.domain.InboxType
@@ -18,6 +19,12 @@ data class InboxResponse(
         val redirectTo: String,
         val type: InboxType,
         val status: InboxStatus,
+
+        @JsonFormat(
+            shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "UTC"
+        )
         val publishedAt: LocalDateTime,
     )
 

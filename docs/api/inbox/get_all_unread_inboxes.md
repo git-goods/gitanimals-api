@@ -19,7 +19,7 @@ inboxes = [
     "redirectTo": "/auctions/",
     "type": "INBOX" // (INBOX, NOTICE...)
     "status": "UNREAD", // READ or UNREAD
-    "publishedAt": "2024-10-14T12:34:56Z", 
+    "publishedAt": "2024-10-14 12:34:56"
   }
   ...
 ]
