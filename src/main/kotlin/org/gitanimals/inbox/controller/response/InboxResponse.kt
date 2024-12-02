@@ -3,6 +3,8 @@ package org.gitanimals.inbox.controller.response
 import org.gitanimals.inbox.domain.InboxApplication
 import org.gitanimals.inbox.domain.InboxStatus
 import org.gitanimals.inbox.domain.InboxType
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 data class InboxResponse(
     val inboxes: List<InboxElement>
@@ -16,6 +18,7 @@ data class InboxResponse(
         val redirectTo: String,
         val type: InboxType,
         val status: InboxStatus,
+        val publishedAt: LocalDateTime,
     )
 
     companion object {
@@ -31,6 +34,10 @@ data class InboxResponse(
                         redirectTo = it.redirectTo,
                         type = it.type,
                         status = it.getStatus(),
+                        publishedAt = LocalDateTime.ofInstant(
+                            it.publisher.publishedAt,
+                            ZoneId.of("Asia/Seoul"),
+                        )
                     )
                 }
             )

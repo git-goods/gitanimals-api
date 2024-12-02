@@ -18,7 +18,8 @@ inboxes = [
     "body": "devxb에게 git-goods 길드가입 요청이 왔어요.",
     "redirectTo": "/auctions/",
     "type": "INBOX" // (INBOX, NOTICE...)
-    "status": "UNREAD" // READ or UNREAD
+    "status": "UNREAD", // READ or UNREAD
+    "publishedAt": "2024-10-14T12:34:56Z", 
   }
   ...
 ]
