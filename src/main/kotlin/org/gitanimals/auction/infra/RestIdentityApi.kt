@@ -33,7 +33,7 @@ class RestIdentityApi(
 
     override fun getUserById(userId: Long): IdentityApi.UserResponse {
         return restClient.get()
-            .uri("/users/$userId")
+            .uri("/internals/users/$userId")
             .header(INTERNAL_SECRET_KEY, internalSecret)
             .exchange { _, response ->
                 runCatching {
