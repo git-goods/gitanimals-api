@@ -1,4 +1,4 @@
-# Get all unread inbox
+# Read Inbox By Id
 
 inbox를 읽음 처리 합니다.
 
