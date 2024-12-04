@@ -22,7 +22,7 @@ class InboxController(
         return InboxResponse.from(inboxApplication)
     }
 
-    @GetMapping("/inboxes/{id}")
+    @DeleteMapping("/inboxes/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun readInboxByTokenAndId(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
