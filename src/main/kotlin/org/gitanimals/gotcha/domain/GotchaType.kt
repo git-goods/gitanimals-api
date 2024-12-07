@@ -101,6 +101,12 @@ enum class GotchaType(
             Capsule.of("HAMSTER_JAVA", 0.01),
             Capsule.of("HAMSTER_KOTLIN", 0.01),
             Capsule.of("HAMSTER_JS", 0.01),
+            Capsule.of("SNOWMAN_MELT", 0.001),
+            Capsule.of("SNOWMAN", 0.005),
+            Capsule.of("DESSERT_FOX_RUDOLPH", 0.005),
+            Capsule.of("RABBIT_BROWN_RUDOLPH", 0.007),
+            Capsule.of("LITTLE_CHICK_SANTA", 0.01),
+            Capsule.of("HAMSTER_SANTA", 0.01),
         )
     }
 }
