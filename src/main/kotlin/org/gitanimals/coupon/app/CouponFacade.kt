@@ -24,9 +24,9 @@ class CouponFacade(
 
         return when (CouponCodes.getByCode(code)) {
             CouponCodes.NEW_USER_BONUS_PET -> useBonusCoupon(token, code, dynamic)
-            CouponCodes.HALLOWEEN_2024,
-            CouponCodes.HALLOWEEN_2024_STAR_BONUS -> {
-                val picked = halloweenCandidates.random()
+            CouponCodes.CHRISTMAS_2024_STAR_BONUS,
+            CouponCodes.CHRISTMAS_2024 -> {
+                val picked = christmasCandidates.random()
                 useBonusCoupon(token, code, picked)
                 return CouponUsedResponse(picked)
             }
@@ -47,24 +47,24 @@ class CouponFacade(
     }
 
     private companion object {
-        private val halloweenCandidates = mutableListOf<String>().also { candidates ->
+        private val christmasCandidates = mutableListOf<String>().also { candidates ->
             repeat(500) {
-                candidates.add("SLIME_PUMPKIN_1")
+                candidates.add("SNOWMAN")
             }
             repeat(302) {
-                candidates.add("SLIME_PUMPKIN_2")
+                candidates.add("HAMSTER_SANTA")
             }
             repeat(150) {
-                candidates.add("GHOST")
+                candidates.add("LITTLE_CHICK_SANTA")
             }
             repeat(30) {
-                candidates.add("GHOST_KING")
+                candidates.add("RABBIT_BROWN_RUDOLPH")
             }
             repeat(15) {
-                candidates.add("SCREAM")
+                candidates.add("DESSERT_FOX_RUDOLPH")
             }
             repeat(3) {
-                candidates.add("SCREAM_GHOST")
+                candidates.add("SNOWMAN_MELT")
             }
         }
     }
