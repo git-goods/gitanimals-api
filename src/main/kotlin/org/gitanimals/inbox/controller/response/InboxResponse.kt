@@ -32,7 +32,9 @@ data class InboxResponse(
 
         fun from(inboxApplication: InboxApplication): InboxResponse {
             return InboxResponse(
-                inboxes = inboxApplication.inboxes.map {
+                inboxes = inboxApplication.inboxes
+                    .sortedByDescending { it.publisher.publishedAt }
+                    .map {
                     InboxElement(
                         id = it.id.toString(),
                         image = it.image,
