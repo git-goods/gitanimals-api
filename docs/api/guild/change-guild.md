@@ -15,7 +15,8 @@
   "title": "변경할 길드의 제목",
   "body": "변경할 길드의 설명",
   "farmType": "변경할 길드의 배경",
-  "guildIcon": "변경할 길드의 아이콘"
+  "guildIcon": "변경할 길드의 아이콘",
+  "autoJoin": true // 자동가입 여부
 }
 ```
 
