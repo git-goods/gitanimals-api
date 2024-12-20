@@ -4,7 +4,7 @@
 
 ## Request
 ### Http Method: `POST`
-### url: `https://render.gitanimals.org/guilds/{guildId}`
+### url: `https://render.gitanimals.org/guilds/{guildId}/accepts`
 ### Request param
 - `user-id`: 가입을 수락할 유저의 id
 ### Http Headers
