@@ -21,7 +21,8 @@
       "leader": {
         "userId": "1", // 리더의 아이디
         "name": "리더의 이름",
-        "contributions": "12345"// 리더의 컨트리뷰션
+        "contributions": "12345", // 리더의 컨트리뷰션
+        "personaId": "12345"
       },
       "farmType": "길드 팜의 종류",
       "totalContributions": "99999999", // 길드 모든 멤버와 리더의 contributions 총합
