@@ -31,7 +31,8 @@
         "userId": "1", // 리더의 아이디
         "name": "리더의 이름",
         "contributions": "12345", // 리더의 컨트리뷰션
-        "personaId": "12345"
+        "personaId": "12345",
+        "personaType": "GOOSE"
       },
       "farmType": "길드 팜의 종류",
       "totalContributions": "99999999", // 길드 모든 멤버와 리더의 contributions 총합
@@ -41,12 +42,23 @@
           "userId": "3", // 유저의 아이디
           "name": "유저의 이름",
           "contributions": "12345", // 각 멤버의 contributions 
-          "personaId": "4"// 길드에 보여질 대표펫의 아이디
+          "personaId": "4", // 길드에 보여질 대표펫의 아이디
+          "personaType": "GOOSE"
         },
         ...
       ],
-      "joinWaitList": ["5", "6", "7"], // 길드에 가입대기중인 유저들의 id
-      "createdAt": "2022-04-29T10:15:30Z"
+      "waitMembers": [ // 길드 가입을 대기하는 유저들
+        {
+          "id": "2", // 멤버의 고유 아이디
+          "userId": "3", // 유저의 아이디
+          "name": "유저의 이름",
+          "contributions": "12345", // 각 멤버의 contributions 
+          "personaId": "4", // 길드에 보여질 대표펫의 아이디
+          "personaType": "GOOSE"
+        },
+        ...
+      ],
+      "createdAt": "2022-04-29T10:15:30Z",
     },
   ],
   "pagination": {
