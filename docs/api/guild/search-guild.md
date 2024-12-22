@@ -4,15 +4,17 @@
 
 ## Request
 ### Http Method: `GET`
-### url: `https://render.gitanimals.org/guilds/search`
+### url: `https://render.gitanimals.org/guilds/search/{text}`
 ### Request param
 - `page-number`: page-number에 해당하는 page를 조회합니다. (첫번째 page-number는 0 이며, 아무것도 입력하지 않을시, 0으로 초기화 됩니다.)
 - `filter`: filter 조건에 의해서 정렬합니다. 기본값은 random 입니다.
-  - `random`: 랜덤하게 정렬합니다.
-  - `people-asc`: 사람 오름차순
-  - `people-desc`: 사람 내림차순
-  - `contribution-asc`: 기여 오름차순
-  - `contribution-desc`: 기여 내림차순
+  - `RANDOM`: 랜덤하게 정렬합니다.
+  - `PEOPLE_ASC`: 사람 오름차순
+  - `PEOPLE_DESC`: 사람 내림차순
+  - `CONTRIBUTION_ASC`: 기여 오름차순
+  - `CONTRIBUTION_DESC`: 기여 내림차순
+- `text`: 검색어 입니다.
+- `key`: 랜덤의 변인이 되는 키 입니다. 하나의 유저는 페이지를 이탈하기 전까지 같은 key로 요청해야 중복된 상품을 보지 않습니다. key는 음수가 아닌 int 입니다.
 
 
 ### Response
