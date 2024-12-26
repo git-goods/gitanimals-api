@@ -4,7 +4,7 @@
 
 ## Request
 ### Http Method: `GET`
-### url: `https://render.gitanimals.org/guilds/search/{text}`
+### url: `https://render.gitanimals.org/guilds/search`
 ### Request param
 - `page-number`: page-number에 해당하는 page를 조회합니다. (첫번째 page-number는 0 이며, 아무것도 입력하지 않을시, 0으로 초기화 됩니다.)
 - `filter`: filter 조건에 의해서 정렬합니다. 기본값은 random 입니다.
