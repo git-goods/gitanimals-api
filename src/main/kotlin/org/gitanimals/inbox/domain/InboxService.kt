@@ -1,8 +1,10 @@
 package org.gitanimals.inbox.domain
 
+import org.gitanimals.inbox.core.instant
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @Service
 @Transactional(readOnly = true)
@@ -46,5 +48,16 @@ class InboxService(
         )
 
         inboxRepository.save(newInbox)
+    }
+
+    @Transactional
+    fun deleteExpiredInboxes() {
+        val expirationDate = instant().minus(expirationDays, ChronoUnit.DAYS)
+
+        inboxRepository.deleteExpiredInboxes(expirationDate)
+    }
+
+    companion object {
+        private const val expirationDays = 30L
     }
 }

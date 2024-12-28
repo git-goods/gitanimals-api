@@ -2,6 +2,7 @@ package org.gitanimals.inbox.domain
 
 import jakarta.persistence.*
 import org.gitanimals.inbox.core.IdGenerator
+import org.gitanimals.inbox.core.instant
 import java.time.Instant
 
 @Entity(name = "inbox")
@@ -47,7 +48,7 @@ class Inbox(
     fun getStatus(): InboxStatus = status
 
     fun read() {
-        readAt = Instant.now()
+        readAt = instant()
         status = InboxStatus.READ
     }
 

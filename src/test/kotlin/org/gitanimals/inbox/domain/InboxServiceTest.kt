@@ -3,11 +3,17 @@ package org.gitanimals.inbox.domain
 import io.kotest.core.annotation.DisplayName
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import jakarta.persistence.EntityManager
+import org.gitanimals.inbox.core.clock
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 @DataJpaTest
 @ContextConfiguration(classes = [InboxService::class])
@@ -18,6 +24,7 @@ import org.springframework.test.context.TestPropertySource
 internal class InboxServiceTest(
     private val inboxService: InboxService,
     private val inboxRepository: InboxRepository,
+    private val entityManager: EntityManager,
 ) : DescribeSpec({
 
     describe("findAllByUserId 메소드는") {
@@ -44,6 +51,23 @@ internal class InboxServiceTest(
                 val result = inboxService.findAllByUserId(userId)
 
                 result.inboxes[0].getStatus() shouldBe InboxStatus.READ
+            }
+        }
+    }
+
+    describe("deleteExpiredInboxes 메소드는") {
+        context("호출되면,") {
+            clock = Clock.fixed(Instant.now().minus(31L, ChronoUnit.DAYS), ZoneId.of("UTC"))
+            inboxRepository.save(inbox(userId = 1L))
+
+            it("만들어진지 30일 지난 inbox를 삭제한다.") {
+                clock = Clock.systemUTC()
+                inboxService.deleteExpiredInboxes()
+                entityManager.clear()
+
+                val allInboxes = inboxService.findAllByUserId(1L)
+
+                allInboxes.inboxes.isEmpty() shouldBe true
             }
         }
     }

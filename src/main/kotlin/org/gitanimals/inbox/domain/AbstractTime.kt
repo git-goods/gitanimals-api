@@ -4,6 +4,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.PrePersist
+import org.gitanimals.inbox.core.instant
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -14,7 +15,7 @@ import java.time.Instant
 abstract class AbstractTime(
     @CreatedDate
     @Column(name = "created_at")
-    var createdAt: Instant = Instant.now(),
+    var createdAt: Instant = instant(),
 
     @LastModifiedDate
     @Column(name = "modified_at")
