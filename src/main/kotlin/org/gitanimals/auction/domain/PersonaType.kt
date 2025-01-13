@@ -85,5 +85,7 @@ enum class PersonaType {
     RABBIT_BROWN_RUDOLPH,
     LITTLE_CHICK_SANTA,
     HAMSTER_SANTA,
+    MALTESE,
+    MALTESE_KING,
     ;
 }
