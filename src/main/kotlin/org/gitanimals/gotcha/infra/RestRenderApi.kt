@@ -1,6 +1,8 @@
 package org.gitanimals.gotcha.infra
 
+import org.gitanimals.core.filter.MDCFilter
 import org.gitanimals.gotcha.app.RenderApi
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
@@ -33,6 +35,7 @@ class RestRenderApi(
             .uri("/internals/personas/multiply")
             .header(HttpHeaders.AUTHORIZATION, token)
             .header("Internal-Secret", internalSecret)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .contentType(MediaType.APPLICATION_JSON)
             .body(request)
             .exchange { _, response ->
@@ -58,6 +61,7 @@ class RestRenderApi(
         restClient.delete()
             .uri("/internals/personas?persona-id=$personaId")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .header("Internal-Secret", internalSecret)
             .exchange { _, response ->
                 require(response.statusCode.is2xxSuccessful) { "Cannot delete persona by personaId \"$personaId\"" }
@@ -67,6 +71,7 @@ class RestRenderApi(
     override fun getAllPersonas(): RenderApi.PersonaWithDropRateResponse {
         return restClient.get()
             .uri("/personas/infos")
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .exchange { _, response ->
                 check(response.statusCode.is2xxSuccessful) { "Cannot get all pets \"/personas/infos\"" }
 

@@ -1,7 +1,9 @@
 package org.gitanimals.inbox.infra
 
 import io.jsonwebtoken.JwtException
+import org.gitanimals.core.filter.MDCFilter
 import org.gitanimals.inbox.app.IdentityApi
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -18,6 +20,7 @@ class RestIdentityApi(
         return restClient.get()
             .uri("/users")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .exchange { _, response ->
                 runCatching {
                     response.bodyTo(IdentityApi.UserResponse::class.java)

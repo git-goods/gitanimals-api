@@ -1,6 +1,8 @@
 package org.gitanimals.auction.infra
 
 import org.gitanimals.auction.app.RenderApi
+import org.gitanimals.core.filter.MDCFilter
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -17,6 +19,7 @@ class RestRenderApi(
         return restClient.get()
             .uri("/personas/$personaId")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .exchange { _, response ->
                 runCatching {
                     response.bodyTo(RenderApi.PersonaResponse::class.java)
@@ -34,6 +37,7 @@ class RestRenderApi(
         return restClient.delete()
             .uri("/internals/personas?persona-id=$personaId")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .header("Internal-Secret", internalSecret)
             .exchange { _, response ->
                 require(response.statusCode.is2xxSuccessful) { "Cannot delete persona by personaId \"$personaId\"" }
@@ -50,6 +54,7 @@ class RestRenderApi(
         return restClient.post()
             .uri("/internals/personas?idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .header("Internal-Secret", internalSecret)
             .body(AddPersonaRequest(personaId, personaType, personaLevel))
             .exchange { _, response ->

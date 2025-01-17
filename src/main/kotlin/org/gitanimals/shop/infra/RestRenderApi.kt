@@ -1,6 +1,8 @@
 package org.gitanimals.shop.infra
 
+import org.gitanimals.core.filter.MDCFilter
 import org.gitanimals.shop.app.RenderApi
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
@@ -19,6 +21,7 @@ class RestRenderApi(
         return restClient.get()
             .uri("/personas/$personaId")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .exchange { _, response ->
                 runCatching {
                     response.bodyTo(RenderApi.PersonaResponse::class.java)
@@ -36,6 +39,7 @@ class RestRenderApi(
         return restClient.delete()
             .uri("/internals/personas?persona-id=$personaId")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .header("Internal-Secret", internalSecret)
             .exchange { _, response ->
                 require(response.statusCode.is2xxSuccessful) { "Cannot delete persona by personaId \"$personaId\"" }
@@ -46,6 +50,7 @@ class RestRenderApi(
         return restClient.post()
             .uri("/internals/backgrounds?name=$backgroundName")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .header("Internal-Secret", internalSecret)
             .exchange { _, response ->
                 if (response.statusCode.is4xxClientError) {
@@ -61,6 +66,7 @@ class RestRenderApi(
         return restClient.delete()
             .uri("/internals/backgrounds?name=$backgroundName")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .header("Internal-Secret", internalSecret)
             .exchange { _, response ->
                 require(response.statusCode.is2xxSuccessful) { "Cannot delete background by backgroundName: \"$backgroundName\"" }
@@ -77,6 +83,7 @@ class RestRenderApi(
         return restClient.post()
             .uri("/internals/personas?idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .header("Internal-Secret", internalSecret)
             .body(AddPersonaRequest(personaId, personaType, personaLevel))
             .exchange { _, response ->
@@ -103,6 +110,7 @@ class RestRenderApi(
         return restClient.post()
             .uri("/internals/personas/multiply")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(MDCFilter.TRACE_ID, MDC.get(MDCFilter.TRACE_ID))
             .header("Internal-Secret", internalSecret)
             .contentType(MediaType.APPLICATION_JSON)
             .body(request)

@@ -2,6 +2,8 @@ package org.gitanimals.auction.infra
 
 import io.jsonwebtoken.JwtException
 import org.gitanimals.auction.app.IdentityApi
+import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -18,6 +20,7 @@ class RestIdentityApi(
         return restClient.get()
             .uri("/users")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(TRACE_ID, MDC.get(TRACE_ID))
             .exchange { _, response ->
                 runCatching {
                     response.bodyTo(IdentityApi.UserResponse::class.java)
@@ -35,6 +38,7 @@ class RestIdentityApi(
         return restClient.get()
             .uri("/internals/users/$userId")
             .header(INTERNAL_SECRET_KEY, internalSecret)
+            .header(TRACE_ID, MDC.get(TRACE_ID))
             .exchange { _, response ->
                 runCatching {
                     response.bodyTo(IdentityApi.UserResponse::class.java)
@@ -52,6 +56,7 @@ class RestIdentityApi(
         return restClient.post()
             .uri("/internals/users/points/decreases?point=$point&idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(TRACE_ID, MDC.get(TRACE_ID))
             .header(INTERNAL_SECRET_KEY, internalSecret)
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
@@ -67,6 +72,7 @@ class RestIdentityApi(
         return restClient.post()
             .uri("/internals/users/points/increases?point=$point&idempotency-key=$idempotencyKey")
             .header(HttpHeaders.AUTHORIZATION, token)
+            .header(TRACE_ID, MDC.get(TRACE_ID))
             .header(INTERNAL_SECRET_KEY, internalSecret)
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
@@ -82,6 +88,7 @@ class RestIdentityApi(
         return restClient.post()
             .uri("/internals/users/points/decreases/$userId?point=$point&idempotency-key=$idempotencyKey")
             .header(INTERNAL_SECRET_KEY, internalSecret)
+            .header(TRACE_ID, MDC.get(TRACE_ID))
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     return@exchange
@@ -96,6 +103,7 @@ class RestIdentityApi(
         return restClient.post()
             .uri("/internals/users/points/increases/$userId?point=$point&idempotency-key=$idempotencyKey")
             .header(INTERNAL_SECRET_KEY, internalSecret)
+            .header(TRACE_ID, MDC.get(TRACE_ID))
             .exchange { _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     return@exchange
