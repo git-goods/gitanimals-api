@@ -11,7 +11,7 @@ import org.gitanimals.shop.core.AggregateRoot
 @Table(name = "collaboration_persona")
 class CollaborationPersona(
     @Id
-    @Column(name = "name", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "name", columnDefinition = "VARCHAR(100)", nullable = false)
     val name: String,
 
     @Column(name = "price", nullable = false)
