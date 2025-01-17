@@ -13,7 +13,7 @@ ARG SLACK_TOKEN
 ARG JWT_KEY
 ARG TEST_SECRET
 
-ARG JAR_FILE=./build/libs/*.jar
+ARG JAR_FILE=./*.jar
 COPY ${JAR_FILE} gitanimals-api.jar
 
 ENV db_url=${DB_URL} \

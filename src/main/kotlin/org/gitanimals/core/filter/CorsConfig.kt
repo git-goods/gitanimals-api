@@ -1,4 +1,4 @@
-package org.gitanimals.identity.controller.config
+package org.gitanimals.core.filter
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.CorsRegistry
