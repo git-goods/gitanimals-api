@@ -1,4 +1,4 @@
-package org.gitanimals.identity.controller.config
+package org.gitanimals.core.filter
 
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain

@@ -11,6 +11,9 @@ import org.gitanimals.auction.AuctionTestRoot
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductRepository
 import org.gitanimals.auction.domain.ProductState
+import org.gitanimals.core.IdGenerator
+import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.slf4j.MDC
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.TestPropertySource
@@ -38,6 +41,7 @@ internal class BuyProductFacadeTest(
 
     beforeEach {
         sagaCapture.clear()
+        MDC.put(TRACE_ID, IdGenerator.generate().toString())
     }
 
     afterEach { productRepository.deleteAll() }

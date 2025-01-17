@@ -36,6 +36,9 @@ jobs:
       - name: build server
         run: ./gradlew build -x test -DSENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
+      - name: move jar file to deploy api
+        run: mv ./build/libs/*.jar ./deploy/api/
+
       - name: docker arm64 build set up - qemu
         uses: docker/setup-qemu-action@v2
 
@@ -75,6 +78,15 @@ jobs:
             "JWT_KEY=${{ secrets.JWT_KEY }}"
             "TEST_SECRET=${{ secrets.TEST_SECRET }}"
 
+      - name: build and push filebeat
+        uses: docker/build-push-action@v4
+        with:
+          context: ./deploy/filebeat
+          platforms: linux/arm64/v8
+          push: true
+          tags: |
+            ghcr.io/devxb/gitanimals-api-filebeat:${{ steps.extract_version_name.outputs.version }}
+
   deploy:
     needs: build
     name: deploy
@@ -84,8 +96,32 @@ jobs:
         run: echo "##[set-output name=version;]$(echo '${{ github.event.head_commit.message }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')"
         id: extract_version_name
 
-      - name: run server
+      - name: run api server
         run: |
           sudo docker pull ghcr.io/devxb/gitanimals-api:${{ steps.extract_version_name.outputs.version }}
           sudo docker ps -q --filter "expose=8080" | xargs sudo docker stop | xargs sudo docker rm
-          sudo docker run -d -p 8080:8080 ghcr.io/devxb/gitanimals-api:${{ steps.extract_version_name.outputs.version }}
+          sudo docker run -d -p 8080:8080 -v logs:/logs ghcr.io/devxb/gitanimals-api:${{ steps.extract_version_name.outputs.version }}
+
+      - name: check filebeat status
+        id: check-status
+        run: |
+          if sudo docker ps --filter "name=filebeat" --filter "status=running" --format "{{.Names}}" | grep -q "^filebeat$"; then
+            echo "Filebeat is already running"
+            echo "status=running" >> $GITHUB_ENV
+          else
+            echo "Filebeat is not running"
+            echo "status=stopped" >> $GITHUB_ENV
+          fi
+
+      - name: display filebeat status
+        run: |
+          if [ "${{ env.status }}" == "running" ]; then
+            echo "✅ Filebeat is already running"
+          else
+            echo "🚀 Filebeat is not running. Starting deployment..."
+          fi
+
+      - name: run file beats
+        if: env.status == 'stopped'
+        run: |
+          sudo docker run -d --name filebeat -v logs:/logs -t ghcr.io/devxb/gitanimals-api-filebeat:${{ steps.extract_version_name.outputs.version }}
