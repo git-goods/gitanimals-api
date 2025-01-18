@@ -124,4 +124,4 @@ jobs:
       - name: run file beats
         if: env.status == 'stopped'
         run: |
-          sudo docker run -d --name filebeat -v logs:/logs -t ghcr.io/devxb/gitanimals-api-filebeat:${{ steps.extract_version_name.outputs.version }}
+          sudo docker run -d --name filebeat -v logs:/logs -e FILEBEAT_USERNAME=$FILEBEAT_USERNAME -e FILEBEAT_PASSWORD=$FILEBEAT_PASSWORD -t ghcr.io/devxb/gitanimals-api-filebeat:${{ steps.extract_version_name.outputs.version }}
