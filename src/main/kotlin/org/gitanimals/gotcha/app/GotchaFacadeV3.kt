@@ -1,7 +1,8 @@
 package org.gitanimals.gotcha.app
 
+import org.gitanimals.core.TraceIdContextOrchestrator
+import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
-import org.gitanimals.gotcha.app.GotchaFacadeV3.*
 import org.gitanimals.gotcha.app.response.GotchaResponseV3
 import org.gitanimals.gotcha.domain.DropRateClient
 import org.gitanimals.gotcha.domain.GotchaService
@@ -31,15 +32,13 @@ class GotchaFacadeV3(
             .sagaSync(gotchaType.name, mapOf(
                 "token" to token,
                 "count" to count,
-                TRACE_ID to MDC.get(TRACE_ID)
-            ))
-            .decodeResultOrThrow(object : TypeReference<List<GotchaResponseV3>>() {})
+                TRACE_ID to MDC.get(TRACE_ID),
+            )).decodeResultOrThrow(object : TypeReference<List<GotchaResponseV3>>() {})
     }
 
     init {
         this.gotchaOrchestrator = orchestratorFactory.create<String>("gotchaOrchestratorV3")
-            .startWithContext(contextOrchestrate = { context, gotchaTypeName ->
-                MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
+            .startWithContext(contextOrchestrate = TraceIdContextOrchestrator { context, gotchaTypeName ->
                 val token = context.decodeContext("token", String::class)
                 val user = userApi.getUserByToken(token)
                 val count = context.decodeContext("count", Int::class)
@@ -55,7 +54,6 @@ class GotchaFacadeV3(
             })
             .joinWithContext(
                 contextOrchestrate = GotchaResponsesOrchestrate { context, gotchaResponses ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
                     val token = context.decodeContext("token", String::class)
 
                     userApi.decreasePoint(
@@ -67,7 +65,6 @@ class GotchaFacadeV3(
                     gotchaResponses
                 },
                 contextRollback = GotChaResponsesRollback { context, gotchaResponses ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
                     val token = context.decodeContext("token", String::class)
 
                     logger.warn("Fail to gotcha increase point...")
@@ -80,7 +77,6 @@ class GotchaFacadeV3(
                 }
             )
             .commitWithContext(GotchaResponseV3Orchestrate { context, gotchaResponses ->
-                MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
                 val token = context.decodeContext("token", String::class)
 
                 val personaIds =
@@ -103,22 +99,25 @@ class GotchaFacadeV3(
             })
     }
 
-    private fun interface GotchaResponsesOrchestrate :
-        ContextOrchestrate<List<GotchaResponse>, List<GotchaResponse>> {
+    private class GotchaResponsesOrchestrate(
+        orchestrate: ContextOrchestrate<List<GotchaResponse>, List<GotchaResponse>>,
+    ) : TraceIdContextOrchestrator<List<GotchaResponse>, List<GotchaResponse>>(orchestrate) {
 
         override fun reified(): TypeReference<List<GotchaResponse>> =
             object : TypeReference<List<GotchaResponse>>() {}
     }
 
-    private fun interface GotChaResponsesRollback
-        : ContextRollback<List<GotchaResponse>, Unit> {
+    private class GotChaResponsesRollback(
+        rollback: ContextRollback<List<GotchaResponse>, Unit>,
+    ) : TraceIdContextRollback<List<GotchaResponse>, Unit>(rollback) {
 
         override fun reified(): TypeReference<List<GotchaResponse>> =
             object : TypeReference<List<GotchaResponse>>() {}
     }
 
-    private fun interface GotchaResponseV3Orchestrate :
-        ContextOrchestrate<List<GotchaResponse>, List<GotchaResponseV3>> {
+    private class GotchaResponseV3Orchestrate(
+        orchestrate: ContextOrchestrate<List<GotchaResponse>, List<GotchaResponseV3>>,
+    ) : TraceIdContextOrchestrator<List<GotchaResponse>, List<GotchaResponseV3>>(orchestrate) {
 
         override fun reified(): TypeReference<List<GotchaResponse>> =
             object : TypeReference<List<GotchaResponse>>() {}

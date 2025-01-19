@@ -34,10 +34,4 @@ class InboxController(
     fun handleIllegalArgumentException(illegalArgumentException: IllegalArgumentException): ErrorResponse {
         return ErrorResponse.from(illegalArgumentException)
     }
-
-    @ExceptionHandler(IllegalStateException::class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    fun handleIllegalStateException(illegalStateException: IllegalStateException): ErrorResponse {
-        return ErrorResponse.from(illegalStateException)
-    }
 }
