@@ -1,9 +1,14 @@
 package org.gitanimals.shop.app
 
+import org.gitanimals.core.TraceIdContextOrchestrator
+import org.gitanimals.core.TraceIdContextRollback
+import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.shop.domain.DropPersona
 import org.gitanimals.shop.domain.DropPersonaService
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
+import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -16,21 +21,23 @@ class DropPersonaFacade(
     private val dropPersonaService: DropPersonaService,
 ) {
 
+    private val logger = LoggerFactory.getLogger(this::class.simpleName)
     private val orchestrator: Orchestrator<Long, DropPersona> =
         orchestratorFactory.create<Long>("drop persona orchestrator")
             .startWithContext(
-                contextOrchestrate = { context, personaId ->
+                contextOrchestrate = TraceIdContextOrchestrator { context, personaId ->
                     val token = context.decodeContext("token", String::class)
                     context.set("persona", renderApi.getPersonaById(token, personaId))
 
                     renderApi.deletePersonaById(token, personaId)
                     personaId
                 },
-                contextRollback = { context, _ ->
+                contextRollback = TraceIdContextRollback { context, _ ->
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
                     val token = context.decodeContext("token", String::class)
                     val persona = context.decodeContext("persona", RenderApi.PersonaResponse::class)
 
+                    logger.warn("Cannot drop persona rollback drop persona data...")
                     renderApi.addPersona(
                         token,
                         idempotencyKey,
@@ -38,10 +45,11 @@ class DropPersonaFacade(
                         persona.level.toInt(),
                         persona.type
                     )
+                    logger.warn("Cannot drop persona rollback drop persona success")
                 }
             )
             .joinWithContext(
-                contextOrchestrate = { context, personId ->
+                contextOrchestrate = TraceIdContextOrchestrator { context, personId ->
                     val token = context.decodeContext("token", String::class)
                     val seller = identityApi.getUserByToken(token)
 
@@ -49,22 +57,34 @@ class DropPersonaFacade(
                     context.set("dropPersonaId", dropPersona.id)
                     dropPersona
                 },
-                contextRollback = { context, _ ->
-                    dropPersonaService.deleteDropPersona(context.decodeContext("dropPersonaId", Long::class))
+                contextRollback = TraceIdContextRollback { context, _ ->
+
+                    logger.warn("Cannot drop persona rollback drop persona data...")
+                    dropPersonaService.deleteDropPersona(
+                        context.decodeContext(
+                            "dropPersonaId",
+                            Long::class
+                        )
+                    )
+                    logger.warn("Cannot drop persona rollback drop persona success")
                 }
             )
-            .commitWithContext { context, dropPersona ->
+            .commitWithContext(TraceIdContextOrchestrator { context, dropPersona ->
                 val token = context.decodeContext("token", String::class)
                 val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
                 identityApi.increasePoint(token, idempotencyKey, dropPersona.givenPoint.toString())
                 dropPersona
-            }
+            })
 
     fun dropPersona(token: String, personaId: Long): DropPersona {
         return orchestrator.sagaSync(
             personaId,
-            mapOf("token" to token, "idempotencyKey" to UUID.randomUUID().toString())
+            mapOf(
+                "token" to token,
+                "idempotencyKey" to UUID.randomUUID().toString(),
+                TRACE_ID to MDC.get(TRACE_ID),
+            )
         ).decodeResultOrThrow(DropPersona::class)
     }
 

@@ -18,4 +18,8 @@ class SagaCapture {
     fun captureRollback(rollbackEvent: SagaRollbackEvent) {
         storage["rollback"] = (storage["rollback"] ?: 0) + 1
     }
+
+    fun clear() {
+        storage.clear()
+    }
 }

@@ -127,10 +127,4 @@ class AuctionController(
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(exception: IllegalArgumentException): ErrorResponse =
         ErrorResponse.from(exception)
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(IllegalStateException::class)
-    fun handleIllegalStateException(exception: IllegalStateException): ErrorResponse =
-        ErrorResponse.from(exception)
-
 }

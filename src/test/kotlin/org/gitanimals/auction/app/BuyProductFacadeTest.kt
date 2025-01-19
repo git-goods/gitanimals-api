@@ -40,8 +40,8 @@ internal class BuyProductFacadeTest(
 ) : DescribeSpec({
 
     beforeEach {
-        sagaCapture.clear()
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
+        sagaCapture.clear()
     }
 
     afterEach { productRepository.deleteAll() }
@@ -51,6 +51,7 @@ internal class BuyProductFacadeTest(
         mockRenderServer.enqueue200(personaResponse)
         mockRenderServer.enqueue200()
 
+        MDC.put(TRACE_ID, IdGenerator.generate().toString())
         return registerProductFacade.registerProduct(VALID_TOKEN, PERSONA_ID, PRICE)
     }
 

@@ -1,9 +1,14 @@
 package org.gitanimals.shop.app
 
+import org.gitanimals.core.TraceIdContextOrchestrator
+import org.gitanimals.core.TraceIdContextRollback
+import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.shop.app.request.BuyCollaborationPersonaRequest
 import org.gitanimals.shop.domain.CollaborationPersonaService
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
+import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -15,12 +20,17 @@ class BuyCollaborationPersonaFacade(
     private val collaborationPersonaService: CollaborationPersonaService,
 ) {
 
+    private val logger = LoggerFactory.getLogger(this::class.simpleName)
     private lateinit var buyCollaborationPersonaOrchestrator: Orchestrator<BuyCollaborationPersonaRequest, Unit>
 
     fun buyCollaborationPet(token: String, request: BuyCollaborationPersonaRequest) {
         val response = buyCollaborationPersonaOrchestrator.sagaSync(
             request,
-            context = mapOf("token" to token, "idempotencyKey" to UUID.randomUUID().toString())
+            context = mapOf(
+                "token" to token,
+                "idempotencyKey" to UUID.randomUUID().toString(),
+                TRACE_ID to MDC.get(TRACE_ID),
+            )
         )
 
         if (response.isSuccess.not()) {
@@ -31,30 +41,35 @@ class BuyCollaborationPersonaFacade(
     init {
         buyCollaborationPersonaOrchestrator =
             orchestratorFactory.create<BuyCollaborationPersonaRequest>("buy collaboration persona orchestrator")
-                .start(orchestrate = { collaborationPersonaService.getCollaborationPersonaByName(it.name) })
+                .startWithContext(contextOrchestrate = TraceIdContextOrchestrator { _, request ->
+                    collaborationPersonaService.getCollaborationPersonaByName(request.name)
+                })
                 .joinWithContext(
-                    contextOrchestrate = { context, request ->
+                    contextOrchestrate = TraceIdContextOrchestrator { context, request ->
                         val token = context.decodeContext("token", String::class)
                         val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
                         identityApi.decreasePoint(token, idempotencyKey, request.price.toString())
                         request
                     },
-                    contextRollback = { context, request ->
+                    contextRollback = TraceIdContextRollback { context, request ->
                         val token = context.decodeContext("token", String::class)
                         val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
+                        logger.warn("Cannot buy collboration persona rollback buy point...")
                         identityApi.increasePoint(token, idempotencyKey, request.price.toString())
+                        logger.warn("Cannot buy collboration persona rollback buy point succcess")
                         request
                     }
                 )
-                .commitWithContext { context, request ->
+                .commitWithContext(TraceIdContextOrchestrator { context, request ->
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
-                    val name = collaborationPersonaService.getCollaborationPersonaByName(request.name).name
+                    val name =
+                        collaborationPersonaService.getCollaborationPersonaByName(request.name).name
 
                     renderApi.addPersonas(token, listOf(idempotencyKey), listOf(name))
-                }
+                })
     }
 }

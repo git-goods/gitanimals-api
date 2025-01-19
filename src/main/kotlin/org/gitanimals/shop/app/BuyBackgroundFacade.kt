@@ -1,9 +1,14 @@
 package org.gitanimals.shop.app
 
+import org.gitanimals.core.TraceIdContextOrchestrator
+import org.gitanimals.core.TraceIdContextRollback
+import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.shop.domain.SaleService
 import org.gitanimals.shop.domain.SaleType
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
+import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -16,18 +21,23 @@ class BuyBackgroundFacade(
     private val saleService: SaleService,
 ) {
 
+    private val logger = LoggerFactory.getLogger(this::class.simpleName)
     private lateinit var backgroundBuyOrchestrator: Orchestrator<String, Unit>
 
     fun buyBackground(token: String, item: String) {
         backgroundBuyOrchestrator.sagaSync(
             item,
-            mapOf("token" to token, "idempotencyKey" to UUID.randomUUID().toString())
+            mapOf(
+                "token" to token,
+                "idempotencyKey" to UUID.randomUUID().toString(),
+                TRACE_ID to MDC.get(TRACE_ID),
+            )
         ).decodeResultOrThrow(Unit::class)
     }
 
     init {
         backgroundBuyOrchestrator = orchestratorFactory.create<String>("buy background facade")
-            .startWithContext({ context, item ->
+            .startWithContext(TraceIdContextOrchestrator { context, item ->
                 val sale = saleService.getByTypeAndItem(SaleType.BACKGROUND, item)
                 val user = identityApi.getUserByToken(context.decodeContext("token", String::class))
 
@@ -42,36 +52,41 @@ class BuyBackgroundFacade(
                 sale
             })
             .joinWithContext(
-                contextOrchestrate = { context, sale ->
+                contextOrchestrate = TraceIdContextOrchestrator { context, sale ->
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
                     identityApi.decreasePoint(token, idempotencyKey, sale.price.toString())
 
                     sale
                 },
-                contextRollback = { context, sale ->
+                contextRollback = TraceIdContextRollback { context, sale ->
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
+
+                    logger.warn("Cannot buy background rollback buyer point...")
                     identityApi.increasePoint(token, idempotencyKey, sale.price.toString())
+                    logger.warn("Cannot buy background rollback buyer point success")
                 }
             )
             .joinWithContext(
-                contextOrchestrate = { context, sale ->
+                contextOrchestrate = TraceIdContextOrchestrator { context, sale ->
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
                     renderApi.addBackground(token, idempotencyKey, sale.item)
                     sale
                 },
-                contextRollback = { context, sale ->
+                contextRollback = TraceIdContextRollback { context, sale ->
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
+                    logger.warn("Cannot buy background rollback item count...")
                     renderApi.deleteBackground(token, idempotencyKey, sale.item)
+                    logger.warn("Cannot buy background rollback item count success")
                 }
             )
-            .commit { sale ->
+            .commitWithContext(TraceIdContextOrchestrator { _, sale ->
                 saleService.buyBySaleTypeAndItem(sale.type, sale.item)
-            }
+            })
     }
 }

@@ -1,6 +1,7 @@
 package org.gitanimals.inbox.domain
 
 import org.gitanimals.inbox.core.IdGenerator
+import org.gitanimals.inbox.core.instant
 import java.time.Instant
 
 fun inbox(
@@ -8,7 +9,7 @@ fun inbox(
     title: String = "dummy title",
     body: String = "dummy body",
     publisher: String = "gotcha",
-    publishedAt: Instant = Instant.now(),
+    publishedAt: Instant = instant(),
     type: InboxType = InboxType.INBOX,
     redirectTo: String = "/",
     image: String = "/inboxes/default.png",

@@ -7,12 +7,15 @@ import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.mockk.every
+import org.gitanimals.core.IdGenerator
+import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.gotcha.app.response.UserResponse
 import org.gitanimals.gotcha.domain.GotchaService
 import org.gitanimals.gotcha.domain.GotchaType
 import org.gitanimals.gotcha.infra.RestRenderApi
 import org.junit.jupiter.api.DisplayName
 import org.rooftop.netx.meta.EnableSaga
+import org.slf4j.MDC
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
@@ -41,6 +44,11 @@ internal class GotchaFacadeV3Test(
     private val userApi: UserApi,
     private val renderApi: RenderApi,
 ) : DescribeSpec({
+
+    beforeEach {
+        sagaCapture.clear()
+        MDC.put(TRACE_ID, IdGenerator.generate().toString())
+    }
 
     describe("gotcha 메소드는") {
         context("token에 해당하는 유저와 GotchaType에 해당하는 Gotcha가 존재한다면,") {
@@ -111,7 +119,6 @@ internal class GotchaFacadeV3Test(
 
                 eventually(5.seconds) {
                     sagaCapture.rollbackCountShouldBe(1)
-
                 }
             }
         }

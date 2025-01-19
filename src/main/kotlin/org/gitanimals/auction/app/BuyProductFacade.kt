@@ -3,6 +3,8 @@ package org.gitanimals.auction.app
 import org.gitanimals.auction.app.event.InboxInputEvent
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductService
+import org.gitanimals.core.TraceIdContextOrchestrator
+import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
@@ -48,9 +50,9 @@ class BuyProductFacade(
     init {
         this.orchestrator = orchestratorFactory.create<Long>("buy product orchestrator")
             .startWithContext(
-                contextOrchestrate = { context, productId ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
-                    val buyer = identityApi.getUserByToken(context.decodeContext("token", String::class))
+                contextOrchestrate = TraceIdContextOrchestrator { context, productId ->
+                    val buyer =
+                        identityApi.getUserByToken(context.decodeContext("token", String::class))
                     val product = productService.getProductById(productId)
 
                     require(product.getPrice() <= buyer.points.toLong()) {
@@ -59,17 +61,14 @@ class BuyProductFacade(
 
                     productService.waitBuyProduct(productId, buyer.id.toLong())
                 },
-                contextRollback = { context, productId ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
-
+                contextRollback = TraceIdContextRollback { _, productId ->
                     logger.warn("Fail to buy product rollback product status... \"$productId\"")
                     productService.rollbackProduct(productId)
                     logger.warn("Fail to buy product rollback product status success... \"$productId\"")
                 }
             )
             .joinWithContext(
-                contextOrchestrate = { context, product ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
+                contextOrchestrate = TraceIdContextOrchestrator { context, product ->
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
@@ -77,8 +76,7 @@ class BuyProductFacade(
 
                     product
                 },
-                contextRollback = { context, product ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
+                contextRollback = TraceIdContextRollback { context, product ->
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
@@ -88,8 +86,7 @@ class BuyProductFacade(
                 }
             )
             .joinWithContext(
-                contextOrchestrate = { context, product ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
+                contextOrchestrate = TraceIdContextOrchestrator { context, product ->
                     val token = context.decodeContext("token", String::class)
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
@@ -103,8 +100,7 @@ class BuyProductFacade(
 
                     product
                 },
-                contextRollback = { context, product ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
+                contextRollback = TraceIdContextRollback { context, product ->
                     val token = context.decodeContext("token", String::class)
 
                     logger.warn("Fail to buy product delete persona to buyer...")
@@ -113,25 +109,33 @@ class BuyProductFacade(
                 }
             )
             .joinWithContext(
-                contextOrchestrate = { context, product ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
+                contextOrchestrate = TraceIdContextOrchestrator { context, product ->
                     val sellerId = product.sellerId
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
-                    identityApi.increasePointById(sellerId, idempotencyKey, product.getPrice().toString())
+                    identityApi.increasePointById(
+                        sellerId,
+                        idempotencyKey,
+                        product.getPrice().toString()
+                    )
 
                     product
                 },
-                contextRollback = { context, product ->
-                    MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
+                contextRollback = TraceIdContextRollback { context, product ->
                     val sellerId = product.sellerId
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
                     logger.warn("Fail to buy product decrease point to seller...")
-                    identityApi.decreasePointById(sellerId, idempotencyKey, product.getPrice().toString())
+                    identityApi.decreasePointById(
+                        sellerId,
+                        idempotencyKey,
+                        product.getPrice().toString()
+                    )
                     logger.warn("Fail to buy product decrease point to seller success")
                 }
             )
-            .commit { product -> productService.buyProduct(product.id) }
+            .commitWithContext(TraceIdContextOrchestrator { _, product ->
+                productService.buyProduct(product.id)
+            })
     }
 }

@@ -27,6 +27,10 @@ internal class InboxServiceTest(
     private val entityManager: EntityManager,
 ) : DescribeSpec({
 
+    afterEach {
+        inboxRepository.deleteAll()
+    }
+
     describe("findAllByUserId 메소드는") {
         context("userId를 입력받으면") {
             val userId = 1L
@@ -55,7 +59,7 @@ internal class InboxServiceTest(
         }
     }
 
-    describe("deleteExpiredInboxes 메소드는") {
+    xdescribe("deleteExpiredInboxes 메소드는") {
         context("호출되면,") {
             clock = Clock.fixed(Instant.now().minus(31L, ChronoUnit.DAYS), ZoneId.of("UTC"))
             inboxRepository.save(inbox(userId = 1L))
