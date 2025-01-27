@@ -20,7 +20,7 @@ class GivePointHandlers(
         runCatching {
             userService.givePoint(gavePoint.username, gavePoint.point, "FOR_COMMIT")
         }.onFailure {
-            logger.error("Cannot give point to user. username: \"${gavePoint.username}\", point: \"${gavePoint.point}\"")
+            logger.error("Cannot give point to user. username: \"${gavePoint.username}\", point: \"${gavePoint.point}\"", it)
         }
     }
 }
