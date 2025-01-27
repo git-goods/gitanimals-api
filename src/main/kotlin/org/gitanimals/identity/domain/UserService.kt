@@ -18,7 +18,7 @@ class UserService(
     @Retryable(retryFor = [ObjectOptimisticLockingFailureException::class])
     @Transactional
     fun givePoint(username: String, point: Long, reason: String) {
-        getUserByName(username).givePoint(point, reason)
+        userRepository.findByName(username)?.givePoint(point, reason)
     }
 
     @Transactional
