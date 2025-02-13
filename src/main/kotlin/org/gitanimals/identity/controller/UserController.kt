@@ -33,6 +33,15 @@ class UserController(
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/internals/users/by-name/{name}")
+    fun getUserByName(
+        @PathVariable("name") username: String,
+    ): UserResponse {
+        val user = userService.getUserByName(username)
+        return UserResponse.from(user)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/internals/users/points/decreases")
     fun decreaseUserPoints(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
