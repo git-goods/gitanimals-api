@@ -14,12 +14,16 @@ enum class RedirectWhenSuccess(
     ),
     LOCAL(
         "https://api.gitanimals.org/logins/oauth/github/tokens/LOCAL",
-        "http://localhost:3000/auth?jwt={jwt}"
+        "http://localhost:3000/auth?jwt={jwt}",
     ),
     LOCAL_ADMIN(
         "https://api.gitanimals.org/logins/oauth/github/tokens/LOCAL_ADMIN",
-        "http://localhost:5173/auth?jwt={jwt}"
-    )
+        "http://localhost:5173/auth?jwt={jwt}",
+    ),
+    APP(
+        "https://api.gitanimals.org/logins/oauth/github/tokens/APP",
+        "gitanimals://auth?jwt={jwt}"
+    ),
     ;
 
     fun successUriWithToken(jwt: String): String = successUri.replace("{jwt}", jwt)
