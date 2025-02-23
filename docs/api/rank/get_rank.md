@@ -8,7 +8,7 @@
 ### Parameter
 - rank: 1 //특정 랭크를 입력하면 해당 랭크부터 {size} 수 만큼 응답합니다.
 - size: 10 // 조회할 랭크의 수 입니다. default: 10 
-- type: WEEKLY_GUILD_CONTRIBUTIONS, WEEKLY_PEOPLE_CONTRIBUTIONS // 조회할 랭크의 타입을 입력합니다.
+- type: WEEKLY_GUILD_CONTRIBUTIONS, WEEKLY_USER_CONTRIBUTIONS // 조회할 랭크의 타입을 입력합니다.
 
 ## Response
 
