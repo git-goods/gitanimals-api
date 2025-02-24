@@ -17,7 +17,7 @@
 ### URL: `https://api.gitanimals.org/quizs/context`
 ### Request header
 - Authorization: `{token}`
-- Language: `{language}` // 해당 하는 언어의 퀴즈를 응답합니다. (없다면 ENGLISH default)
+- Locale: `{language}` // 해당 하는 언어의 퀴즈를 응답합니다. (없다면 EN_US default, value는 대소문자 상관없음)
 
 ## Response
 ```json
@@ -32,7 +32,7 @@
 ### URL: `https://api.gitanimals.org/quizs/context/{contextId}`
 ### Request header
 - Authorization: `{token}`
-- Language: `{language}`
+- Locale: `{language}`
 
 ## Response
 
@@ -67,7 +67,7 @@
 ### URL: `https://api.gitanimals.org/quizs/context/{contextId}/answers`
 ### Request header
 - Authorization: `{token}`
-- Language: `{language}`
+- Locale: `{language}`
 ### Request body
 ```json
 {
@@ -84,7 +84,7 @@
 ### URL: `https://api.gitanimals.org/quizs/context/{contextId}/results/by-round/{round}`
 ### Request header
 - Authorization: `{token}`
-- Language: `{language}`
+- Locale: `{language}`
 
 ## Response
 ```json
@@ -99,7 +99,7 @@
 ### URL: `https://api.gitanimals.org/quizs/context/{contextId}`
 ### Request header
 - Authorization: `{token}`
-- Language: `{language}`
+- Locale: `{language}`
 
 ### Request body
 ```json
