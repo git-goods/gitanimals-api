@@ -7,7 +7,6 @@
 ### URL: `https://api.gitanimals.org/quizs`
 ### Request header
 - Authorization: `{token}`
-- Location: `{location}` // 요청 위치를 같이 주세용 퀴즈 내용 국제화 할때 참고해서 사용 할 예정입니다.
 
 ### Request body
 
