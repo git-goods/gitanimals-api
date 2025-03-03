@@ -54,6 +54,16 @@ class UserService(
         return user
     }
 
+    @Transactional
+    @Retryable(ObjectOptimisticLockingFailureException::class)
+    fun increasePointByUsername(username: String, idempotencyKey: String, point: Long): User {
+        val user = getUserByName(username)
+        requireIdempotency("increasePoint:${user.id}:$idempotencyKey")
+
+        user.increasePoint(point)
+        return user
+    }
+
     private fun requireIdempotency(idempotencyKey: String) {
         val userIdempotency =
             userIdempotencyRepository.findByIdOrNull(idempotencyKey)

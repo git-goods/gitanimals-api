@@ -80,4 +80,14 @@ class UserController(
     ) {
         userService.increasePoint(userId, idempotencyKey, point)
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/internals/users/points/increases/by-username/{username}")
+    fun increaseUserPointsByUsername(
+        @PathVariable("username") username: String,
+        @RequestParam("point") point: Long,
+        @RequestParam("idempotency-key") idempotencyKey: String,
+    ) {
+        userService.increasePointByUsername(username, idempotencyKey, point)
+    }
 }
