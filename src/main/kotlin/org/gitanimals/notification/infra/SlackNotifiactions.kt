@@ -31,3 +31,8 @@ class GitAnimalsNewUserSlackNotification(
 class GitAnimalsDailyReportSlackNotification(
     @Value(value = "\${slack.token}") token: String,
 ): SlackNotification(token, "C07BPB42R8D")
+
+@Component
+class GitAnimalsNewQuizCreatedSlackNotification(
+    @Value(value = "\${slack.token}") token: String,
+): SlackNotification(token, "C08GU67NV6W")
