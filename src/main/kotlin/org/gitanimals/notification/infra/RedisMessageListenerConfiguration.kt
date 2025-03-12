@@ -1,6 +1,7 @@
 package org.gitanimals.notification.infra
 
 import org.gitanimals.core.redis.RedisPubSubChannel
+import org.gitanimals.notification.app.NotApprovedQuizCreatedMessageListener
 import org.gitanimals.notification.app.QuizCreatedMessageListener
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,6 +13,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer
 class RedisMessageListenerConfiguration(
     private val redisConnectionFactory: RedisConnectionFactory,
     private val quizCreatedMessageListener: QuizCreatedMessageListener,
+    private val notApprovedQuizCreatedMessageListener: NotApprovedQuizCreatedMessageListener,
 ) {
 
     @Bean
@@ -21,6 +23,10 @@ class RedisMessageListenerConfiguration(
             this.addMessageListener(
                 quizCreatedMessageListener,
                 ChannelTopic(RedisPubSubChannel.NEW_QUIZ_CREATED),
+            )
+            this.addMessageListener(
+                notApprovedQuizCreatedMessageListener,
+                ChannelTopic(RedisPubSubChannel.NOT_APPROVED_QUIZ_CREATED),
             )
         }
     }

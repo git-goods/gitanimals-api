@@ -1,21 +1,23 @@
 package org.gitanimals.quiz.domain
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-class QuizService(
-    private val quizRepository: QuizRepository,
+class NotApprovedQuizService(
+    private val notApprovedQuizRepository: NotApprovedQuizRepository,
 ) {
 
-    fun createNewQuiz(
+    @Transactional
+    fun createNotApprovedQuiz(
         userId: Long,
         problem: String,
         level: Level,
         category: Category,
         expectedAnswer: String,
-    ): Quiz {
-        return quizRepository.save(
-            Quiz.create(
+    ): NotApprovedQuiz {
+        return notApprovedQuizRepository.save(
+            NotApprovedQuiz.create(
                 userId = userId,
                 problem = problem,
                 level = level,
@@ -24,7 +26,4 @@ class QuizService(
             )
         )
     }
-
-    fun findAllByIds(similarityQuizIds: List<Long>): List<Quiz> =
-        quizRepository.findAllById(similarityQuizIds)
 }

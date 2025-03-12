@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class HibernateEventListenerConfiguration(
     private val entityManagerFactory: EntityManagerFactory,
-    private val newQuizCreatedInsertEventListener: NewQuizCreatedInsertEventListener,
+    private val newQuizCreatedInsertEventListener: NewQuizCreatedInsertHibernateEventListener,
 ) {
 
     @PostConstruct

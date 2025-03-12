@@ -9,7 +9,6 @@ fun quiz(
     category: Category = Category.BACKEND,
     problem: String = "Test problem",
     expectedAnswer: String = "YES",
-    approval: Boolean = true,
 ): Quiz = Quiz(
     id = id,
     userId = userId,
@@ -17,5 +16,4 @@ fun quiz(
     category = category,
     problem = problem,
     expectedAnswer = expectedAnswer,
-    approval = approval,
 )

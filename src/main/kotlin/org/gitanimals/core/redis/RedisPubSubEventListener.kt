@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
-class TransactionCommitRedisPubSubEventListener(
+class RedisPubSubEventListener(
     private val objectMapper: ObjectMapper,
     @Qualifier("gitanimalsRedisTemplate") private val redisTemplate: StringRedisTemplate,
 ) {

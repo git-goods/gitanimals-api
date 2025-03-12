@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 
 @Component
-class NewQuizCreatedInsertEventListener(
+class NewQuizCreatedInsertHibernateEventListener(
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : PostInsertEventListener {
 

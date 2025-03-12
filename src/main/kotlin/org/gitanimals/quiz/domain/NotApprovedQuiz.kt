@@ -4,8 +4,8 @@ import jakarta.persistence.*
 import org.gitanimals.core.IdGenerator
 
 @Entity
-@Table(name = "quiz")
-class Quiz(
+@Table(name = "not_approval_quiz")
+class NotApprovedQuiz(
     @Id
     @Column(name = "id")
     val id: Long,
@@ -36,8 +36,8 @@ class Quiz(
             problem: String,
             category: Category,
             expectedAnswer: String,
-        ): Quiz {
-            return Quiz(
+        ): NotApprovedQuiz {
+            return NotApprovedQuiz(
                 id = IdGenerator.generate(),
                 userId = userId,
                 level = level,
