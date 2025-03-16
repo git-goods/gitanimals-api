@@ -8,7 +8,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType
 
 private const val BERT_SMALL_DIMS = 384
 
-@Document(indexName = "quiz_similarity")
+@Document(indexName = "quiz_similarity", createIndex = true)
 class QuizSimilarity(
     @Id
     val id: Long,
@@ -17,11 +17,11 @@ class QuizSimilarity(
     val quizId: Long,
 
     @Field(name = "vector", type = FieldType.Dense_Vector, dims = BERT_SMALL_DIMS)
-    val vector: List<Double>,
+    val vector: List<Float>,
 ) {
 
     companion object {
-        fun from(quizId: Long, vector: List<Double>): QuizSimilarity {
+        fun from(quizId: Long, vector: List<Float>): QuizSimilarity {
             return QuizSimilarity(
                 id = IdGenerator.generate(),
                 quizId = quizId,

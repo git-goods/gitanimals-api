@@ -7,15 +7,19 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations
 import org.springframework.stereotype.Component
 
 @Component
-class SbertEsTextSimilarityChecker(
+class EsKnnTextSimilarityChecker(
     private val elasticSearchOperations: ElasticsearchOperations,
+    private val tokenizer: Tokenizer,
 ) : TextSimilarityChecker {
 
     override fun getSimilarity(text: String): SimilarityResponse {
+        val tokenizedText = tokenizer.tokenize(Tokenizer.Request(text))
+
         val knnQuery = NativeQuery.builder()
             .withKnnSearches {
                 it.field(QuizSimilarity::vector.name)
-                it.similarity(0.75F) // TODO: Need tune similarity 0.75 ~ 0.9
+                it.queryVector(tokenizedText)
+                it.similarity(0.75F)
                 it.k(MAX_RETURN_KNN_SIZE)
                 it.numCandidates(MAX_RETURN_KNN_SIZE * 5)
             }.build()

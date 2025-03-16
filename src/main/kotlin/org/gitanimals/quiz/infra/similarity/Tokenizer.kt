@@ -5,7 +5,7 @@ import org.springframework.web.service.annotation.PostExchange
 fun interface Tokenizer {
 
     @PostExchange("/pipeline/feature-extraction/sentence-transformers/all-mpnet-base-v2")
-    fun tokenize(request: Request): List<Double>
+    fun tokenize(request: Request): List<Float>
 
     data class Request(
         val inputs: String,

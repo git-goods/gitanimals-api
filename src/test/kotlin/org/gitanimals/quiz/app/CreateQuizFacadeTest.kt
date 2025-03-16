@@ -14,6 +14,9 @@ import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.domain.*
+import org.gitanimals.quiz.domain.prompt.QuizCreatePrompt
+import org.gitanimals.quiz.domain.prompt.QuizCreatePromptRepository
+import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
 import org.gitanimals.quiz.infra.HibernateEventListenerConfiguration
 import org.gitanimals.quiz.infra.NewQuizCreatedInsertHibernateEventListener
 import org.gitanimals.quiz.infra.event.NewQuizCreated
@@ -38,6 +41,7 @@ import kotlin.time.Duration.Companion.seconds
         CreateQuizFacade::class,
         DomainEventHolder::class,
         NotApprovedQuizService::class,
+        QuizCreatePromptService::class,
         NewQuizCreatedInsertHibernateEventListener::class,
         HibernateEventListenerConfiguration::class,
     ]
@@ -51,17 +55,22 @@ internal class CreateQuizFacadeTest(
     private val domainEventHolder: DomainEventHolder,
     private val quizRepository: QuizRepository,
     private val notApprovedQuizRepository: NotApprovedQuizRepository,
+    private val quizCreatePromptRepository: QuizCreatePromptRepository,
     @MockkBean private val identityApi: IdentityApi,
     @MockkBean private val textSimilarityChecker: TextSimilarityChecker,
+    @MockkBean private val aiApi: AIApi,
 ) : DescribeSpec({
 
     extension(SpringExtension)
 
     beforeEach {
+        quizCreatePromptRepository.deleteAll()
+        quizCreatePromptRepository.save(QuizCreatePrompt(1L, "Hello AI"))
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
         every { identityApi.getUserByToken(any()) } returns defaultUser
         every { identityApi.increaseUserPointsById(any(), any(), any()) } just Runs
         every { identityApi.decreaseUserPointsById(any(), any(), any()) } just Runs
+        every { aiApi.isDevelopmentQuiz(any()) } returns true
         domainEventHolder.deleteAll()
     }
 

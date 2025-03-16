@@ -26,7 +26,6 @@ class NewQuizCreatedEventListener(
 
             runCatching {
                 val quizSimilarity = QuizSimilarity.from(newQuizCreated.id, tokenizedQuizText)
-
                 quizSimilarityRepository.save(quizSimilarity)
             }.onSuccess {
                 logger.info("Tokenize and save success. quizId: ${it.quizId}")

@@ -8,6 +8,7 @@ import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.domain.NotApprovedQuizService
 import org.gitanimals.quiz.domain.QuizService
+import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
 import org.slf4j.LoggerFactory
@@ -17,11 +18,13 @@ import org.springframework.stereotype.Component
 
 @Component
 class CreateQuizFacade(
+    private val aiApi: AIApi,
     private val identityApi: IdentityApi,
     private val quizService: QuizService,
     private val notApprovedQuizService: NotApprovedQuizService,
     private val textSimilarityChecker: TextSimilarityChecker,
     private val eventPublisher: ApplicationEventPublisher,
+    private val quizCreatePromptService: QuizCreatePromptService,
     orchestratorFactory: OrchestratorFactory,
 ) {
 
@@ -53,6 +56,12 @@ class CreateQuizFacade(
                 )
             )
             return
+        }
+
+        val quizCreatePrompt = quizCreatePromptService.getFirstPrompt()
+        require(aiApi.isDevelopmentQuiz(quizCreatePrompt.getRequestTextWithPrompt(text = createQuizRequest.problem))) {
+            logger.warn("Only development quiz allow request: $createQuizRequest")
+            "Only development quiz allow request: $createQuizRequest"
         }
 
         createQuizOrchestrator.sagaSync(
