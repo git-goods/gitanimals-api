@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.web.client.RestClient
 
 @Configuration
-@Profile("prod")
+@Profile("!prod")
 class RestClientConfigurer {
 
     @Bean("renderRestClient")

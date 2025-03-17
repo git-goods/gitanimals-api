@@ -6,6 +6,7 @@ import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
+import org.gitanimals.quiz.app.response.CreateQuizResponse
 import org.gitanimals.quiz.domain.NotApprovedQuizService
 import org.gitanimals.quiz.domain.QuizService
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
@@ -30,10 +31,14 @@ class CreateQuizFacade(
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
-    private lateinit var createQuizOrchestrator: Orchestrator<CreateQuizRequest, Unit>
+    private lateinit var createQuizOrchestrator: Orchestrator<CreateQuizRequest, CreateQuizResponse>
 
-    fun createQuiz(token: String, createQuizRequest: CreateQuizRequest) {
-        val user = identityApi.getUserByToken(token)
+    fun createQuiz(token: String, createQuizRequest: CreateQuizRequest): CreateQuizResponse {
+        val user = runCatching { identityApi.getUserByToken(token) }
+            .getOrElse {
+                it.printStackTrace()
+                throw it
+            }
 
         val similarityResponses = textSimilarityChecker.getSimilarity(createQuizRequest.problem)
         if (similarityResponses.similarityQuizIds.isNotEmpty()) {
@@ -49,29 +54,46 @@ class CreateQuizFacade(
                 level = createQuizRequest.level,
             )
 
+            identityApi.increaseUserPointsById(
+                userId = user.id.toLong(),
+                point = CREATE_QUIZ_PRICE,
+                idempotencyKey = IdGenerator.generate().toString(),
+            )
+
             eventPublisher.publishEvent(
                 NotApprovedQuizCreated.from(
                     notApprovedQuiz,
                     similarityQuizs.map { it.problem },
                 )
             )
-            return
+
+            return CreateQuizResponse.fail(
+                point = CREATE_QUIZ_PRICE,
+                message = CREATE_QUIZ_SIMILARITY_CHECK_MESSAGE
+            )
         }
 
         val quizCreatePrompt = quizCreatePromptService.getFirstPrompt()
-        require(aiApi.isDevelopmentQuiz(quizCreatePrompt.getRequestTextWithPrompt(text = createQuizRequest.problem))) {
+        val isDevelopmentQuiz = runCatching {
+            aiApi.isDevelopmentQuiz(quizCreatePrompt.getRequestTextWithPrompt(text = createQuizRequest.problem))
+        }.getOrElse {
+            logger.error("Validation fail on isDevelopmentQuiz cause ${it.message}", it)
+            throw it
+        }
+
+        require(isDevelopmentQuiz) {
             logger.warn("Only development quiz allow request: $createQuizRequest")
             "Only development quiz allow request: $createQuizRequest"
         }
 
-        createQuizOrchestrator.sagaSync(
+        return createQuizOrchestrator.sagaSync(
             request = createQuizRequest,
             context = mapOf(
                 "userId" to user.id,
                 "idempotencyKey" to IdGenerator.generate(),
                 TRACE_ID to MDC.get(TRACE_ID),
             ),
-        )
+        ).decodeResultOrThrow(CreateQuizResponse::class)
     }
 
     init {
@@ -114,11 +136,19 @@ class CreateQuizFacade(
                         expectedAnswer = request.expectedAnswer,
                         level = request.level,
                     )
+
+                    CreateQuizResponse.success(
+                        point = CREATE_QUIZ_PRICE,
+                        message = CREATE_QUIZ_SUCCESS_MESSAGE
+                    )
                 }
             )
     }
 
     companion object {
         private const val CREATE_QUIZ_PRICE = 5_000L
+        private const val CREATE_QUIZ_SIMILARITY_CHECK_MESSAGE =
+            "Your quiz has been successfully created, but a similar quiz has been found and is under review. The awarded points may be revoked."
+        private const val CREATE_QUIZ_SUCCESS_MESSAGE = "Success to create quiz."
     }
 }

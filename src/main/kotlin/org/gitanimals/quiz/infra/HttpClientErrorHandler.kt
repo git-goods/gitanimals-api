@@ -21,8 +21,7 @@ class HttpClientErrorHandler : ResponseErrorHandler {
             response.statusCode.is4xxClientError ->
                 throw IllegalArgumentException(body)
 
-            response.statusCode.is5xxServerError ->
-                throw IllegalStateException(body)
+            else -> error(body)
         }
     }
 }

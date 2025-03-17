@@ -6,7 +6,7 @@ import org.springframework.data.elasticsearch.annotations.Document
 import org.springframework.data.elasticsearch.annotations.Field
 import org.springframework.data.elasticsearch.annotations.FieldType
 
-private const val BERT_SMALL_DIMS = 384
+private const val BERT_LARGE_DIMS = 768
 
 @Document(indexName = "quiz_similarity", createIndex = true)
 class QuizSimilarity(
@@ -16,7 +16,7 @@ class QuizSimilarity(
     @Field(name = "quiz_id")
     val quizId: Long,
 
-    @Field(name = "vector", type = FieldType.Dense_Vector, dims = BERT_SMALL_DIMS)
+    @Field(name = "vector", type = FieldType.Dense_Vector, dims = BERT_LARGE_DIMS)
     val vector: List<Float>,
 ) {
 

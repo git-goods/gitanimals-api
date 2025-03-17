@@ -1,8 +1,8 @@
 package org.gitanimals.quiz.infra
 
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.quiz.app.OpenAI
 import org.gitanimals.quiz.app.IdentityApi
-import org.gitanimals.quiz.app.AIApi
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -19,6 +19,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory
 class QuizHttpClientConfigurer(
     @Value("\${internal.secret}") private val internalSecret: String,
     @Value("\${openai.key}") private val openAIKey: String,
+    @Value("\${openai.organization-id}") private val openAIOrganizationId: String,
+    @Value("\${openai.project}") private val openAIProject: String,
 ) {
 
     @Bean
@@ -44,12 +46,14 @@ class QuizHttpClientConfigurer(
     }
 
     @Bean
-    fun openAiQuizValidator(): AIApi {
+    fun openAiQuizValidator(): OpenAI {
         val restClient = RestClient
             .builder()
             .requestInterceptor { request, body, execution ->
                 request.headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 request.headers.add(HttpHeaders.AUTHORIZATION, "Bearer $openAIKey")
+                request.headers.add("OpenAI-Organization", openAIOrganizationId)
+                request.headers.add("OpenAI-Project", openAIProject)
 
                 execution.execute(request, body)
             }
@@ -61,7 +65,7 @@ class QuizHttpClientConfigurer(
             .builderFor(RestClientAdapter.create(restClient))
             .build()
 
-        return httpServiceProxyFactory.createClient(AIApi::class.java)
+        return httpServiceProxyFactory.createClient(OpenAI::class.java)
     }
 
     @Bean
@@ -74,7 +78,9 @@ class QuizHttpClientConfigurer(
 
 @Configuration
 @Profile("test")
-class QuizTestHttpClientConfigurer {
+class QuizTestHttpClientConfigurer(
+    @Value("\${openai.key:foo}") private val openAIKey: String,
+) {
 
     @Bean
     fun quizIdentityApiHttpClient(): IdentityApi {
@@ -90,7 +96,4 @@ class QuizTestHttpClientConfigurer {
 
         return httpServiceProxyFactory.createClient(IdentityApi::class.java)
     }
-
-    @Bean
-    fun rankHttpClientErrorHandler(): HttpClientErrorHandler = HttpClientErrorHandler()
 }
