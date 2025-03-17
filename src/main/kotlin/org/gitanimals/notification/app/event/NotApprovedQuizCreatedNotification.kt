@@ -9,5 +9,6 @@ data class NotApprovedQuizCreatedNotification(
     val level: String,
     val category: Category,
     val expectedAnswer: String,
+    val traceId: String,
     val similarityQuizTexts: List<String>,
 )
