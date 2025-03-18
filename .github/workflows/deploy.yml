@@ -81,9 +81,9 @@ jobs:
             "OPENAI_PROJECT=${{ secrets.OPENAI_PROJECT }}"
             "OPENAI_ORGANIZATION=${{ secrets.OPENAI_ORGANIZATION }}"
             "TOKENIZER_API_KEY=${{ secrets.TOKENIZER_API_KEY }}"
-            "ELASTIC_SEARCH_URIS=${secrets.ELASTIC_SEARCH_URIS}"
-            "ELASTIC_SEARCH_USER_NAME=${secrets.ELASTIC_SEARCH_USER_NAME}"
-            "ELASTIC_SEARCH_PASSWORD=${secrets.ELASTIC_SEARCH_PASSWORD}"
+            "ELASTIC_SEARCH_URIS=${{ secrets.ELASTIC_SEARCH_URIS }}"
+            "ELASTIC_SEARCH_USER_NAME=${{ secrets.ELASTIC_SEARCH_USER_NAME }}"
+            "ELASTIC_SEARCH_PASSWORD=${{ secrets.ELASTIC_SEARCH_PASSWORD }}"
 
       - name: build and push filebeat
         uses: docker/build-push-action@v4
