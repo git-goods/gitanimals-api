@@ -20,8 +20,8 @@ abstract class TraceableMessageListener(
         runCatching {
             val traceId: String = objectMapper.readValue(
                 redisTemplate.stringSerializer.deserialize(message.body),
-                object: TypeReference<Map<String, String>>(){},
-            )["traceId"] ?: throw IllegalArgumentException("Cannot find traceId on message: $message")
+                object: TypeReference<Map<String, Any>>(){},
+            )["traceId"] as String
             MDC.put(TRACE_ID, traceId)
             onMessage(message)
         }.onFailure {
