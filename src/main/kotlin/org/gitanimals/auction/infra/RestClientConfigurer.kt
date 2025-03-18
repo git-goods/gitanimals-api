@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.web.client.RestClient
 
-@Profile("prod")
+@Profile("!test")
 @Configuration("auction.RestClientConfigurer")
 class RestClientConfigurer {
 

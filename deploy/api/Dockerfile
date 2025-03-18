@@ -12,6 +12,13 @@ ARG INTERNAL_SECRET
 ARG SLACK_TOKEN
 ARG JWT_KEY
 ARG TEST_SECRET
+ARG OPENAI_KEY
+ARG OPENAI_PROJECT
+ARG OPENAI_ORGANIZATION
+ARG TOKENIZER_API_KEY
+ARG ELASTIC_SEARCH_URIS
+ARG ELASTIC_SEARCH_USER_NAME
+ARG ELASTIC_SEARCH_PASSWORD
 
 ARG JAR_FILE=./*.jar
 COPY ${JAR_FILE} gitanimals-api.jar
@@ -27,7 +34,14 @@ ENV db_url=${DB_URL} \
   internal_secret=${INTERNAL_SECRET} \
   slack_token=${SLACK_TOKEN} \
   jwt_key=${JWT_KEY} \
-  test_secret=${TEST_SECRET}
+  test_secret=${TEST_SECRET} \
+  openai_key=${OPENAI_KEY} \
+  openai_project=${OPENAI_PROJECT} \
+  openai_organization=${OPENAI_ORGANIZATION} \
+  tokenizer_api_key=${TOKENIZER_API_KEY} \
+  elastic_search_uris=${ELASTIC_SEARCH_URIS} \
+  elastic_search_user_name=${ELASTIC_SEARCH_USER_NAME} \
+  elastic_search_password=${ELASTIC_SEARCH_PASSWORD}
 
 ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --spring.datasource.url=${db_url} \
@@ -41,4 +55,11 @@ ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --internal.secret=${internal_secret} \
   --slack.token=${slack_token} \
   --jwt.key=${jwt_key} \
-  --test.secret=${test_secret}
+  --test.secret=${test_secret} \
+  --openai.key=${openai_key} \
+  --openai.project=${openai_project} \
+  --openai.organization-id=${openai_organization} \
+  --tokenizer.api.key=${tokenizer_api_key} \
+  --spring.elasticsearch.uris=${elastic_search_uris} \
+  --spring.elasticsearch.username=${elastic_search_user_name} \
+  --spring.elasticsearch.password=${elastic_search_password}

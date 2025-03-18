@@ -44,7 +44,7 @@
     <springProfile name="prod">
       <appender-ref ref="ASYNC_SLACK_APPENDER"/>
     </springProfile>
-    <springProfile name="test">
+    <springProfile name="local">
       <appender-ref ref="CONSOLE_APPENDER"/>
     </springProfile>
   </root>
