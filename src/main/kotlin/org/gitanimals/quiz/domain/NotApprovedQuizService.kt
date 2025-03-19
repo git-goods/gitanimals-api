@@ -1,5 +1,6 @@
 package org.gitanimals.quiz.domain
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -7,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional
 class NotApprovedQuizService(
     private val notApprovedQuizRepository: NotApprovedQuizRepository,
 ) {
+
+    private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
     @Transactional
     fun createNotApprovedQuiz(
@@ -16,6 +19,14 @@ class NotApprovedQuizService(
         category: Category,
         expectedAnswer: String,
     ): NotApprovedQuiz {
+        val notApprovedQuizs = notApprovedQuizRepository.findAllByUserId(userId)
+
+        require(notApprovedQuizs.size < 3) {
+            val message = "Cannot create quiz cause already have ${notApprovedQuizs.size} not approved quizs."
+            logger.info(message)
+            message
+        }
+
         return notApprovedQuizRepository.save(
             NotApprovedQuiz.create(
                 userId = userId,
