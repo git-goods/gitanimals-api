@@ -40,6 +40,19 @@ class CreateQuizFacade(
                 throw it
             }
 
+        val quizCreatePrompt = quizCreatePromptService.getFirstPrompt()
+        val isDevelopmentQuiz = runCatching {
+            aiApi.isDevelopmentQuiz(quizCreatePrompt.getRequestTextWithPrompt(text = createQuizRequest.problem))
+        }.getOrElse {
+            logger.error("Validation fail on isDevelopmentQuiz cause ${it.message}", it)
+            throw it
+        }
+
+        require(isDevelopmentQuiz) {
+            logger.warn("Only development quiz allow request: $createQuizRequest")
+            "Only development quiz allow request: $createQuizRequest"
+        }
+
         val similarityResponses = textSimilarityChecker.getSimilarity(createQuizRequest.problem)
         if (similarityResponses.similarityQuizIds.isNotEmpty()) {
             logger.info("Cannot pass similarity check, need to human intelligence.")
@@ -71,19 +84,6 @@ class CreateQuizFacade(
                 point = CREATE_QUIZ_PRICE,
                 message = CREATE_QUIZ_SIMILARITY_CHECK_MESSAGE
             )
-        }
-
-        val quizCreatePrompt = quizCreatePromptService.getFirstPrompt()
-        val isDevelopmentQuiz = runCatching {
-            aiApi.isDevelopmentQuiz(quizCreatePrompt.getRequestTextWithPrompt(text = createQuizRequest.problem))
-        }.getOrElse {
-            logger.error("Validation fail on isDevelopmentQuiz cause ${it.message}", it)
-            throw it
-        }
-
-        require(isDevelopmentQuiz) {
-            logger.warn("Only development quiz allow request: $createQuizRequest")
-            "Only development quiz allow request: $createQuizRequest"
         }
 
         return createQuizOrchestrator.sagaSync(
