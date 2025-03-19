@@ -4,8 +4,8 @@ import org.gitanimals.core.IdGenerator
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.core.redis.AsyncRedisPubSubEvent
 import org.gitanimals.core.redis.RedisPubSubChannel
-import org.gitanimals.quiz.domain.Category
-import org.gitanimals.quiz.domain.Quiz
+import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.approved.Quiz
 import org.slf4j.MDC
 
 data class NewQuizCreated(

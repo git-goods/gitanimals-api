@@ -1,6 +1,10 @@
 package org.gitanimals.quiz.domain
 
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.quiz.domain.approved.Quiz
+import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Level
+import org.gitanimals.quiz.domain.not_approved.NotApprovedQuiz
 
 fun quiz(
     id: Long = IdGenerator.generate(),

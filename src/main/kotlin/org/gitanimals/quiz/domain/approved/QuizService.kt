@@ -1,5 +1,7 @@
-package org.gitanimals.quiz.domain
+package org.gitanimals.quiz.domain.approved
 
+import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Level
 import org.springframework.stereotype.Service
 
 @Service

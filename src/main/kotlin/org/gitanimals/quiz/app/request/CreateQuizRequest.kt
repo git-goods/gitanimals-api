@@ -1,7 +1,7 @@
 package org.gitanimals.quiz.app.request
 
-import org.gitanimals.quiz.domain.Category
-import org.gitanimals.quiz.domain.Level
+import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Level
 
 data class CreateQuizRequest(
     val level: Level,

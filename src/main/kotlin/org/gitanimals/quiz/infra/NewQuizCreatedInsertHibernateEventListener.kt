@@ -1,6 +1,6 @@
 package org.gitanimals.quiz.infra
 
-import org.gitanimals.quiz.domain.Quiz
+import org.gitanimals.quiz.domain.approved.Quiz
 import org.gitanimals.quiz.infra.event.NewQuizCreated
 import org.hibernate.event.spi.PostInsertEvent
 import org.hibernate.event.spi.PostInsertEventListener

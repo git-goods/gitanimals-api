@@ -1,11 +1,15 @@
-package org.gitanimals.quiz.domain
+package org.gitanimals.quiz.domain.not_approved
 
 import jakarta.persistence.*
+import org.gitanimals.core.AggregateRoot
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Level
 
 @Entity
-@Table(name = "quiz")
-class Quiz(
+@AggregateRoot
+@Table(name = "not_approval_quiz")
+class NotApprovedQuiz(
     @Id
     @Column(name = "id")
     val id: Long,
@@ -36,8 +40,8 @@ class Quiz(
             problem: String,
             category: Category,
             expectedAnswer: String,
-        ): Quiz {
-            return Quiz(
+        ): NotApprovedQuiz {
+            return NotApprovedQuiz(
                 id = IdGenerator.generate(),
                 userId = userId,
                 level = level,

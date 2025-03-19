@@ -15,6 +15,12 @@ import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.domain.*
+import org.gitanimals.quiz.domain.approved.QuizRepository
+import org.gitanimals.quiz.domain.approved.QuizService
+import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Level
+import org.gitanimals.quiz.domain.not_approved.NotApprovedQuizRepository
+import org.gitanimals.quiz.domain.not_approved.NotApprovedQuizService
 import org.gitanimals.quiz.domain.prompt.QuizCreatePrompt
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptRepository
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService

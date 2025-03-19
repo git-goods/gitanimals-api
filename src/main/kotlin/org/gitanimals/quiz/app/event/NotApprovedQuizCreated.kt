@@ -4,8 +4,8 @@ import org.gitanimals.core.IdGenerator
 import org.gitanimals.core.filter.MDCFilter
 import org.gitanimals.core.redis.AsyncRedisPubSubEvent
 import org.gitanimals.core.redis.RedisPubSubChannel
-import org.gitanimals.quiz.domain.Category
-import org.gitanimals.quiz.domain.NotApprovedQuiz
+import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.not_approved.NotApprovedQuiz
 import org.slf4j.MDC
 
 data class NotApprovedQuizCreated(

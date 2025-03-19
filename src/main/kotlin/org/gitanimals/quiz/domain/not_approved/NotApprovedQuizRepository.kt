@@ -1,4 +1,4 @@
-package org.gitanimals.quiz.domain
+package org.gitanimals.quiz.domain.not_approved
 
 import org.springframework.data.jpa.repository.JpaRepository
 

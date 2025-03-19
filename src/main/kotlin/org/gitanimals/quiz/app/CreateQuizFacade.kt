@@ -7,8 +7,8 @@ import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.app.response.CreateQuizResponse
-import org.gitanimals.quiz.domain.NotApprovedQuizService
-import org.gitanimals.quiz.domain.QuizService
+import org.gitanimals.quiz.domain.not_approved.NotApprovedQuizService
+import org.gitanimals.quiz.domain.approved.QuizService
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
