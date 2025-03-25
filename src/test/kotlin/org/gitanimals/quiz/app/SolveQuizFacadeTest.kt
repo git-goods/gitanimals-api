@@ -74,13 +74,13 @@ internal class SolveQuizFacadeTest(
         }
     }
 
-    describe("getQuizById 메소드는") {
+    describe("getAndStartSolveQuizContextById 메소드는") {
         context("token과 contextId에 해당하는 context의 상태가 NOT_STARTED혹은 SUCCESS라면") {
             val quizContext = quizSolveContextRepository.save(quizSolveContext(userId = 0L))
             every { identityApi.getUserByToken(any()) } returns defaultUser
 
             it("SOLVING상태의 QuizContextResponse를 응답한다") {
-                val result = solveQuizFacade.getQuizById(token, quizContext.id)
+                val result = solveQuizFacade.getAndStartSolveQuizContextById(token, quizContext.id)
 
                 result.should {
                     it.status shouldBe QuizSolveContextStatus.SOLVING
@@ -117,7 +117,7 @@ internal class SolveQuizFacadeTest(
                 }
             }
         }
-    }풀
+    }
 }) {
 
     companion object {

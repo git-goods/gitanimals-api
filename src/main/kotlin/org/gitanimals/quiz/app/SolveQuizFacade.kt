@@ -3,6 +3,7 @@ package org.gitanimals.quiz.app
 import org.gitanimals.quiz.app.request.CreateSolveQuizRequest
 import org.gitanimals.quiz.app.response.QuizContextResponse
 import org.gitanimals.quiz.domain.approved.QuizService
+import org.gitanimals.quiz.domain.context.QuizSolveContext
 import org.gitanimals.quiz.domain.context.QuizSolveContextService
 import org.gitanimals.quiz.domain.core.Level
 import org.springframework.stereotype.Service
@@ -27,7 +28,7 @@ class SolveQuizFacade(
         return quizSolveContext.id
     }
 
-    fun getQuizById(token: String, id: Long): QuizContextResponse {
+    fun getAndStartSolveQuizContextById(token: String, id: Long): QuizContextResponse {
         val user = identityApi.getUserByToken(token)
 
         val quizSolveContext =
@@ -40,6 +41,11 @@ class SolveQuizFacade(
         val user = identityApi.getUserByToken(token)
 
         quizSolveContextService.solveQuiz(id, user.id.toLong(), answer)
+    }
+
+    fun getQuizById(token: String, id: Long): QuizSolveContext {
+        val userId = identityApi.getUserByToken(token).id.toLong()
+        return quizSolveContextService.getQuizSolveContextByIdAndUserId(id = id, userId = userId)
     }
 
     private companion object {

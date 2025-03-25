@@ -88,7 +88,7 @@
 # 4. Get round result by contextId
 ## Request
 ### HTTP method: `GET`
-### URL: `https://api.gitanimals.org/quizs/context/{contextId}/results/by-round/{round}`
+### URL: `https://api.gitanimals.org/quizs/context/{contextId}/results`
 ### Request header
 - Authorization: `{token}`
 - Locale: `{language}`

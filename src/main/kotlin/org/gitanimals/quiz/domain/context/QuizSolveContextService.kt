@@ -49,12 +49,11 @@ class QuizSolveContextService(
         quizSolveContext.solve(answer)
     }
 
-    private fun getQuizSolveContextByIdAndUserId(
+    fun getQuizSolveContextByIdAndUserId(
         id: Long,
         userId: Long
     ): QuizSolveContext {
-        val quizSolveContext = quizSolveContextRepository.findByIdAndUserId(id, userId)
+        return quizSolveContextRepository.findByIdAndUserId(id, userId)
             ?: throw IllegalArgumentException("Cannot find quizContext by id: \"$id\" and userId: \"$userId\"")
-        return quizSolveContext
     }
 }
