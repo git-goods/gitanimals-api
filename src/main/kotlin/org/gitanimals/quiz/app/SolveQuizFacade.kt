@@ -36,6 +36,12 @@ class SolveQuizFacade(
         return QuizContextResponse.from(quizSolveContext)
     }
 
+    fun answerQuizById(token: String, id: Long, answer: String) {
+        val user = identityApi.getUserByToken(token)
+
+        quizSolveContextService.solveQuiz(id, user.id.toLong(), answer)
+    }
+
     private companion object {
         private val quizLevels =
             listOf(Level.EASY, Level.EASY, Level.MEDIUM, Level.DIFFICULT, Level.DIFFICULT)

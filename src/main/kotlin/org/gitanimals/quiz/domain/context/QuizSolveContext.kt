@@ -38,7 +38,7 @@ class QuizSolveContext(
     val solveStage: SolveStage,
 
     @Column(name = "prize")
-    val prize: Int,
+    private var prize: Int,
 
     @Column(name = "solved_at")
     val solvedAt: LocalDate,
@@ -49,18 +49,45 @@ class QuizSolveContext(
 
     fun getStatus() = status
 
-    fun getCurrentQuiz(): QuizSolveContextQuiz {
-        val currentStage = solveStage.getCurrentStage()
-        return quizSolveContextQuiz[currentStage - 1]
-    }
+    fun getPrize() = prize
 
     fun startSolve() {
         require(status in solveTransferableStatus) {
-            "Cannot start solve cause quiz is not is inProgress $solveTransferableStatus"
+            "Cannot start solve cause quiz is not in progress status : \"$solveTransferableStatus\""
         }
 
         this.status = QuizSolveContextStatus.SOLVING
         this.solveStage.setNextStage()
+    }
+
+    fun solve(answer: String) {
+        require(status == QuizSolveContextStatus.SOLVING) {
+            "Cannot solve quiz cause is not \"SOLVING\" status"
+        }
+
+        val answerTime = instant()
+
+        if (answerTime > solveStage.getCurrentStageTimeout()) {
+            this.status = QuizSolveContextStatus.FAIL
+            return
+        }
+
+        val currentQuiz = getCurrentQuiz()
+        if (currentQuiz.isCorrect(answer).not()) {
+            this.status = QuizSolveContextStatus.FAIL
+            return
+        }
+
+        if (prize == 0) {
+            prize = 2000
+        } else {
+            prize *= 2
+        }
+    }
+
+    fun getCurrentQuiz(): QuizSolveContextQuiz {
+        val currentStage = solveStage.getCurrentStage()
+        return quizSolveContextQuiz[currentStage - 1]
     }
 
     companion object {

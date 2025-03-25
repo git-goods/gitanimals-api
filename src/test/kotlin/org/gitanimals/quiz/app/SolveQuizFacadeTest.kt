@@ -2,6 +2,7 @@ package org.gitanimals.quiz.app
 
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.annotation.DisplayName
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.should
@@ -40,6 +41,7 @@ internal class SolveQuizFacadeTest(
     private val quizRepository: QuizRepository,
     private val quizSolveContextRepository: QuizSolveContextRepository,
     private val quizService: QuizService,
+    private val quizSolveContextService: QuizSolveContextService,
     @MockkBean private val identityApi: IdentityApi,
 ) : DescribeSpec({
 
@@ -75,7 +77,6 @@ internal class SolveQuizFacadeTest(
     describe("getQuizById 메소드는") {
         context("token과 contextId에 해당하는 context의 상태가 NOT_STARTED혹은 SUCCESS라면") {
             val quizContext = quizSolveContextRepository.save(quizSolveContext(userId = 0L))
-
             every { identityApi.getUserByToken(any()) } returns defaultUser
 
             it("SOLVING상태의 QuizContextResponse를 응답한다") {
@@ -90,6 +91,33 @@ internal class SolveQuizFacadeTest(
             }
         }
     }
+
+    describe("answerQuizById 메소드는") {
+        context("token과 contextId에 해당하는 context의 상태가 SOLVING이라면") {
+            val quizContext =
+                quizSolveContextRepository.save(quizSolveContext(userId = defaultUser.id.toLong()))
+            quizSolveContextService.getAndStartSolveQuizContext(quizContext.id, quizContext.userId)
+            every { identityApi.getUserByToken(any()) } returns defaultUser
+
+            it("퀴즈를 푼다") {
+                shouldNotThrowAny {
+                    solveQuizFacade.answerQuizById(token, quizContext.id, "YES")
+                }
+            }
+        }
+
+        context("token과 contextId에 해당하는 context의 상태가 SOLVING이 아니라면") {
+            val quizContext =
+                quizSolveContextRepository.save(quizSolveContext(userId = defaultUser.id.toLong()))
+            every { identityApi.getUserByToken(any()) } returns defaultUser
+
+            it("IllegalArgumentException을 던진다") {
+                shouldThrowExactly<IllegalArgumentException> {
+                    solveQuizFacade.answerQuizById(token, quizContext.id, "YES")
+                }
+            }
+        }
+    }풀
 }) {
 
     companion object {

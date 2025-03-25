@@ -31,6 +31,7 @@ class QuizSolveContextQuiz(
     @JoinColumn(name = "quiz_solve_context_id")
     val quizSolveContext: QuizSolveContext,
 ) : AbstractTime() {
+    fun isCorrect(answer: String): Boolean = expectedAnswer == answer
 
     companion object {
         fun of(

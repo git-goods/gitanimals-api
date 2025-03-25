@@ -46,7 +46,7 @@ data class QuizContextResponse(
                 level = currentQuiz.level,
                 category = currentQuiz.category,
                 problem = currentQuiz.problem,
-                prize = quizSolveContext.prize,
+                prize = quizSolveContext.getPrize(),
                 status = quizSolveContext.getStatus(),
             )
         }
