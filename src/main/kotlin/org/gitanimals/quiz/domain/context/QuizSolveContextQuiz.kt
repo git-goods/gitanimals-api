@@ -1,22 +1,17 @@
-package org.gitanimals.quiz.domain.approved
+package org.gitanimals.quiz.domain.context
 
 import jakarta.persistence.*
-import org.gitanimals.core.AggregateRoot
 import org.gitanimals.core.IdGenerator
 import org.gitanimals.quiz.domain.core.AbstractTime
 import org.gitanimals.quiz.domain.core.Category
 import org.gitanimals.quiz.domain.core.Level
 
 @Entity
-@AggregateRoot
-@Table(name = "quiz")
-class Quiz(
+@Table(name = "quiz_solve_context_quiz")
+class QuizSolveContextQuiz(
     @Id
     @Column(name = "id")
     val id: Long,
-
-    @Column(name = "user_id", nullable = false, unique = false)
-    val userId: Long,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "level", columnDefinition = "VARCHAR(50)", nullable = false)
@@ -31,24 +26,27 @@ class Quiz(
 
     @Column(name = "expected_answer", columnDefinition = "TEXT", nullable = false)
     val expectedAnswer: String,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quiz_solve_context_id")
+    val quizSolveContext: QuizSolveContext,
 ) : AbstractTime() {
 
     companion object {
-
-        fun create(
-            userId: Long,
+        fun of(
             level: Level,
-            problem: String,
             category: Category,
+            problem: String,
             expectedAnswer: String,
-        ): Quiz {
-            return Quiz(
+            quizSolveContext: QuizSolveContext,
+        ): QuizSolveContextQuiz {
+            return QuizSolveContextQuiz(
                 id = IdGenerator.generate(),
-                userId = userId,
                 level = level,
-                problem = problem,
                 category = category,
+                problem = problem,
                 expectedAnswer = expectedAnswer,
+                quizSolveContext = quizSolveContext,
             )
         }
     }

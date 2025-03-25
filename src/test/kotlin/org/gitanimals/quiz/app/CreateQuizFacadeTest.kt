@@ -24,6 +24,8 @@ import org.gitanimals.quiz.domain.not_approved.NotApprovedQuizService
 import org.gitanimals.quiz.domain.prompt.QuizCreatePrompt
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptRepository
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
+import org.gitanimals.quiz.domain.quiz.notApprovedQuiz
+import org.gitanimals.quiz.domain.quiz.quiz
 import org.gitanimals.quiz.infra.HibernateEventListenerConfiguration
 import org.gitanimals.quiz.infra.NewQuizCreatedInsertHibernateEventListener
 import org.gitanimals.quiz.infra.event.NewQuizCreated

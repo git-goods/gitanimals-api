@@ -1,4 +1,4 @@
-package org.gitanimals.quiz.domain
+package org.gitanimals.quiz.domain.quiz
 
 import org.gitanimals.core.IdGenerator
 import org.gitanimals.quiz.domain.approved.Quiz

@@ -3,6 +3,7 @@ package org.gitanimals.quiz.domain.not_approved
 import jakarta.persistence.*
 import org.gitanimals.core.AggregateRoot
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.quiz.domain.core.AbstractTime
 import org.gitanimals.quiz.domain.core.Category
 import org.gitanimals.quiz.domain.core.Level
 
@@ -30,7 +31,7 @@ class NotApprovedQuiz(
 
     @Column(name = "expected_answer", columnDefinition = "TEXT", nullable = false)
     val expectedAnswer: String,
-) {
+) : AbstractTime() {
 
     companion object {
 

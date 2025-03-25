@@ -19,6 +19,13 @@
 - Authorization: `{token}`
 - Locale: `{language}` // 해당 하는 언어의 퀴즈를 응답합니다. (없다면 EN_US default, value는 대소문자 상관없음)
 
+### Request body
+```json
+{
+  "category": "FRONTEND" // FRONTEND OR BACKEND
+}
+```
+
 ## Response
 ```json
 {
