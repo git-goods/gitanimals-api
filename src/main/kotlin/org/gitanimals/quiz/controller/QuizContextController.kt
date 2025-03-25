@@ -3,6 +3,7 @@ package org.gitanimals.quiz.controller
 import org.apache.http.HttpHeaders
 import org.gitanimals.quiz.app.SolveQuizFacade
 import org.gitanimals.quiz.app.request.CreateSolveQuizRequest
+import org.gitanimals.quiz.app.response.QuizContextResponse
 import org.gitanimals.quiz.controller.response.CreateQuizContextResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -21,4 +22,11 @@ class QuizContextController(
         val contextId = solveQuizFacade.createContext(token, createSolveQuizRequest)
         return CreateQuizContextResponse(contextId.toString())
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/quizs/context/{contextId}")
+    fun getQuizByContextId(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
+        @PathVariable("contextId") contextId: Long,
+    ): QuizContextResponse = solveQuizFacade.getQuizById(token, contextId)
 }

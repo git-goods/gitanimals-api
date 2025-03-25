@@ -5,6 +5,7 @@ import org.gitanimals.core.AggregateRoot
 import org.gitanimals.core.IdGenerator
 import org.gitanimals.core.instant
 import org.gitanimals.quiz.domain.approved.Quiz
+import org.gitanimals.quiz.domain.context.QuizSolveContextStatus.Companion.solveTransferableStatus
 import org.gitanimals.quiz.domain.core.AbstractTime
 import org.gitanimals.quiz.domain.core.Category
 import java.time.LocalDate
@@ -30,19 +31,39 @@ class QuizSolveContext(
     @Enumerated(EnumType.STRING)
     val category: Category,
 
-    @OneToMany(mappedBy = "quizSolveContext", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "quizSolveContext", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val quizSolveContextQuiz: MutableList<QuizSolveContextQuiz>,
 
     @Embedded
     val solveStage: SolveStage,
 
+    @Column(name = "prize")
+    val prize: Int,
+
     @Column(name = "solved_at")
     val solvedAt: LocalDate,
+
+    @Column(name = "status")
+    private var status: QuizSolveContextStatus,
 ) : AbstractTime() {
 
-    companion object {
+    fun getStatus() = status
 
-        const val MAX_SOLVE_STAGE = 5
+    fun getCurrentQuiz(): QuizSolveContextQuiz {
+        val currentStage = solveStage.getCurrentStage()
+        return quizSolveContextQuiz[currentStage - 1]
+    }
+
+    fun startSolve() {
+        require(status in solveTransferableStatus) {
+            "Cannot start solve cause quiz is not is inProgress $solveTransferableStatus"
+        }
+
+        this.status = QuizSolveContextStatus.SOLVING
+        this.solveStage.setNextStage()
+    }
+
+    companion object {
 
         fun of(
             userId: Long,
@@ -55,14 +76,16 @@ class QuizSolveContext(
                 category = category,
                 quizSolveContextQuiz = mutableListOf(),
                 solveStage = SolveStage(
-                    maxSolveStage = MAX_SOLVE_STAGE,
+                    maxSolveStage = quizs.size,
                     currentStage = 0,
                     currentStageTimeout = null,
                 ),
+                prize = 0,
                 solvedAt = LocalDate.ofInstant(instant(), ZoneId.of("Asia/Seoul")),
+                status = QuizSolveContextStatus.NOT_STARTED,
             )
 
-            quizSolveContext.quizSolveContextQuiz + quizs.map {
+            quizSolveContext.quizSolveContextQuiz.addAll(quizs.map {
                 QuizSolveContextQuiz.of(
                     level = it.level,
                     category = it.category,
@@ -70,7 +93,7 @@ class QuizSolveContext(
                     expectedAnswer = it.expectedAnswer,
                     quizSolveContext = quizSolveContext,
                 )
-            }
+            })
 
             return quizSolveContext
         }

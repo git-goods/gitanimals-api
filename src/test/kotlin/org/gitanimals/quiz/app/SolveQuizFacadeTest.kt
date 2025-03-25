@@ -4,11 +4,16 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.core.annotation.DisplayName
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import org.gitanimals.quiz.app.request.CreateSolveQuizRequest
 import org.gitanimals.quiz.domain.approved.QuizRepository
 import org.gitanimals.quiz.domain.approved.QuizService
+import org.gitanimals.quiz.domain.context.QuizSolveContextRepository
 import org.gitanimals.quiz.domain.context.QuizSolveContextService
+import org.gitanimals.quiz.domain.context.QuizSolveContextStatus
+import org.gitanimals.quiz.domain.context.quizSolveContext
 import org.gitanimals.quiz.domain.core.Category
 import org.gitanimals.quiz.domain.core.Level
 import org.gitanimals.quiz.domain.quiz.quiz
@@ -33,13 +38,18 @@ import org.springframework.test.context.TestPropertySource
 internal class SolveQuizFacadeTest(
     private val solveQuizFacade: SolveQuizFacade,
     private val quizRepository: QuizRepository,
+    private val quizSolveContextRepository: QuizSolveContextRepository,
     private val quizService: QuizService,
     @MockkBean private val identityApi: IdentityApi,
 ) : DescribeSpec({
 
+    afterAny {
+        quizRepository.deleteAll()
+        quizSolveContextRepository.deleteAll()
+    }
+
     describe("createContext 메소드는") {
         context("token과 category를 입력받으면") {
-            val token = "Bearer some token..."
             val request = CreateSolveQuizRequest(Category.BACKEND)
             quizRepository.saveAll(
                 listOf(
@@ -61,9 +71,30 @@ internal class SolveQuizFacadeTest(
             }
         }
     }
+
+    describe("getQuizById 메소드는") {
+        context("token과 contextId에 해당하는 context의 상태가 NOT_STARTED혹은 SUCCESS라면") {
+            val quizContext = quizSolveContextRepository.save(quizSolveContext(userId = 0L))
+
+            every { identityApi.getUserByToken(any()) } returns defaultUser
+
+            it("SOLVING상태의 QuizContextResponse를 응답한다") {
+                val result = solveQuizFacade.getQuizById(token, quizContext.id)
+
+                result.should {
+                    it.status shouldBe QuizSolveContextStatus.SOLVING
+                    it.round.current shouldBe 1
+                    it.round.total shouldBe 2
+                    it.problem shouldBe "1"
+                }
+            }
+        }
+    }
 }) {
 
     companion object {
+        val token = "Bearer some token..."
+
         private val defaultUser = IdentityApi.UserResponse(
             id = "0",
             username = "devxb",

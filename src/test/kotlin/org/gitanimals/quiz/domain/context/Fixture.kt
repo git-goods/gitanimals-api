@@ -8,8 +8,8 @@ fun quizSolveContext(
     userId: Long = 0L,
     category: Category = Category.BACKEND,
     quizs: List<Quiz> = listOf(
-        quiz(problem = "Sample problem 1"),
-        quiz(problem = "Sample problem 2")
+        quiz(problem = "1"),
+        quiz(problem = "2")
     )
 ): QuizSolveContext = QuizSolveContext.of(
     userId = userId,

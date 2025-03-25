@@ -32,4 +32,14 @@ class QuizSolveContextService(
 
         return quizSolveContextRepository.save(quizSolveContext)
     }
+
+    @Transactional
+    fun getAndStartSolveQuizContext(id: Long, userId: Long): QuizSolveContext {
+        val quizSolveContext = quizSolveContextRepository.findByIdAndUserId(id, userId)
+            ?: throw IllegalArgumentException("Cannot find quizContext by id: \"$id\" and userId: \"$userId\"")
+
+        quizSolveContext.startSolve()
+
+        return quizSolveContext
+    }
 }

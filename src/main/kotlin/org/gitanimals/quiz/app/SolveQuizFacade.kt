@@ -1,6 +1,7 @@
 package org.gitanimals.quiz.app
 
 import org.gitanimals.quiz.app.request.CreateSolveQuizRequest
+import org.gitanimals.quiz.app.response.QuizContextResponse
 import org.gitanimals.quiz.domain.approved.QuizService
 import org.gitanimals.quiz.domain.context.QuizSolveContextService
 import org.gitanimals.quiz.domain.core.Level
@@ -24,6 +25,15 @@ class SolveQuizFacade(
         )
 
         return quizSolveContext.id
+    }
+
+    fun getQuizById(token: String, id: Long): QuizContextResponse {
+        val user = identityApi.getUserByToken(token)
+
+        val quizSolveContext =
+            quizSolveContextService.getAndStartSolveQuizContext(id = id, userId = user.id.toLong())
+
+        return QuizContextResponse.from(quizSolveContext)
     }
 
     private companion object {

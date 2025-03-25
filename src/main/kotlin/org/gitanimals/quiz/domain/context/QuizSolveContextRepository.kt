@@ -1,6 +1,7 @@
 package org.gitanimals.quiz.domain.context
 
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import java.time.LocalDate
 
 interface QuizSolveContextRepository : JpaRepository<QuizSolveContext, Long> {
@@ -8,5 +9,11 @@ interface QuizSolveContextRepository : JpaRepository<QuizSolveContext, Long> {
     fun findQuizSolveContextByUserIdAndSolvedAt(
         userId: Long,
         solvedAt: LocalDate,
+    ): QuizSolveContext?
+
+    @Query("select q from QuizSolveContext q join fetch q.quizSolveContextQuiz where q.id = :id and q.userId = :userId")
+    fun findByIdAndUserId(
+        id: Long,
+        userId: Long,
     ): QuizSolveContext?
 }
