@@ -30,6 +30,8 @@ class SolveStage(
             .plusMillis((10).seconds.inWholeMilliseconds + NETWORK_LATENCY)
     }
 
+    fun isLastStage() = currentStage == maxSolveStage
+
     companion object {
         private const val NETWORK_LATENCY = 500
     }

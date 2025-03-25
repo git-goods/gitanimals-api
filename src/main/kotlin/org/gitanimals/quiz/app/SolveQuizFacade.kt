@@ -48,6 +48,12 @@ class SolveQuizFacade(
         return quizSolveContextService.getQuizSolveContextByIdAndUserId(id = id, userId = userId)
     }
 
+    fun stopQuiz(token: String, id: Long) {
+        val userId = identityApi.getUserByToken(token).id.toLong()
+
+        quizSolveContextService.stopQuizByIdAndUserId(id = id, userId = userId)
+    }
+
     private companion object {
         private val quizLevels =
             listOf(Level.EASY, Level.EASY, Level.MEDIUM, Level.DIFFICULT, Level.DIFFICULT)

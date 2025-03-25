@@ -100,17 +100,10 @@
 }
 ```
 
-# 5. Go or Stop Context by contextId
+# 5. Stop Context by contextId
 ## Request
-### HTTP method: `PATCH`
-### URL: `https://api.gitanimals.org/quizs/context/{contextId}`
+### HTTP method: `POST`
+### URL: `https://api.gitanimals.org/quizs/context/{contextId}/stops`
 ### Request header
 - Authorization: `{token}`
 - Locale: `{language}`
-
-### Request body
-```json
-{
-  "go": true // true, false 
-}
-```

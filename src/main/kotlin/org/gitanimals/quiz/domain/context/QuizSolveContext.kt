@@ -78,6 +78,11 @@ class QuizSolveContext(
             return
         }
 
+        this.status = QuizSolveContextStatus.SUCCESS
+        if (solveStage.isLastStage()) {
+            this.status = QuizSolveContextStatus.DONE
+        }
+
         if (prize == 0) {
             prize = 2000
         } else {
@@ -88,6 +93,14 @@ class QuizSolveContext(
     fun getCurrentQuiz(): QuizSolveContextQuiz {
         val currentStage = solveStage.getCurrentStage()
         return quizSolveContextQuiz[currentStage - 1]
+    }
+
+    fun stopSolve() {
+        check(this.status == QuizSolveContextStatus.SUCCESS) {
+            "Stop quiz is only available in \"SUCCESS\" status."
+        }
+
+        this.status = QuizSolveContextStatus.DONE
     }
 
     companion object {

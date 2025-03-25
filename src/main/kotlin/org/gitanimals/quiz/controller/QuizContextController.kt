@@ -33,6 +33,7 @@ class QuizContextController(
     ): QuizContextResponse = solveQuizFacade.getAndStartSolveQuizContextById(token, contextId)
 
     @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/quizs/context/{contextId}/answers")
     fun answerQuizByContextId(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
@@ -40,10 +41,19 @@ class QuizContextController(
     ) = solveQuizFacade.answerQuizById(token, contextId, answerQuizRequest.answer)
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/quizs/context/{contextId}/results")
     fun getQuizSolveContextStatus(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
     ): QuizSolveContextStatusResponse = QuizSolveContextStatusResponse(
         solveQuizFacade.getQuizById(token = token, id = contextId).getStatus()
     )
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/quizs/context/{contextId}/stops")
+    fun stopQuizByContextId(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
+        @PathVariable("contextId") contextId: Long,
+    ) = solveQuizFacade.stopQuiz(token = token, id = contextId)
+
 }

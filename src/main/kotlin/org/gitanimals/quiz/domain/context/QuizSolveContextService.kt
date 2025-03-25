@@ -49,6 +49,13 @@ class QuizSolveContextService(
         quizSolveContext.solve(answer)
     }
 
+    @Transactional
+    fun stopQuizByIdAndUserId(id: Long, userId: Long) {
+        val quizSolveContext = getQuizSolveContextByIdAndUserId(id, userId)
+
+        quizSolveContext.stopSolve()
+    }
+
     fun getQuizSolveContextByIdAndUserId(
         id: Long,
         userId: Long
