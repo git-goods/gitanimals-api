@@ -2,6 +2,7 @@ package org.gitanimals.quiz.app
 
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.nondeterministic.eventually
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.annotation.DisplayName
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -14,9 +15,17 @@ import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.domain.*
+import org.gitanimals.quiz.domain.approved.QuizRepository
+import org.gitanimals.quiz.domain.approved.QuizService
+import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Level
+import org.gitanimals.quiz.domain.not_approved.NotApprovedQuizRepository
+import org.gitanimals.quiz.domain.not_approved.NotApprovedQuizService
 import org.gitanimals.quiz.domain.prompt.QuizCreatePrompt
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptRepository
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
+import org.gitanimals.quiz.domain.quiz.notApprovedQuiz
+import org.gitanimals.quiz.domain.quiz.quiz
 import org.gitanimals.quiz.infra.HibernateEventListenerConfiguration
 import org.gitanimals.quiz.infra.NewQuizCreatedInsertHibernateEventListener
 import org.gitanimals.quiz.infra.event.NewQuizCreated
@@ -102,6 +111,31 @@ internal class CreateQuizFacadeTest(
                     domainEventHolder.eventsShouldBe(NotApprovedQuizCreated::class, 1)
                 }
                 notApprovedQuizRepository.findAll().size shouldBe 1
+            }
+        }
+
+        context("승락되지 않은 퀴즈가 3개 이상인데, 다음 요청이 승락되지 않으면") {
+            val quiz = quizRepository.save(quiz())
+            every { textSimilarityChecker.getSimilarity(any()) } returns SimilarityResponse(
+                listOf(quiz.id)
+            )
+            notApprovedQuizRepository.saveAll(
+                listOf(
+                    notApprovedQuiz(id = 1, userId = defaultUser.id.toLong()),
+                    notApprovedQuiz(id = 2, userId = defaultUser.id.toLong()),
+                    notApprovedQuiz(id = 3, userId = defaultUser.id.toLong()),
+                )
+            )
+
+            it("IllegalArgumentException을 던진다.") {
+                val result = shouldThrowExactly<IllegalArgumentException> {
+                    createQuizFacade.createQuiz(
+                        token,
+                        createQuizRequest
+                    )
+                }
+
+                result.message shouldBe "Cannot create quiz cause already have 3 not approved quizs."
             }
         }
     }

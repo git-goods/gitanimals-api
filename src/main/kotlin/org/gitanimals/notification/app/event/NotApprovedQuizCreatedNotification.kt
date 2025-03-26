@@ -1,6 +1,6 @@
 package org.gitanimals.notification.app.event
 
-import org.gitanimals.quiz.domain.Category
+import org.gitanimals.quiz.domain.core.Category
 
 data class NotApprovedQuizCreatedNotification(
     val id: Long,

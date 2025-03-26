@@ -7,8 +7,8 @@ import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.app.response.CreateQuizResponse
-import org.gitanimals.quiz.domain.NotApprovedQuizService
-import org.gitanimals.quiz.domain.QuizService
+import org.gitanimals.quiz.domain.not_approved.NotApprovedQuizService
+import org.gitanimals.quiz.domain.approved.QuizService
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
@@ -39,6 +39,19 @@ class CreateQuizFacade(
                 it.printStackTrace()
                 throw it
             }
+
+        val quizCreatePrompt = quizCreatePromptService.getFirstPrompt()
+        val isDevelopmentQuiz = runCatching {
+            aiApi.isDevelopmentQuiz(quizCreatePrompt.getRequestTextWithPrompt(text = createQuizRequest.problem))
+        }.getOrElse {
+            logger.error("Validation fail on isDevelopmentQuiz cause ${it.message}", it)
+            throw it
+        }
+
+        require(isDevelopmentQuiz) {
+            logger.warn("Only development quiz allow request: $createQuizRequest")
+            "Only development quiz allow request: $createQuizRequest"
+        }
 
         val similarityResponses = textSimilarityChecker.getSimilarity(createQuizRequest.problem)
         if (similarityResponses.similarityQuizIds.isNotEmpty()) {
@@ -71,19 +84,6 @@ class CreateQuizFacade(
                 point = CREATE_QUIZ_PRICE,
                 message = CREATE_QUIZ_SIMILARITY_CHECK_MESSAGE
             )
-        }
-
-        val quizCreatePrompt = quizCreatePromptService.getFirstPrompt()
-        val isDevelopmentQuiz = runCatching {
-            aiApi.isDevelopmentQuiz(quizCreatePrompt.getRequestTextWithPrompt(text = createQuizRequest.problem))
-        }.getOrElse {
-            logger.error("Validation fail on isDevelopmentQuiz cause ${it.message}", it)
-            throw it
-        }
-
-        require(isDevelopmentQuiz) {
-            logger.warn("Only development quiz allow request: $createQuizRequest")
-            "Only development quiz allow request: $createQuizRequest"
         }
 
         return createQuizOrchestrator.sagaSync(

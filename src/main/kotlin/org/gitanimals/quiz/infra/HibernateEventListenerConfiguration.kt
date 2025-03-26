@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration
 class HibernateEventListenerConfiguration(
     private val entityManagerFactory: EntityManagerFactory,
     private val newQuizCreatedInsertEventListener: NewQuizCreatedInsertHibernateEventListener,
+    private val quizSolveContextDoneHibernateEventListener: QuizSolveContextDoneHibernateEventListener,
 ) {
 
     @PostConstruct
@@ -22,6 +23,10 @@ class HibernateEventListenerConfiguration(
         eventListenerRegistry.appendListeners(
             EventType.POST_COMMIT_INSERT,
             newQuizCreatedInsertEventListener,
+        )
+        eventListenerRegistry.appendListeners(
+            EventType.POST_COMMIT_UPDATE,
+            quizSolveContextDoneHibernateEventListener,
         )
     }
 }

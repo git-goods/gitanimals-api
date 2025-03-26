@@ -1,4 +1,4 @@
-package org.gitanimals.quiz.domain
+package org.gitanimals.quiz.domain.core
 
 enum class Level {
     EASY,

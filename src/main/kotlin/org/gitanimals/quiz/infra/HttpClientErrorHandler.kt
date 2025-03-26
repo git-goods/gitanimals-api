@@ -1,9 +1,11 @@
 package org.gitanimals.quiz.infra
 
 import org.gitanimals.core.AuthorizationException
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.web.client.ResponseErrorHandler
+import java.net.URI
 
 
 class HttpClientErrorHandler : ResponseErrorHandler {
@@ -12,7 +14,7 @@ class HttpClientErrorHandler : ResponseErrorHandler {
         return response.statusCode.isError
     }
 
-    override fun handleError(response: ClientHttpResponse) {
+    override fun handleError(url: URI, method: HttpMethod, response: ClientHttpResponse) {
         val body = response.body.bufferedReader().use { it.readText() }
         when {
             response.statusCode.isSameCodeAs(HttpStatus.UNAUTHORIZED) ->

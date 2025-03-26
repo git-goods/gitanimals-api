@@ -1,11 +1,16 @@
-package org.gitanimals.quiz.domain
+package org.gitanimals.quiz.domain.approved
 
 import jakarta.persistence.*
+import org.gitanimals.core.AggregateRoot
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.quiz.domain.core.AbstractTime
+import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Level
 
 @Entity
-@Table(name = "not_approval_quiz")
-class NotApprovedQuiz(
+@AggregateRoot
+@Table(name = "quiz")
+class Quiz(
     @Id
     @Column(name = "id")
     val id: Long,
@@ -26,7 +31,7 @@ class NotApprovedQuiz(
 
     @Column(name = "expected_answer", columnDefinition = "TEXT", nullable = false)
     val expectedAnswer: String,
-) {
+) : AbstractTime() {
 
     companion object {
 
@@ -36,8 +41,8 @@ class NotApprovedQuiz(
             problem: String,
             category: Category,
             expectedAnswer: String,
-        ): NotApprovedQuiz {
-            return NotApprovedQuiz(
+        ): Quiz {
+            return Quiz(
                 id = IdGenerator.generate(),
                 userId = userId,
                 level = level,
