@@ -5,6 +5,7 @@ import org.gitanimals.quiz.app.response.QuizContextResponse
 import org.gitanimals.quiz.domain.approved.QuizService
 import org.gitanimals.quiz.domain.context.QuizSolveContext
 import org.gitanimals.quiz.domain.context.QuizSolveContextService
+import org.gitanimals.quiz.domain.core.Language
 import org.gitanimals.quiz.domain.core.Level
 import org.springframework.stereotype.Service
 
@@ -15,8 +16,17 @@ class SolveQuizFacade(
     private val quizSolveContextService: QuizSolveContextService,
 ) {
 
-    fun createContext(token: String, request: CreateSolveQuizRequest): Long {
-        val pickedQuizs = quizService.findAllQuizByLevel(quizLevels)
+    fun createContext(token: String, locale: String, request: CreateSolveQuizRequest): Long {
+        val language = when (locale.uppercase()) {
+            "EN_US" -> Language.ENGLISH
+            else -> Language.KOREA
+        }
+        val pickedQuizs = quizService.findAllQuizByLevelAndCategoryAndLanguage(
+            levels = quizLevels,
+            language = language,
+            category = request.category,
+        )
+
         val user = identityApi.getUserByToken(token)
 
         val quizSolveContext = quizSolveContextService.createQuizSolveContext(
