@@ -38,6 +38,7 @@ class NotApprovedQuizCreatedMessageListener(
                     category: ${notApprovedQuizCreatedNotification.category}
                     problem: ${notApprovedQuizCreatedNotification.problem}
                     expectedAnswer: ${notApprovedQuizCreatedNotification.expectedAnswer}
+                    language: ${notApprovedQuizCreatedNotification.language}
                     ---유사하다고 판단된 퀴즈들 :point_down:---
                     ${notApprovedQuizCreatedNotification.similarityQuizTexts.joinToString("\n---\n")}
                 """.trimIndent()

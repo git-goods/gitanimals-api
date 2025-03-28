@@ -5,6 +5,7 @@ import org.gitanimals.core.filter.MDCFilter
 import org.gitanimals.core.redis.AsyncRedisPubSubEvent
 import org.gitanimals.core.redis.RedisPubSubChannel
 import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Language
 import org.gitanimals.quiz.domain.not_approved.NotApprovedQuiz
 import org.slf4j.MDC
 
@@ -16,6 +17,7 @@ data class NotApprovedQuizCreated(
     val category: Category,
     val expectedAnswer: String,
     val similarityQuizTexts: List<String>,
+    val language: Language,
 ) : AsyncRedisPubSubEvent(
     channel = RedisPubSubChannel.NOT_APPROVED_QUIZ_CREATED,
     traceId = runCatching { MDC.get(MDCFilter.TRACE_ID) }
@@ -32,6 +34,7 @@ data class NotApprovedQuizCreated(
                 category = entity.category,
                 expectedAnswer = entity.expectedAnswer,
                 similarityQuizTexts = similarityQuizTexts,
+                language = entity.language,
             )
         }
     }
