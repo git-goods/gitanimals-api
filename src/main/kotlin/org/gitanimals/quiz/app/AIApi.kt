@@ -13,7 +13,7 @@ class AIApi(
     fun isDevelopmentQuiz(text: String): Boolean {
         val request = OpenAI.Request(messages = listOf(Message(role = "user", content = text)))
         val aiResponseContent = openAI.invoke(request).choices.first().message.content
-        return when (aiResponseContent.trim()) {
+        return when (aiResponseContent.trim().lowercase()) {
             "true" -> true
             "false" -> false
             else -> error("Cannot parsing content cause content is not \"true\" or \"false\". content: \"${aiResponseContent.trim()}\"")
