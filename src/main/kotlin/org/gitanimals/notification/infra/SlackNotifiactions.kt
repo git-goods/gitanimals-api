@@ -10,6 +10,7 @@ import com.slack.api.model.block.composition.MarkdownTextObject
 import com.slack.api.model.block.composition.PlainTextObject
 import com.slack.api.model.block.element.ButtonElement
 import org.gitanimals.notification.domain.Notification
+import org.gitanimals.notification.domain.Notification.ActionRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
@@ -33,42 +34,29 @@ sealed class SlackNotification(
 
     override fun notifyWithActions(
         message: String,
-        whenApporvedButtonClicked: Map<String, *>,
-        whenNotApprovedButtonClicked: Map<String, *>,
+        actions: List<ActionRequest>,
     ) {
-        val whenNotApprovedButtonClicked =
-            objectMapper.writeValueAsString(whenNotApprovedButtonClicked)
-
-        val whenApprovedButtonClicked = objectMapper.writeValueAsString(whenApporvedButtonClicked)
-
-        val actions: List<LayoutBlock> = listOf(
+        val layoutAction: List<LayoutBlock> = listOf(
             SectionBlock.builder()
                 .text(MarkdownTextObject.builder().text(message).build())
                 .build(),
 
             ActionsBlock.builder()
                 .elements(
-                    listOf(
+                    actions.map {
                         ButtonElement.builder()
-                            .text(PlainTextObject.builder().text("Approve!").emoji(true).build())
-                            .style("primary")
-                            .actionId("approve_action")
-                            .value(whenApprovedButtonClicked)
-                            .build(),
-                        ButtonElement.builder()
-                            .text(PlainTextObject.builder().text("Deny!").emoji(true).build())
-                            .style("danger")
-                            .actionId("delete_action")
-                            .value(whenNotApprovedButtonClicked)
+                            .text(PlainTextObject.builder().text(it.name).emoji(true).build())
+                            .style(it.style)
+                            .actionId(it.id)
+                            .value(objectMapper.writeValueAsString(it.interaction))
                             .build()
-                    )
-                )
-                .build()
+                    }
+                ).build()
         )
 
         val request = ChatPostMessageRequest.builder()
             .channel(channel)
-            .blocks(actions)
+            .blocks(layoutAction)
             .text(message)
             .build()
 

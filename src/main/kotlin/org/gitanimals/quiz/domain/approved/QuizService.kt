@@ -114,6 +114,10 @@ class QuizService(
         return quizCountCache
     }
 
+    fun deleteById(quizId: Long) {
+        quizRepository.deleteById(quizId)
+    }
+
     companion object {
         private const val EVERY_1_HOURS = "0 0 * * * *"
     }

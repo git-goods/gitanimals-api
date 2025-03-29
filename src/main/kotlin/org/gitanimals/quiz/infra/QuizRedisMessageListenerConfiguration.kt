@@ -11,6 +11,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer
 class QuizRedisMessageListenerConfiguration(
     private val redisConnectionFactory: RedisConnectionFactory,
     private val notApprovedQuizSlackInteractedMessageListener: NotApprovedQuizSlackInteractedMessageListener,
+    private val quizDeleteSlackInteractedMessageListener: QuizDeleteSlackInteractedMessageListener,
 ) {
 
     @Bean
@@ -19,6 +20,10 @@ class QuizRedisMessageListenerConfiguration(
             this.connectionFactory = redisConnectionFactory
             this.addMessageListener(
                 notApprovedQuizSlackInteractedMessageListener,
+                ChannelTopic(RedisPubSubChannel.SLACK_INTERACTED),
+            )
+            this.addMessageListener(
+                quizDeleteSlackInteractedMessageListener,
                 ChannelTopic(RedisPubSubChannel.SLACK_INTERACTED),
             )
         }
