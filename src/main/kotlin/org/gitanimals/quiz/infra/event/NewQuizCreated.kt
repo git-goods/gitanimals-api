@@ -6,6 +6,7 @@ import org.gitanimals.core.redis.AsyncRedisPubSubEvent
 import org.gitanimals.core.redis.RedisPubSubChannel
 import org.gitanimals.quiz.domain.core.Category
 import org.gitanimals.quiz.domain.approved.Quiz
+import org.gitanimals.quiz.domain.core.Language
 import org.slf4j.MDC
 
 data class NewQuizCreated(
@@ -15,6 +16,7 @@ data class NewQuizCreated(
     val level: String,
     val category: Category,
     val expectedAnswer: String,
+    val language: Language,
 ) : AsyncRedisPubSubEvent(
     channel = RedisPubSubChannel.NEW_QUIZ_CREATED,
     traceId = runCatching { MDC.get(TRACE_ID) }
@@ -30,6 +32,7 @@ data class NewQuizCreated(
                 level = entity.level.name,
                 category = entity.category,
                 expectedAnswer = entity.expectedAnswer,
+                language = entity.language,
             )
         }
     }

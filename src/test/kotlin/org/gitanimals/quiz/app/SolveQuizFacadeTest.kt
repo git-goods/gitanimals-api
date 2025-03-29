@@ -68,7 +68,7 @@ internal class SolveQuizFacadeTest(
 
             it("새로운 quizContext를 생성한다") {
                 shouldNotThrowAny {
-                    solveQuizFacade.createContext(token, request)
+                    solveQuizFacade.createContext(token,"KR" , request)
                 }
             }
         }

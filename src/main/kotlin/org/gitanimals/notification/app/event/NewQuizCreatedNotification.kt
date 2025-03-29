@@ -8,4 +8,5 @@ data class NewQuizCreatedNotification(
     val category: String,
     val expectedAnswer: String,
     val traceId: String,
+    val language: String,
 )

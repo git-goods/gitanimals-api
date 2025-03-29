@@ -20,8 +20,9 @@ class QuizContextController(
     fun createQuizContext(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestBody createSolveQuizRequest: CreateSolveQuizRequest,
+        @RequestHeader("Locale") locale: String,
     ): CreateQuizContextResponse {
-        val contextId = solveQuizFacade.createContext(token, createSolveQuizRequest)
+        val contextId = solveQuizFacade.createContext(token, locale, createSolveQuizRequest)
         return CreateQuizContextResponse(contextId.toString())
     }
 

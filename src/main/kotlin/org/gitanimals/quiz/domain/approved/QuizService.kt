@@ -1,6 +1,7 @@
 package org.gitanimals.quiz.domain.approved
 
 import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Language
 import org.gitanimals.quiz.domain.core.Level
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
@@ -12,7 +13,7 @@ class QuizService(
     private val quizRepository: QuizRepository,
 ) {
 
-    private var quizIdsAssociatedByLevelCache: Map<Level, List<Long>> = getQuizIdsAssociatedLevel()
+    private var quizIdsAssociatedByLevelCache: Map<Level, List<Quiz>> = getQuizIdsAssociatedLevel()
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
     fun createNewQuiz(
@@ -36,34 +37,52 @@ class QuizService(
     fun findAllByIds(similarityQuizIds: List<Long>): List<Quiz> =
         quizRepository.findAllById(similarityQuizIds)
 
-    fun findAllQuizByLevel(levels: List<Level>): List<Quiz> {
-        val allQuizs: Map<Level, MutableList<Long>> = this.quizIdsAssociatedByLevelCache
+    fun findAllQuizByLevelAndCategoryAndLanguage(
+        levels: List<Level>,
+        category: Category,
+        language: Language,
+    ): List<Quiz> {
+        val allQuizs: Map<Level, MutableList<Quiz>> = this.quizIdsAssociatedByLevelCache
             .mapValues { it.value.toMutableList() }
 
-        checkQuizPickable(levels, allQuizs)
+        checkAndCalibratePickableQuiz(
+            levels = levels,
+            category = category,
+            language = language,
+            allQuizs = allQuizs,
+        )
 
         return runCatching {
-            val quizIds = levels.map {
-                val quizId = quizIdsAssociatedByLevelCache[it]?.random()
-                allQuizs[it]?.remove(quizId)
-                quizId
+            levels.map {
+                val quiz = quizIdsAssociatedByLevelCache[it]?.random()
+                    ?: throw IllegalStateException("Cannot pick quiz cause list is empty")
+                allQuizs[it]?.remove(quiz)
+                quiz
             }
-
-            quizRepository.findAllById(quizIds)
         }.getOrElse {
             logger.error("Cannot call findAllQuizByLevel. levels: $levels", it)
             throw it
         }
     }
 
-    private fun checkQuizPickable(levels: List<Level>, allQuizs: Map<Level, MutableList<Long>>) {
+    private fun checkAndCalibratePickableQuiz(
+        levels: List<Level>,
+        category: Category,
+        language: Language,
+        allQuizs: Map<Level, MutableList<Quiz>>,
+    ) {
         levels.forEach { level ->
-            val isPickable = allQuizs[level]?.let { quizIds ->
-                quizIds.size >= levels.count { it == level }
-            } ?: false
+            allQuizs[level]?.removeIf { it.category != category || it.language != language }
+
+            val isPickable = allQuizs[level]
+                ?.filter { it.category == category && it.language == language }
+                ?.let { quizs ->
+                    quizs.size >= levels.count { it == level }
+                } ?: false
 
             check(isPickable) {
-                val message = "Fail to checkQuizPickable cause level: \"$level\" pickable size is smaller than request level size: \"${levels.count { it == level }}\""
+                val message =
+                    "Fail to checkQuizPickable cause level: \"$level\" pickable size is smaller than request level size: \"${levels.count { it == level }}\""
                 logger.warn(message)
                 message
             }
@@ -75,19 +94,19 @@ class QuizService(
         this.quizIdsAssociatedByLevelCache = getQuizIdsAssociatedLevel()
     }
 
-    private fun getQuizIdsAssociatedLevel(): Map<Level, List<Long>> {
-        val quizCountCache: MutableMap<Level, MutableList<Long>> =
-            Level.entries.associateWith { mutableListOf<Long>() }.toMutableMap()
+    private fun getQuizIdsAssociatedLevel(): Map<Level, List<Quiz>> {
+        val quizCountCache: MutableMap<Level, MutableList<Quiz>> =
+            Level.entries.associateWith { mutableListOf<Quiz>() }.toMutableMap()
 
         var currentPage = 0
         val pageSize = 100
         var quizs = quizRepository.findAll(PageRequest.of(currentPage, pageSize))
-        quizs.forEach { quizCountCache[it.level]?.add(it.id) }
+        quizs.forEach { quizCountCache[it.level]?.add(it) }
 
         while (quizs.hasNext()) {
             currentPage += 1
             quizs = quizRepository.findAll(PageRequest.of(currentPage, pageSize))
-            quizs.forEach { quizCountCache[it.level]?.add(it.id) }
+            quizs.forEach { quizCountCache[it.level]?.add(it) }
         }
 
         return quizCountCache

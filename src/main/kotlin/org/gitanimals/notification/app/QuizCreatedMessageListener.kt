@@ -36,6 +36,7 @@ class QuizCreatedMessageListener(
                     category: ${newQuizCreatedNotification.category}
                     problem: ${newQuizCreatedNotification.problem}
                     expectedAnswer: ${newQuizCreatedNotification.expectedAnswer}
+                    language: ${newQuizCreatedNotification.language}
                 """.trimIndent()
             )
         }.onFailure {
