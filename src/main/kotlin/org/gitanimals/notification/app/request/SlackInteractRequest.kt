@@ -19,8 +19,6 @@ data class SlackInteractRequest(
         val type: String,
         @JsonProperty("message_ts")
         val messageTs: String,
-        @JsonProperty("attachment_id")
-        val attachmentId: String,
         @JsonProperty("channel_id")
         val channelId: String,
     )
