@@ -34,6 +34,8 @@ class QuizService(
         )
     }
 
+    fun createNewQuiz(quiz: Quiz): Quiz = quizRepository.save(quiz)
+
     fun findAllByIds(similarityQuizIds: List<Long>): List<Quiz> =
         quizRepository.findAllById(similarityQuizIds)
 

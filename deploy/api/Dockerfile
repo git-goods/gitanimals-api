@@ -19,6 +19,7 @@ ARG TOKENIZER_API_KEY
 ARG ELASTIC_SEARCH_URIS
 ARG ELASTIC_SEARCH_USER_NAME
 ARG ELASTIC_SEARCH_PASSWORD
+ARG QUIZ_APPROVE_TOKEN
 
 ARG JAR_FILE=./*.jar
 COPY ${JAR_FILE} gitanimals-api.jar
@@ -41,7 +42,8 @@ ENV db_url=${DB_URL} \
   tokenizer_api_key=${TOKENIZER_API_KEY} \
   elastic_search_uris=${ELASTIC_SEARCH_URIS} \
   elastic_search_user_name=${ELASTIC_SEARCH_USER_NAME} \
-  elastic_search_password=${ELASTIC_SEARCH_PASSWORD}
+  elastic_search_password=${ELASTIC_SEARCH_PASSWORD} \
+  quiz_approve_token=${QUIZ_APPROVE_TOKEN}
 
 ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --spring.datasource.url=${db_url} \
@@ -62,4 +64,5 @@ ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --tokenizer.api.key=${tokenizer_api_key} \
   --spring.elasticsearch.uris=${elastic_search_uris} \
   --spring.elasticsearch.username=${elastic_search_user_name} \
-  --spring.elasticsearch.password=${elastic_search_password}
+  --spring.elasticsearch.password=${elastic_search_password} \
+  --quiz.approve.token=${quiz_approve_token}

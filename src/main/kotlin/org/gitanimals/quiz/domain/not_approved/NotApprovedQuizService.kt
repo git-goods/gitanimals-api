@@ -24,7 +24,8 @@ class NotApprovedQuizService(
         val notApprovedQuizs = notApprovedQuizRepository.findAllByUserId(userId)
 
         require(notApprovedQuizs.size < 3) {
-            val message = "Cannot create quiz cause already have ${notApprovedQuizs.size} not approved quizs."
+            val message =
+                "Cannot create quiz cause already have ${notApprovedQuizs.size} not approved quizs."
             logger.info(message)
             message
         }
@@ -39,4 +40,10 @@ class NotApprovedQuizService(
             )
         )
     }
+
+    fun getById(notApprovedQuizId: Long): NotApprovedQuiz =
+        notApprovedQuizRepository.getReferenceById(notApprovedQuizId)
+
+    fun denyQuizById(notApprovedQuizId: Long) =
+        notApprovedQuizRepository.deleteById(notApprovedQuizId)
 }
