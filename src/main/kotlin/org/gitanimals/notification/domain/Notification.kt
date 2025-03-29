@@ -8,9 +8,15 @@ interface Notification {
 
     fun notifyWithActions(
         message: String,
-        whenApprovedButtonClicked: Map<String, *>,
-        whenNotApprovedButtonClicked: Map<String, *>,
+        actions: List<ActionRequest>,
     )
 
     fun replyInThread(message: String, threadTs: String)
+
+    data class ActionRequest(
+        val id: String,
+        val name: String,
+        val style: String,
+        val interaction: Map<String, *>
+    )
 }

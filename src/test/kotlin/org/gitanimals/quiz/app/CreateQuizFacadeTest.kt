@@ -26,8 +26,8 @@ import org.gitanimals.quiz.domain.prompt.QuizCreatePromptRepository
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
 import org.gitanimals.quiz.domain.quiz.notApprovedQuiz
 import org.gitanimals.quiz.domain.quiz.quiz
-import org.gitanimals.quiz.infra.HibernateEventListenerConfiguration
-import org.gitanimals.quiz.infra.NewQuizCreatedInsertHibernateEventListener
+import org.gitanimals.quiz.infra.hibernate.HibernateEventListenerConfiguration
+import org.gitanimals.quiz.infra.hibernate.NewQuizCreatedInsertHibernateEventListener
 import org.gitanimals.quiz.infra.event.NewQuizCreated
 import org.rooftop.netx.meta.EnableSaga
 import org.slf4j.MDC

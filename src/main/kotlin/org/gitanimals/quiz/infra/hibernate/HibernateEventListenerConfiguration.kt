@@ -1,4 +1,4 @@
-package org.gitanimals.quiz.infra
+package org.gitanimals.quiz.infra.hibernate
 
 import jakarta.annotation.PostConstruct
 import jakarta.persistence.EntityManagerFactory
@@ -12,6 +12,7 @@ class HibernateEventListenerConfiguration(
     private val entityManagerFactory: EntityManagerFactory,
     private val newQuizCreatedInsertEventListener: NewQuizCreatedInsertHibernateEventListener,
     private val quizSolveContextDoneHibernateEventListener: QuizSolveContextDoneHibernateEventListener,
+    private val quizDeletedHibernateEventListener: QuizDeletedHibernateEventListener,
 ) {
 
     @PostConstruct
@@ -20,6 +21,7 @@ class HibernateEventListenerConfiguration(
 
         val eventListenerRegistry =
             sessionFactory.serviceRegistry.getService(EventListenerRegistry::class.java)!!
+
         eventListenerRegistry.appendListeners(
             EventType.POST_COMMIT_INSERT,
             newQuizCreatedInsertEventListener,
@@ -27,6 +29,10 @@ class HibernateEventListenerConfiguration(
         eventListenerRegistry.appendListeners(
             EventType.POST_COMMIT_UPDATE,
             quizSolveContextDoneHibernateEventListener,
+        )
+        eventListenerRegistry.appendListeners(
+            EventType.POST_COMMIT_DELETE,
+            quizDeletedHibernateEventListener,
         )
     }
 }

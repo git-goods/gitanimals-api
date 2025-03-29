@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.gitanimals.core.redis.TraceableMessageListener
 import org.gitanimals.notification.app.event.NotApprovedQuizCreatedNotification
 import org.gitanimals.notification.domain.Notification
+import org.gitanimals.notification.domain.Notification.ActionRequest
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -58,8 +59,20 @@ class NotApprovedQuizCreatedMessageListener(
                     ---유사하다고 판단된 퀴즈들 :point_down:---
                     ${notApprovedQuizCreatedNotification.similarityQuizTexts.joinToString("\n---\n")}
                 """.trimIndent(),
-                whenApprovedButtonClicked = payloadWhenApprovedButtonClicked,
-                whenNotApprovedButtonClicked = payloadWhenNotApprovedButtonClicked,
+                actions = listOf(
+                    ActionRequest(
+                        id = "approve_action",
+                        style = "primray",
+                        name = "Approve",
+                        interaction = payloadWhenApprovedButtonClicked,
+                    ),
+                    ActionRequest(
+                        id = "delete_action",
+                        style = "danger",
+                        name = "Deny",
+                        interaction = payloadWhenNotApprovedButtonClicked,
+                    )
+                )
             )
         }.onFailure {
             logger.error("Fail to publish new quiz created event.", it)
