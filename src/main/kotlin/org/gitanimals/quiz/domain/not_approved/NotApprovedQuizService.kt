@@ -44,6 +44,6 @@ class NotApprovedQuizService(
     fun getById(notApprovedQuizId: Long): NotApprovedQuiz =
         notApprovedQuizRepository.getReferenceById(notApprovedQuizId)
 
-    fun denyQuizById(notApprovedQuizId: Long) =
+    fun deleteQuizById(notApprovedQuizId: Long) =
         notApprovedQuizRepository.deleteById(notApprovedQuizId)
 }

@@ -26,6 +26,13 @@ class ApproveQuizFacade(
 
         val quiz = notApprovedQuiz.toQuiz()
 
-        quizService.createNewQuiz(quiz)
+        runCatching {
+            quizService.createNewQuiz(quiz)
+        }.onSuccess {
+            notApprovedQuizService.deleteQuizById(notApprovedQuizId)
+        }.getOrElse {
+            logger.error("Cannot approve quiz. cause $it", it)
+            throw it
+        }
     }
 }
