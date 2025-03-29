@@ -3,6 +3,7 @@ package org.gitanimals.quiz.domain.not_approved
 import jakarta.persistence.*
 import org.gitanimals.core.AggregateRoot
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.quiz.domain.approved.Quiz
 import org.gitanimals.quiz.domain.core.AbstractTime
 import org.gitanimals.quiz.domain.core.Category
 import org.gitanimals.quiz.domain.core.Language
@@ -37,6 +38,16 @@ class NotApprovedQuiz(
     @Column(name = "language", columnDefinition = "TEXT DEFAULT 'KOREA'", nullable = true)
     val language: Language,
 ) : AbstractTime() {
+
+    fun toQuiz(): Quiz {
+        return Quiz.create(
+            userId = userId,
+            level = level,
+            problem = problem,
+            category = category,
+            expectedAnswer = expectedAnswer,
+        )
+    }
 
     companion object {
 
