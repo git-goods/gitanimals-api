@@ -5,6 +5,8 @@ import org.gitanimals.core.redis.TraceableMessageListener
 import org.gitanimals.notification.app.event.NotApprovedQuizCreatedNotification
 import org.gitanimals.notification.domain.Notification
 import org.gitanimals.notification.domain.Notification.ActionRequest
+import org.gitanimals.notification.domain.Notification.ActionRequest.Style.DANGER
+import org.gitanimals.notification.domain.Notification.ActionRequest.Style.PRIMARY
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -63,13 +65,13 @@ class NotApprovedQuizCreatedMessageListener(
                 actions = listOf(
                     ActionRequest(
                         id = "approve_action",
-                        style = "primray",
+                        style = PRIMARY,
                         name = "Approve",
                         interaction = payloadWhenApprovedButtonClicked,
                     ),
                     ActionRequest(
                         id = "delete_action",
-                        style = "danger",
+                        style = DANGER,
                         name = "Deny",
                         interaction = payloadWhenNotApprovedButtonClicked,
                     )

@@ -5,6 +5,7 @@ import org.gitanimals.core.redis.TraceableMessageListener
 import org.gitanimals.notification.app.event.NewQuizCreatedNotification
 import org.gitanimals.notification.domain.Notification
 import org.gitanimals.notification.domain.Notification.ActionRequest
+import org.gitanimals.notification.domain.Notification.ActionRequest.Style.DANGER
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -45,7 +46,7 @@ class QuizCreatedMessageListener(
                     ActionRequest(
                         id = "delete_action",
                         name = "Delete",
-                        style = "danger",
+                        style = DANGER,
                         interaction = mapOf(
                             "clicked" to "DELETE",
                             "sourceKey" to "DELETE_QUIZ",
