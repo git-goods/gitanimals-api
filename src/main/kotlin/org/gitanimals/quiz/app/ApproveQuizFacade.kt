@@ -30,6 +30,7 @@ class ApproveQuizFacade(
             quizService.createNewQuiz(quiz)
         }.onSuccess {
             notApprovedQuizService.deleteQuizById(notApprovedQuizId)
+            quizService.updateQuizCountCacheScheduled()
         }.getOrElse {
             logger.error("Cannot approve quiz. cause $it", it)
             throw it
