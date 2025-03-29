@@ -142,7 +142,7 @@ class CreateQuizFacade(
     }
 
     companion object {
-        private const val CREATE_QUIZ_PRICE = 5_000L
+        const val CREATE_QUIZ_PRICE = 5_000L
         private const val CREATE_QUIZ_SIMILARITY_CHECK_MESSAGE =
             "Your quiz has been successfully created, but a similar quiz has been found and is under review. The awarded points may be revoked."
         private const val CREATE_QUIZ_SUCCESS_MESSAGE = "Success to create quiz."
