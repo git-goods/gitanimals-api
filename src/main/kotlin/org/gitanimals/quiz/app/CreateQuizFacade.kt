@@ -133,6 +133,8 @@ class CreateQuizFacade(
                         level = request.level,
                     )
 
+                    quizService.updateQuizCountCacheScheduled()
+
                     CreateQuizResponse.success(
                         point = CREATE_QUIZ_PRICE,
                         message = CREATE_QUIZ_SUCCESS_MESSAGE
