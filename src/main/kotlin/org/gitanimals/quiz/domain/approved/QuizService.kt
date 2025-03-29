@@ -116,6 +116,7 @@ class QuizService(
 
     fun deleteById(quizId: Long) {
         quizRepository.deleteById(quizId)
+        updateQuizCountCacheScheduled()
     }
 
     companion object {
