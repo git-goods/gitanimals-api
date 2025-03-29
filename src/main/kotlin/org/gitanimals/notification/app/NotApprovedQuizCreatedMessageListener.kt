@@ -24,6 +24,7 @@ class NotApprovedQuizCreatedMessageListener(
 
     override fun onMessage(message: Message) {
         runCatching {
+            logger.info("NotApprovedQuizCreatedMessageListener message: $message")
             val notApprovedQuizCreatedNotification = objectMapper.readValue(
                 redisTemplate.stringSerializer.deserialize(message.body),
                 NotApprovedQuizCreatedNotification::class.java,
@@ -75,7 +76,7 @@ class NotApprovedQuizCreatedMessageListener(
                 )
             )
         }.onFailure {
-            logger.error("Fail to publish new quiz created event.", it)
+            logger.error("Fail to publish not approved quiz created event.", it)
         }
     }
 }

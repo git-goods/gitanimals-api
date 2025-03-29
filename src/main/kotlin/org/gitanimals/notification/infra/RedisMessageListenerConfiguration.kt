@@ -19,7 +19,7 @@ class RedisMessageListenerConfiguration(
 ) {
 
     @Bean
-    fun rankRedisListenerContainer(): RedisMessageListenerContainer {
+    fun notificationRedisListenerContainer(): RedisMessageListenerContainer {
         return RedisMessageListenerContainer().apply {
             this.connectionFactory = redisConnectionFactory
             this.addMessageListener(

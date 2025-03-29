@@ -1,6 +1,5 @@
 package org.gitanimals.gotcha.infra
 
-import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
 import org.gitanimals.core.filter.MDCFilter
 import org.gitanimals.gotcha.app.UserApi
