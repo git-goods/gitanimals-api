@@ -20,6 +20,6 @@ class DenyQuizFacade(
             message
         }
 
-        notApprovedQuizService.denyQuizById(notApprovedQuizId)
+        notApprovedQuizService.deleteQuizById(notApprovedQuizId)
     }
 }
