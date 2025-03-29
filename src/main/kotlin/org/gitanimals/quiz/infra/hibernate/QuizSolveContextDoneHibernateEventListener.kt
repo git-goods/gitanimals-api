@@ -1,4 +1,4 @@
-package org.gitanimals.quiz.infra
+package org.gitanimals.quiz.infra.hibernate
 
 import org.gitanimals.core.IdGenerator
 import org.gitanimals.inbox.domain.InboxType

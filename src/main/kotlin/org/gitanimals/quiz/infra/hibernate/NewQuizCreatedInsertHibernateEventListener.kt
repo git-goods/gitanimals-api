@@ -1,4 +1,4 @@
-package org.gitanimals.quiz.infra
+package org.gitanimals.quiz.infra.hibernate
 
 import org.gitanimals.quiz.domain.approved.Quiz
 import org.gitanimals.quiz.infra.event.NewQuizCreated
@@ -16,7 +16,8 @@ class NewQuizCreatedInsertHibernateEventListener(
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
-    override fun requiresPostCommitHandling(persister: EntityPersister): Boolean = true
+    override fun requiresPostCommitHandling(persister: EntityPersister): Boolean =
+        persister.mappedClass == Quiz::class.java
 
     override fun onPostInsert(event: PostInsertEvent) {
         if (event.entity is Quiz) {
