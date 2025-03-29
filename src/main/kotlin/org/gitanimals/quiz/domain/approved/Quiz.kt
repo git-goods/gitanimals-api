@@ -34,6 +34,7 @@ class Quiz(
     @Column(name = "expected_answer", columnDefinition = "TEXT", nullable = false)
     val expectedAnswer: String,
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "language", columnDefinition = "TEXT", nullable = true)
     val language: Language,
 ) : AbstractTime() {
