@@ -13,9 +13,15 @@ interface QuizSolveContextRepository : JpaRepository<QuizSolveContext, Long> {
         solvedAt: LocalDate,
     ): QuizSolveContext?
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select q from QuizSolveContext q join fetch q.quizSolveContextQuiz where q.id = :id and q.userId = :userId")
     fun findByIdAndUserId(
+        id: Long,
+        userId: Long,
+    ): QuizSolveContext?
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select q from QuizSolveContext q join fetch q.quizSolveContextQuiz where q.id = :id and q.userId = :userId")
+    fun findByIdAndUserIdWithLock(
         id: Long,
         userId: Long,
     ): QuizSolveContext?

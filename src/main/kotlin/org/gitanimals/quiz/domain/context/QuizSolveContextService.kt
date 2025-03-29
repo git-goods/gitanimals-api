@@ -44,16 +44,24 @@ class QuizSolveContextService(
 
     @Transactional
     fun solveQuiz(id: Long, userId: Long, answer: String) {
-        val quizSolveContext = getQuizSolveContextByIdAndUserId(id, userId)
+        val quizSolveContext = getQuizSolveContextByIdAndUserIdWithLock(id, userId)
 
         quizSolveContext.solve(answer)
     }
 
     @Transactional
     fun stopQuizByIdAndUserId(id: Long, userId: Long) {
-        val quizSolveContext = getQuizSolveContextByIdAndUserId(id, userId)
+        val quizSolveContext = getQuizSolveContextByIdAndUserIdWithLock(id, userId)
 
         quizSolveContext.stopSolve()
+    }
+
+    private fun getQuizSolveContextByIdAndUserIdWithLock(
+        id: Long,
+        userId: Long
+    ): QuizSolveContext {
+        return quizSolveContextRepository.findByIdAndUserIdWithLock(id, userId)
+            ?: throw IllegalArgumentException("Cannot find quizContext by id: \"$id\" and userId: \"$userId\"")
     }
 
     fun getQuizSolveContextByIdAndUserId(

@@ -9,6 +9,7 @@
 ## Response
 ```json
 {
+  "id": "123", // user면 user의 id guild면 guild의 id
   "rank": 100,
   "image": "https://static.gitanimals.org/...",
   "name": "dog",
