@@ -16,7 +16,14 @@ interface Notification {
     data class ActionRequest(
         val id: String,
         val name: String,
-        val style: String,
+        val style: Style,
         val interaction: Map<String, *>
-    )
+    ) {
+
+        enum class Style {
+            PRIMARY,
+            DANGER,
+            ;
+        }
+    }
 }

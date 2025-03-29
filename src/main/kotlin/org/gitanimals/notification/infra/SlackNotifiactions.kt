@@ -46,7 +46,7 @@ sealed class SlackNotification(
                     actions.map {
                         ButtonElement.builder()
                             .text(PlainTextObject.builder().text(it.name).emoji(true).build())
-                            .style(it.style)
+                            .style(it.style.name.lowercase())
                             .actionId(it.id)
                             .value(objectMapper.writeValueAsString(it.interaction))
                             .build()
