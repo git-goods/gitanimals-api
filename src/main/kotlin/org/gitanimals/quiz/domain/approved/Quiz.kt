@@ -34,7 +34,7 @@ class Quiz(
     @Column(name = "expected_answer", columnDefinition = "TEXT", nullable = false)
     val expectedAnswer: String,
 
-    @Column(name = "language", columnDefinition = "TEXT DEFAULT 'KOREA'", nullable = true)
+    @Column(name = "language", columnDefinition = "TEXT", nullable = true)
     val language: Language,
 ) : AbstractTime() {
 
