@@ -1,5 +1,6 @@
 package org.gitanimals.identity.controller.advice
 
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.security.SignatureException
@@ -20,6 +21,11 @@ class JwtAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun handleMalformedJwtException(malformedJwtException: MalformedJwtException): ErrorResponse =
         ErrorResponse.from(malformedJwtException)
+
+    @ExceptionHandler(ExpiredJwtException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun handleExpiredJwtException(expiredJwtException: ExpiredJwtException): ErrorResponse =
+        ErrorResponse.from(expiredJwtException)
 
     @ExceptionHandler(JwtException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
