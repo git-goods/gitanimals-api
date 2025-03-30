@@ -17,7 +17,7 @@ class InboxHttpClientConfigurer(
 ) {
 
     @Bean
-    fun inboxIdentityApi(token: String): IdentityApi {
+    fun inboxIdentityApi(): IdentityApi {
         val restClient = RestClient
             .builder()
             .requestInterceptor { request, body, execution ->
