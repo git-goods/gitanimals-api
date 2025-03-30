@@ -2,6 +2,7 @@ package org.gitanimals.quiz.domain.infra
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
+import org.gitanimals.notification.domain.Notification
 import org.gitanimals.notification.infra.GitAnimalsNewQuizCreatedSlackNotification
 
 
@@ -33,9 +34,21 @@ internal class SlackNotificationTest : StringSpec({
 
         // when
         slackNotificationWithToken.notifyWithActions(
-            "xb test",
-            whenApprovedButtonClicked,
-            whenNotApprovedButtonClicked,
+            message = "xb test",
+            actions = listOf(
+                Notification.ActionRequest(
+                    id = "approve_action",
+                    style = Notification.ActionRequest.Style.PRIMARY,
+                    name = "Approve",
+                    interaction = whenApprovedButtonClicked,
+                ),
+                Notification.ActionRequest(
+                    id = "delete_action",
+                    style = Notification.ActionRequest.Style.DANGER,
+                    name = "Deny",
+                    interaction = whenNotApprovedButtonClicked,
+                )
+            ),
         )
     }
 })
