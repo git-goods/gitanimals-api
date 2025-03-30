@@ -1,5 +1,6 @@
 package org.gitanimals.identity.app
 
+import org.gitanimals.core.AUTHORIZATION_EXCEPTION
 import org.gitanimals.identity.domain.User
 import org.gitanimals.identity.domain.UserService
 import org.springframework.stereotype.Service
@@ -11,7 +12,11 @@ class UserFacade(
 ) {
 
     fun getUserByToken(token: Token): User {
-        val userId = tokenManager.getUserId(token)
+        val userId = runCatching {
+            tokenManager.getUserId(token)
+        }.getOrElse {
+            throw AUTHORIZATION_EXCEPTION
+        }
 
         return userService.getUserById(userId)
     }
