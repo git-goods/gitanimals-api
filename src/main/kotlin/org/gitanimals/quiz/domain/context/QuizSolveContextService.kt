@@ -13,7 +13,7 @@ class QuizSolveContextService(
     private val quizSolveContextRepository: QuizSolveContextRepository,
 ) {
 
-    @Transactional
+//    @Transactional
     fun createQuizSolveContext(
         userId: Long,
         category: Category,
@@ -21,7 +21,8 @@ class QuizSolveContextService(
     ): QuizSolveContext {
         val now = LocalDate.ofInstant(instant(), ZoneId.of("Asia/Seoul"))
         quizSolveContextRepository.findQuizSolveContextByUserIdAndSolvedAt(userId, now)?.let {
-            throw IllegalArgumentException("Already solve daily quiz.")
+            quizSolveContextRepository.deleteAll() // 전체삭제 QA끝나고 지운다.
+//            throw IllegalArgumentException("Already solve daily quiz.")
         }
 
         val quizSolveContext = QuizSolveContext.of(
