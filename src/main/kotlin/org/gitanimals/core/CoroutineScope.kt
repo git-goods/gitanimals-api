@@ -1,10 +1,7 @@
 package org.gitanimals.core
 
 import jakarta.annotation.PreDestroy
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.slf4j.MDCContext
 import org.gitanimals.core.GracefulShutdownDispatcher.executorService
 import org.slf4j.LoggerFactory
