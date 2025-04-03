@@ -15,7 +15,7 @@
   "winner": [
     {
       "id": "123", // user면 user의 id guild면 guild의 id
-      "rank": 1,
+      "rank": 0,
       "prize": 12345,
       "name": "dog",
       "rankType": "WEEKLY_GUILD_CONTRIBUTIONS" // WEEKLY_USER_CONTRIBUTIONS
