@@ -6,6 +6,7 @@ import org.gitanimals.core.redis.TraceableMessageListener
 import org.gitanimals.supports.event.SlackInteracted
 import org.gitanimals.supports.event.SlackReplied
 import org.rooftop.netx.api.DeadLetterRelay
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.redis.connection.Message
@@ -20,6 +21,8 @@ class DeadLetterRelayEventListener(
     private val applicationEventPublisher: ApplicationEventPublisher,
     @Value("\${relay.approve.token}") private val approveToken: String,
 ) : TraceableMessageListener(redisTemplate, objectMapper) {
+
+    private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
     override fun onMessage(message: Message) {
         runCatching {
@@ -53,6 +56,8 @@ class DeadLetterRelayEventListener(
                     message = "Relay by ${slackInteracted.username}"
                 )
             )
+        }.onFailure {
+            logger.error("Fail to relay dead letter. message: \"$message\", cause: \"${it.message}\"", it)
         }
     }
 
