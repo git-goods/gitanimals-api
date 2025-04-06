@@ -17,7 +17,10 @@ class DeadLetterEventPublisher(
             applicationEventPublisher.publishEvent(
                 DeadLetterEvent(
                     deadLetterId = deadLetterId,
-                    sagaEvent = sagaEvent,
+                    sagaId = sagaEvent.id,
+                    group = sagaEvent.group,
+                    nodeName = sagaEvent.nodeName,
+                    deadLetter = sagaEvent.decodeEvent(String::class),
                 )
             )
         }.also {

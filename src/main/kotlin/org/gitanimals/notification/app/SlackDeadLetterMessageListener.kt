@@ -6,6 +6,7 @@ import org.gitanimals.notification.app.event.DeadLetterEvent
 import org.gitanimals.notification.domain.Notification
 import org.gitanimals.notification.domain.Notification.ActionRequest
 import org.gitanimals.notification.domain.Notification.ActionRequest.Style.PRIMARY
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.connection.Message
@@ -18,7 +19,9 @@ class SlackDeadLetterMessageListener(
     private val objectMapper: ObjectMapper,
     @Qualifier("gitAnimalsDeadLetterSlackNotification") private val notification: Notification,
     @Value("\${relay.approve.token}") private val approveToken: String,
-): TraceableMessageListener(redisTemplate, objectMapper) {
+) : TraceableMessageListener(redisTemplate, objectMapper) {
+
+    private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
     override fun onMessage(message: Message) {
         runCatching {
@@ -51,6 +54,8 @@ class SlackDeadLetterMessageListener(
                     )
                 ),
             )
+        }.onFailure {
+            logger.error("Fail to notify dead letter. message: $message", it)
         }
     }
 }
