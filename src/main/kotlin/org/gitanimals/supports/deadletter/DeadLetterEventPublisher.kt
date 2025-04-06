@@ -3,6 +3,7 @@ package org.gitanimals.supports.deadletter
 import org.gitanimals.core.IdGenerator
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.rooftop.netx.api.SagaEvent
+import org.rooftop.netx.api.TypeReference
 import org.rooftop.netx.spi.DeadLetterListener
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -23,7 +24,7 @@ class DeadLetterEventPublisher(
                     sagaId = sagaEvent.id,
                     group = sagaEvent.group,
                     nodeName = sagaEvent.nodeName,
-                    deadLetter = sagaEvent.decodeEvent(String::class),
+                    deadLetter = sagaEvent.decodeEvent(object: TypeReference<Map<String, Any>>(){}),
                 )
             )
         }.onFailure {
