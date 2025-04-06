@@ -4,12 +4,15 @@ import org.gitanimals.core.IdGenerator
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.rooftop.netx.api.SagaEvent
 import org.rooftop.netx.spi.DeadLetterListener
+import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.context.ApplicationEventPublisher
 
 class DeadLetterEventPublisher(
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : DeadLetterListener {
+
+    private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
     override fun listen(deadLetterId: String, sagaEvent: SagaEvent) {
         runCatching {
@@ -23,6 +26,8 @@ class DeadLetterEventPublisher(
                     deadLetter = sagaEvent.decodeEvent(String::class),
                 )
             )
+        }.onFailure {
+            logger.error("Fail to publish dead letter event deadLetterId: \"$deadLetterId\", event: \"$sagaEvent\"", it)
         }.also {
             MDC.remove(TRACE_ID)
         }
