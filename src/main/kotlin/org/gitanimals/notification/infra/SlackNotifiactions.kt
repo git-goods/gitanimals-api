@@ -91,3 +91,9 @@ class GitAnimalsNewQuizCreatedSlackNotification(
     objectMapper: ObjectMapper,
     @Value(value = "\${slack.token}") token: String,
 ) : SlackNotification(token, "C08GU67NV6W", objectMapper)
+
+@Component
+class GitAnimalsDeadLetterSlackNotification(
+    objectMapper: ObjectMapper,
+    @Value(value = "\${slack.token}") token: String,
+) : SlackNotification(token, "C08M0R0GEKV", objectMapper)

@@ -7,4 +7,6 @@ object RedisPubSubChannel {
 
     const val SLACK_INTERACTED = "SLACK_INTERACTED"
     const val SLACK_REPLIED = "SLACK_REPLIED"
+
+    const val DEAD_LETTER_OCCURRED = "DEAD_LETTER_OCCURRED"
 }
