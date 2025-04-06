@@ -1,5 +1,7 @@
 package org.gitanimals.supports.deadletter
 
+import org.gitanimals.core.TraceIdContextOrchestrator
+import org.gitanimals.core.TraceIdContextRollback
 import org.rooftop.netx.api.OrchestratorFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -17,21 +19,25 @@ class DeadLetterTestController(
     ) {
         val orchestrator = orchestratorFactory.create<String>("dead-letter-test")
             .startWithContext(
-                contextOrchestrate = { _, it -> it },
-                contextRollback = { _, it ->
+                contextOrchestrate = TraceIdContextOrchestrator { _, it -> it },
+                contextRollback = TraceIdContextRollback { _, it ->
                     it
                 }
             )
             .joinWithContext(
-                contextOrchestrate = { _, it -> it },
-                contextRollback = { _, it ->
+                contextOrchestrate = TraceIdContextOrchestrator { _, it -> it },
+                contextRollback = TraceIdContextRollback { _, it ->
                     throw IllegalStateException("add dead letter")
                 }
             )
-            .commitWithContext { _, _ ->
+            .commitWithContext(TraceIdContextOrchestrator { _, _ ->
                 throw IllegalStateException("test dead-letter")
-            }
+            })
 
-        orchestrator.sagaSync(message, context = mapOf("hello" to "world"))
+        val result = orchestrator.sagaSync(message, context = mapOf("hello" to "world"))
+
+        if (result.isSuccess.not()) {
+            result.throwError()
+        }
     }
 }

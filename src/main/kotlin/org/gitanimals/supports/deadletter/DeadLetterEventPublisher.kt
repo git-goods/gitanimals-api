@@ -1,7 +1,10 @@
 package org.gitanimals.supports.deadletter
 
+import org.gitanimals.core.IdGenerator
+import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.rooftop.netx.api.SagaEvent
 import org.rooftop.netx.spi.DeadLetterListener
+import org.slf4j.MDC
 import org.springframework.context.ApplicationEventPublisher
 
 class DeadLetterEventPublisher(
@@ -9,12 +12,17 @@ class DeadLetterEventPublisher(
 ) : DeadLetterListener {
 
     override fun listen(deadLetterId: String, sagaEvent: SagaEvent) {
-        applicationEventPublisher.publishEvent(
-            DeadLetterEvent(
-                deadLetterId = deadLetterId,
-                sagaEvent = sagaEvent,
+        runCatching {
+            MDC.put(TRACE_ID, IdGenerator.generate().toString())
+            applicationEventPublisher.publishEvent(
+                DeadLetterEvent(
+                    deadLetterId = deadLetterId,
+                    sagaEvent = sagaEvent,
+                )
             )
-        )
+        }.also {
+            MDC.remove(TRACE_ID)
+        }
     }
 }
 
