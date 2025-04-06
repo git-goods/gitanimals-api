@@ -34,7 +34,8 @@ class SlackDeadLetterMessageListener(
                 "clicked" to "RELAY",
                 "sourceKey" to "RELAY_DEAD_LETTER",
                 "approveToken" to approveToken,
-                "deadLetterId" to deadLetterEvent.deadLetterId
+                "deadLetterId" to deadLetterEvent.deadLetterId,
+                "nodeName" to deadLetterEvent.nodeName,
             )
 
             notification.notifyWithActions(
