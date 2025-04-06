@@ -39,7 +39,7 @@ class SlackDeadLetterMessageListener(
 
             notification.notifyWithActions(
                 message = """
-                    :this_is_fine: **DeadLetter** :this_is_fine:
+                    :this_is_fine: *DeadLetter* :this_is_fine:
                     
                     > $deadLetterEvent
                 """.trimIndent(),
