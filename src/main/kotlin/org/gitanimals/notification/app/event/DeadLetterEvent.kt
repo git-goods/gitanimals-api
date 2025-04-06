@@ -6,5 +6,5 @@ data class DeadLetterEvent(
     val sagaId: String,
     val nodeName: String,
     val group: String,
-    val deadLetter: String,
+    val deadLetter: Map<String, Any>,
 )

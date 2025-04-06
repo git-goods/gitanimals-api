@@ -11,7 +11,7 @@ data class DeadLetterEvent(
     val sagaId: String,
     val nodeName: String,
     val group: String,
-    val deadLetter: String,
+    val deadLetter: Map<String, Any>,
 ) : AsyncRedisPubSubEvent(
     traceId = runCatching { MDC.get(MDCFilter.TRACE_ID) }
         .getOrElse { IdGenerator.generate().toString() },
