@@ -2,7 +2,9 @@ package org.gitanimals.supports.deadletter
 
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
+import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.rooftop.netx.api.OrchestratorFactory
+import org.slf4j.MDC
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -34,7 +36,7 @@ class DeadLetterTestController(
                 throw IllegalStateException("test dead-letter")
             })
 
-        val result = orchestrator.sagaSync(message, context = mapOf("hello" to "world"))
+        val result = orchestrator.sagaSync(message, context = mapOf("hello" to "world", "traceId" to MDC.get(TRACE_ID)))
 
         if (result.isSuccess.not()) {
             result.throwError()
