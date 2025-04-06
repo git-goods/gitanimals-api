@@ -20,6 +20,7 @@ class DeadLetterRelayEventListener(
     private val deadLetterRelay: DeadLetterRelay,
     private val applicationEventPublisher: ApplicationEventPublisher,
     @Value("\${relay.approve.token}") private val approveToken: String,
+    @Value("\${netx.node-name}") private val nodeName: String,
 ) : TraceableMessageListener(redisTemplate, objectMapper) {
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
@@ -42,8 +43,9 @@ class DeadLetterRelayEventListener(
 
             val approveToken = payload["approveToken"] as String
             val deadLetterId = payload["deadLetterId"] as String
+            val nodeName = payload["nodeName"] as String
 
-            if (approveToken != this.approveToken) {
+            if (approveToken != this.approveToken || nodeName != this.nodeName) {
                 return
             }
 
