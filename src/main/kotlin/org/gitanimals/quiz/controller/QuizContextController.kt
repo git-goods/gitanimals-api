@@ -46,9 +46,14 @@ class QuizContextController(
     fun getQuizSolveContextStatus(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
-    ): QuizSolveContextStatusResponse = QuizSolveContextStatusResponse(
-        solveQuizFacade.getQuizById(token = token, id = contextId).getStatus()
-    )
+    ): QuizSolveContextStatusResponse {
+        val quizContext = solveQuizFacade.getQuizById(token = token, id = contextId)
+
+        return QuizSolveContextStatusResponse(
+            prize = quizContext.getPrize(),
+            result = quizContext.getStatus(),
+        )
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/quizs/context/{contextId}/stops")

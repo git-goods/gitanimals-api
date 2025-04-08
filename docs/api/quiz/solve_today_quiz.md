@@ -96,6 +96,7 @@
 ## Response
 ```json
 {
+  "prize": 12345, // 현재까지 번 돈이 지급된다.
   "result": "FAIL" // SUCCESS, FAIL, NOT_STARTED (NOT_STARTED같은 경우 아직 풀지 않았다면 응답한다.)
 }
 ```
