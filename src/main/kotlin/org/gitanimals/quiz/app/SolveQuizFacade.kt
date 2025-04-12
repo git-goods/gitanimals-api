@@ -2,6 +2,7 @@ package org.gitanimals.quiz.app
 
 import org.gitanimals.quiz.app.request.CreateSolveQuizRequest
 import org.gitanimals.quiz.app.response.QuizContextResponse
+import org.gitanimals.quiz.app.response.TodaySolvedContextResponse
 import org.gitanimals.quiz.domain.approved.QuizService
 import org.gitanimals.quiz.domain.context.QuizSolveContext
 import org.gitanimals.quiz.domain.context.QuizSolveContextService
@@ -62,6 +63,13 @@ class SolveQuizFacade(
         val userId = identityApi.getUserByToken(token).id.toLong()
 
         quizSolveContextService.stopQuizByIdAndUserId(id = id, userId = userId)
+    }
+
+    fun getTodaySolvedContextResult(token: String): TodaySolvedContextResponse {
+        val userId = identityApi.getUserByToken(token).id.toLong()
+        val quizSolveContext = quizSolveContextService.findTodaySolvedContext(userId)
+
+        return TodaySolvedContextResponse.from(quizSolveContext)
     }
 
     private companion object {
