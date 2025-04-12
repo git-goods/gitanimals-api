@@ -62,4 +62,10 @@ class QuizContextController(
         @PathVariable("contextId") contextId: Long,
     ) = solveQuizFacade.stopQuiz(token = token, id = contextId)
 
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/quizs/context/today")
+    fun getTodaySolvedContextResult(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
+    ) = solveQuizFacade.getTodaySolvedContextResult(token)
 }
