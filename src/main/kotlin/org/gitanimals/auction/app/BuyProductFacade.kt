@@ -1,11 +1,13 @@
 package org.gitanimals.auction.app
 
+import org.gitanimals.auction.app.RenderApi.AddPersonaRequest
 import org.gitanimals.auction.app.event.InboxInputEvent
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductService
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
 import org.rooftop.netx.api.SagaManager
@@ -33,6 +35,7 @@ class BuyProductFacade(
                 "token" to token,
                 "idempotencyKey" to UUID.randomUUID().toString(),
                 TRACE_ID to MDC.get(TRACE_ID),
+                USER_ID to MDC.get(USER_ID),
             )
         ).decodeResultOrThrow(Product::class)
 
@@ -91,11 +94,13 @@ class BuyProductFacade(
                     val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
                     renderApi.addPersona(
-                        token,
-                        idempotencyKey,
-                        product.persona.personaId,
-                        product.persona.personaLevel,
-                        product.persona.personaType,
+                        token = token,
+                        idempotencyKey = idempotencyKey,
+                        request = AddPersonaRequest(
+                            product.persona.personaId,
+                            product.persona.personaType,
+                            product.persona.personaLevel,
+                        )
                     )
 
                     product

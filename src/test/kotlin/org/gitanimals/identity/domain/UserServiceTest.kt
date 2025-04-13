@@ -1,7 +1,6 @@
 package org.gitanimals.identity.domain
 
-import io.kotest.assertions.throwables.shouldThrowExactly
-import io.kotest.assertions.throwables.shouldThrowWithMessage
+import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.equals.shouldBeEqual
 import org.junit.jupiter.api.DisplayName
@@ -22,10 +21,6 @@ internal class UserServiceTest(
     private val userRepository: UserRepository,
 ) : DescribeSpec({
 
-    beforeEach {
-        userRepository.saveAndFlush(defaultUser)
-    }
-
     afterEach {
         userRepository.deleteAll()
     }
@@ -33,6 +28,8 @@ internal class UserServiceTest(
     describe("givePoint 메소드는") {
         context("username에 해당하는 user가 존재할경우,") {
             val point = 100L
+            userRepository.save(defaultUser)
+
             it("입력받은 point를 지급한다.") {
                 userService.givePoint(USER_NAME, point, "FOR_TEST")
 
@@ -43,8 +40,8 @@ internal class UserServiceTest(
         }
 
         context("username에 해당하는 user가 존재하지 않을경우,") {
-            it("IllegalArgumentException을 던진다.") {
-                shouldThrowExactly<IllegalArgumentException> {
+            it("아무런 동작도 하지 않는다") {
+                shouldNotThrowAny {
                     userService.givePoint(NOT_EXIST_USER_NAME, 100, "FOR_TEST")
                 }
             }

@@ -3,6 +3,7 @@ package org.gitanimals.gotcha.app
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.gotcha.app.response.GotchaResponseV3
 import org.gitanimals.gotcha.domain.DropRateClient
 import org.gitanimals.gotcha.domain.GotchaService
@@ -29,11 +30,14 @@ class GotchaFacadeV3(
         require(count in 1..10) { "Gotcha count must between 1..10" }
 
         return gotchaOrchestrator
-            .sagaSync(gotchaType.name, mapOf(
-                "token" to token,
-                "count" to count,
-                TRACE_ID to MDC.get(TRACE_ID),
-            )).decodeResultOrThrow(object : TypeReference<List<GotchaResponseV3>>() {})
+            .sagaSync(
+                gotchaType.name, mapOf(
+                    "token" to token,
+                    "count" to count,
+                    TRACE_ID to MDC.get(TRACE_ID),
+                    USER_ID to MDC.get(USER_ID),
+                )
+            ).decodeResultOrThrow(object : TypeReference<List<GotchaResponseV3>>() {})
     }
 
     init {
@@ -82,9 +86,13 @@ class GotchaFacadeV3(
                 val personaIds =
                     renderApi.addPersonas(
                         token,
-                        gotchaResponses.map { it.idempotency },
-                        gotchaResponses.map { it.name },
-                    )
+                        gotchaResponses.map {
+                            RenderApi.AddPersonaRequest(
+                                idempotencyKey = it.idempotency,
+                                personaName = it.name,
+                            )
+                        },
+                    ).map { it.id }
 
                 for (i in gotchaResponses.indices) {
                     gotchaResponses[i].id = personaIds[i]
