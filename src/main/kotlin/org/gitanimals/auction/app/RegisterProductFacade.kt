@@ -6,6 +6,7 @@ import org.gitanimals.auction.domain.request.RegisterProductRequest
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
 import org.slf4j.LoggerFactory
@@ -43,6 +44,7 @@ class RegisterProductFacade(
                 "token" to token,
                 "idempotencyKey" to UUID.randomUUID().toString(),
                 TRACE_ID to MDC.get(TRACE_ID),
+                USER_ID to MDC.get(USER_ID),
             ),
         ).decodeResultOrThrow(Product::class)
     }
@@ -62,11 +64,13 @@ class RegisterProductFacade(
 
                         logger.warn("Cannot register product rollback delete persona...")
                         renderApi.addPersona(
-                            token,
-                            idempotencyKey,
-                            request.personaId,
-                            request.personaLevel,
-                            request.personaType
+                            token = token,
+                            idempotencyKey = idempotencyKey,
+                            request = RenderApi.AddPersonaRequest(
+                                id = request.personaId,
+                                name = request.personaType,
+                                level = request.personaLevel,
+                            ),
                         )
                         logger.warn("Cannot register product rollback delete persona success")
                     }

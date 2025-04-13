@@ -12,8 +12,6 @@ import kotlin.time.Duration.Companion.seconds
     classes = [
         AuctionTestRoot::class,
         RedisContainer::class,
-        MockUserServer::class,
-        MockRenderServer::class,
         AuctionSagaCapture::class,
     ]
 )

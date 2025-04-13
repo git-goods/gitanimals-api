@@ -1,6 +1,7 @@
 package org.gitanimals.core
 
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.rooftop.netx.api.Context
 import org.rooftop.netx.api.ContextOrchestrate
 import org.rooftop.netx.api.ContextRollback
@@ -13,6 +14,11 @@ open class TraceIdContextOrchestrator<T : Any, V : Any>(
 
     override fun orchestrate(context: Context, request: T): V {
         MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
+        runCatching {
+            context.decodeContext(USER_ID, String::class)
+        }.onSuccess {
+            MDC.put(USER_ID, it)
+        }
         return runCatching {
             orchestrate.orchestrate(context, request)
         }.getOrElse {
@@ -20,6 +26,7 @@ open class TraceIdContextOrchestrator<T : Any, V : Any>(
             throw it
         }.also {
             MDC.remove(TRACE_ID)
+            MDC.remove(USER_ID)
         }
     }
 
@@ -34,6 +41,11 @@ open class TraceIdContextRollback<T : Any, V : Any?>(
 
     override fun rollback(context: Context, request: T): V {
         MDC.put(TRACE_ID, context.decodeContext(TRACE_ID, String::class))
+        runCatching {
+            context.decodeContext(USER_ID, String::class)
+        }.onSuccess {
+            MDC.put(USER_ID, it)
+        }
         return runCatching {
             rollback.rollback(context, request)
         }.getOrElse {
@@ -41,6 +53,7 @@ open class TraceIdContextRollback<T : Any, V : Any?>(
             throw it
         }.also {
             MDC.remove(TRACE_ID)
+            MDC.remove(USER_ID)
         }
     }
 

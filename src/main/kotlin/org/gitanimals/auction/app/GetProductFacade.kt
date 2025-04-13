@@ -2,12 +2,13 @@ package org.gitanimals.auction.app
 
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductService
+import org.gitanimals.core.auth.InternalAuth
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
 @Service
 class GetProductFacade(
-    private val identityApi: IdentityApi,
+    private val internalAuth: InternalAuth,
     private val productService: ProductService,
 ) {
     fun getProductsByToken(
@@ -17,10 +18,10 @@ class GetProductFacade(
         orderType: String,
         sortDirection: String,
     ): Page<Product> {
-        val user = identityApi.getUserByToken(token)
+        val userId = internalAuth.getUserId()
 
         return productService.getProductsByUserId(
-            user.id.toLong(),
+            userId,
             pageNumber,
             count,
             orderType,

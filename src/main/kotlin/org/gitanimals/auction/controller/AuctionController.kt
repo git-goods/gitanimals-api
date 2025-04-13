@@ -110,7 +110,7 @@ class AuctionController(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestBody changeProductRequest: ChangeProductRequest,
     ): ProductResponse {
-        val product = changeProductFacade.changeProduct(token, changeProductRequest)
+        val product = changeProductFacade.changeProduct(changeProductRequest)
 
         return ProductResponse.from(product)
     }
