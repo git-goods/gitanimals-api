@@ -3,6 +3,7 @@ package org.gitanimals.shop.app
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.shop.domain.SaleService
 import org.gitanimals.shop.domain.SaleType
 import org.rooftop.netx.api.Orchestrator
@@ -31,6 +32,7 @@ class BuyBackgroundFacade(
                 "token" to token,
                 "idempotencyKey" to UUID.randomUUID().toString(),
                 TRACE_ID to MDC.get(TRACE_ID),
+                USER_ID to MDC.get(USER_ID),
             )
         ).decodeResultOrThrow(Unit::class)
     }
@@ -71,17 +73,15 @@ class BuyBackgroundFacade(
             .joinWithContext(
                 contextOrchestrate = TraceIdContextOrchestrator { context, sale ->
                     val token = context.decodeContext("token", String::class)
-                    val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
-                    renderApi.addBackground(token, idempotencyKey, sale.item)
+                    renderApi.addBackground(token, sale.item)
                     sale
                 },
                 contextRollback = TraceIdContextRollback { context, sale ->
                     val token = context.decodeContext("token", String::class)
-                    val idempotencyKey = context.decodeContext("idempotencyKey", String::class)
 
                     logger.warn("Cannot buy background rollback item count...")
-                    renderApi.deleteBackground(token, idempotencyKey, sale.item)
+                    renderApi.deleteBackground(token, sale.item)
                     logger.warn("Cannot buy background rollback item count success")
                 }
             )

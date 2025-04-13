@@ -3,6 +3,7 @@ package org.gitanimals.shop.app
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.shop.app.request.BuyCollaborationPersonaRequest
 import org.gitanimals.shop.domain.CollaborationPersonaService
 import org.rooftop.netx.api.Orchestrator
@@ -29,6 +30,7 @@ class BuyCollaborationPersonaFacade(
             context = mapOf(
                 "token" to token,
                 "idempotencyKey" to UUID.randomUUID().toString(),
+                USER_ID to MDC.get(USER_ID),
                 TRACE_ID to MDC.get(TRACE_ID),
             )
         )
@@ -69,7 +71,15 @@ class BuyCollaborationPersonaFacade(
                     val name =
                         collaborationPersonaService.getCollaborationPersonaByName(request.name).name
 
-                    renderApi.addPersonas(token, listOf(idempotencyKey), listOf(name))
+                    renderApi.addPersonas(
+                        token = token,
+                        addMultiplePersonaRequest = listOf(
+                            RenderApi.AddMultiplePersonaRequest(
+                                idempotencyKey = idempotencyKey,
+                                personaName = name,
+                            )
+                        ),
+                    )
                 })
     }
 }

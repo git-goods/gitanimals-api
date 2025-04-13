@@ -3,6 +3,7 @@ package org.gitanimals.shop.app
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.shop.domain.DropPersona
 import org.gitanimals.shop.domain.DropPersonaService
 import org.rooftop.netx.api.Orchestrator
@@ -41,9 +42,11 @@ class DropPersonaFacade(
                     renderApi.addPersona(
                         token,
                         idempotencyKey,
-                        persona.id.toLong(),
-                        persona.level.toInt(),
-                        persona.type
+                        addPersonaRequest = RenderApi.AddPersonaRequest(
+                            id = persona.id.toLong(),
+                            name = persona.type,
+                            level = persona.level.toInt(),
+                        )
                     )
                     logger.warn("Cannot drop persona rollback drop persona success")
                 }
@@ -84,6 +87,7 @@ class DropPersonaFacade(
                 "token" to token,
                 "idempotencyKey" to UUID.randomUUID().toString(),
                 TRACE_ID to MDC.get(TRACE_ID),
+                USER_ID to MDC.get(USER_ID),
             )
         ).decodeResultOrThrow(DropPersona::class)
     }
