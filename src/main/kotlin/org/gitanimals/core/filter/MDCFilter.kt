@@ -26,9 +26,13 @@ class MDCFilter(
         runCatching {
             val traceId: String = request.getHeader("traceId") ?: IdGenerator.generate().toString()
 
+            val uri = request.requestURI
+
             MDC.put(TRACE_ID, traceId)
-            MDC.put(PATH, request.requestURI)
-            internalAuth.findUserId()?.let { MDC.put(USER_ID, it.toString()) }
+            MDC.put(PATH, uri)
+            if (uri != "/users") {
+                internalAuth.findUserId()?.let { MDC.put(USER_ID, it.toString()) }
+            }
 
             val elapsedTime = measureTimeMillis {
                 filterChain.doFilter(request, response)
