@@ -1,5 +1,6 @@
 package org.gitanimals.quiz.app
 
+import org.gitanimals.core.auth.InternalAuth
 import org.gitanimals.quiz.app.request.CreateSolveQuizRequest
 import org.gitanimals.quiz.app.response.QuizContextResponse
 import org.gitanimals.quiz.app.response.TodaySolvedContextResponse
@@ -12,12 +13,14 @@ import org.springframework.stereotype.Service
 
 @Service
 class SolveQuizFacade(
-    private val identityApi: IdentityApi,
+    private val internalAuth: InternalAuth,
     private val quizService: QuizService,
     private val quizSolveContextService: QuizSolveContextService,
 ) {
 
-    fun createContext(token: String, locale: String, request: CreateSolveQuizRequest): Long {
+    fun createContext(locale: String, request: CreateSolveQuizRequest): Long {
+        val userId = internalAuth.getUserId()
+
         val language = when (locale.uppercase()) {
             "EN_US" -> Language.ENGLISH
             else -> Language.KOREA
@@ -28,10 +31,9 @@ class SolveQuizFacade(
             category = request.category,
         )
 
-        val user = identityApi.getUserByToken(token)
 
         val quizSolveContext = quizSolveContextService.createQuizSolveContext(
-            userId = user.id.toLong(),
+            userId = userId,
             category = request.category,
             quizs = pickedQuizs,
         )
@@ -39,34 +41,34 @@ class SolveQuizFacade(
         return quizSolveContext.id
     }
 
-    fun getAndStartSolveQuizContextById(token: String, id: Long): QuizContextResponse {
-        val user = identityApi.getUserByToken(token)
+    fun getAndStartSolveQuizContextById(id: Long): QuizContextResponse {
+        val userId = internalAuth.getUserId()
 
         val quizSolveContext =
-            quizSolveContextService.getAndStartSolveQuizContext(id = id, userId = user.id.toLong())
+            quizSolveContextService.getAndStartSolveQuizContext(id = id, userId = userId)
 
         return QuizContextResponse.from(quizSolveContext)
     }
 
-    fun answerQuizById(token: String, id: Long, answer: String) {
-        val user = identityApi.getUserByToken(token)
+    fun answerQuizById(id: Long, answer: String) {
+        val userId = internalAuth.getUserId()
 
-        quizSolveContextService.solveQuiz(id, user.id.toLong(), answer)
+        quizSolveContextService.solveQuiz(id, userId, answer)
     }
 
-    fun getQuizById(token: String, id: Long): QuizSolveContext {
-        val userId = identityApi.getUserByToken(token).id.toLong()
+    fun getQuizById(id: Long): QuizSolveContext {
+        val userId = internalAuth.getUserId()
         return quizSolveContextService.getQuizSolveContextByIdAndUserId(id = id, userId = userId)
     }
 
-    fun stopQuiz(token: String, id: Long) {
-        val userId = identityApi.getUserByToken(token).id.toLong()
+    fun stopQuiz(id: Long) {
+        val userId = internalAuth.getUserId()
 
         quizSolveContextService.stopQuizByIdAndUserId(id = id, userId = userId)
     }
 
     fun getTodaySolvedContextResult(token: String): TodaySolvedContextResponse {
-        val userId = identityApi.getUserByToken(token).id.toLong()
+        val userId = internalAuth.getUserId()
         val quizSolveContext = quizSolveContextService.findTodaySolvedContext(userId)
 
         return TodaySolvedContextResponse.from(quizSolveContext)

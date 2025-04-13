@@ -1,6 +1,7 @@
 package org.gitanimals.inbox.infra
 
 import org.gitanimals.core.HttpClientErrorHandler
+import org.gitanimals.core.auth.InternalAuthRequestInterceptor
 import org.gitanimals.core.filter.MDCFilter
 import org.gitanimals.inbox.app.IdentityApi
 import org.slf4j.MDC
@@ -13,6 +14,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory
 
 @Configuration
 class InboxHttpClientConfigurer(
+    private val internalAuthRequestInterceptor: InternalAuthRequestInterceptor,
     @Value("\${internal.secret}") private val internalSecret: String,
 ) {
 
@@ -30,6 +32,7 @@ class InboxHttpClientConfigurer(
                 }
                 execution.execute(request, body)
             }
+            .requestInterceptor(internalAuthRequestInterceptor)
             .defaultStatusHandler(inboxHttpClientErrorHandler())
             .baseUrl("https://api.gitanimals.org")
             .build()

@@ -11,7 +11,9 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.core.auth.InternalAuth
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.domain.*
@@ -26,9 +28,11 @@ import org.gitanimals.quiz.domain.prompt.QuizCreatePromptRepository
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
 import org.gitanimals.quiz.domain.quiz.notApprovedQuiz
 import org.gitanimals.quiz.domain.quiz.quiz
+import org.gitanimals.quiz.infra.event.NewQuizCreated
 import org.gitanimals.quiz.infra.hibernate.HibernateEventListenerConfiguration
 import org.gitanimals.quiz.infra.hibernate.NewQuizCreatedInsertHibernateEventListener
-import org.gitanimals.quiz.infra.event.NewQuizCreated
+import org.gitanimals.quiz.infra.hibernate.QuizDeletedHibernateEventListener
+import org.gitanimals.quiz.infra.hibernate.QuizSolveContextDoneHibernateEventListener
 import org.rooftop.netx.meta.EnableSaga
 import org.slf4j.MDC
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -52,6 +56,8 @@ import kotlin.time.Duration.Companion.seconds
         NotApprovedQuizService::class,
         QuizCreatePromptService::class,
         NewQuizCreatedInsertHibernateEventListener::class,
+        QuizSolveContextDoneHibernateEventListener::class,
+        QuizDeletedHibernateEventListener::class,
         HibernateEventListenerConfiguration::class,
     ]
 )
@@ -65,6 +71,7 @@ internal class CreateQuizFacadeTest(
     private val quizRepository: QuizRepository,
     private val notApprovedQuizRepository: NotApprovedQuizRepository,
     private val quizCreatePromptRepository: QuizCreatePromptRepository,
+    @MockkBean private val internalAuth: InternalAuth,
     @MockkBean private val identityApi: IdentityApi,
     @MockkBean private val textSimilarityChecker: TextSimilarityChecker,
     @MockkBean private val aiApi: AIApi,
@@ -76,7 +83,9 @@ internal class CreateQuizFacadeTest(
         quizCreatePromptRepository.deleteAll()
         quizCreatePromptRepository.save(QuizCreatePrompt(1L, "Hello AI"))
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
+        MDC.put(USER_ID, defaultUser.id)
         every { identityApi.getUserByToken(any()) } returns defaultUser
+        every { internalAuth.getUserId() } returns defaultUser.id.toLong()
         every { identityApi.increaseUserPointsById(any(), any(), any()) } just Runs
         every { identityApi.decreaseUserPointsById(any(), any(), any()) } just Runs
         every { aiApi.isDevelopmentQuiz(any()) } returns true
@@ -90,7 +99,7 @@ internal class CreateQuizFacadeTest(
             )
 
             it("새로운 퀴즈를 생성하고, 퀴즈 생성 이벤트를 발행한다.") {
-                createQuizFacade.createQuiz(token, createQuizRequest)
+                createQuizFacade.createQuiz(createQuizRequest)
 
                 eventually(5.seconds) {
                     domainEventHolder.eventsShouldBe(NewQuizCreated::class, 1)
@@ -105,7 +114,7 @@ internal class CreateQuizFacadeTest(
             )
 
             it("NotApprovedQuiz를 생성하고, NotApprovedQuizCreated 이벤트를 발행한다.") {
-                createQuizFacade.createQuiz(token, createQuizRequest)
+                createQuizFacade.createQuiz(createQuizRequest)
 
                 eventually(5.seconds) {
                     domainEventHolder.eventsShouldBe(NotApprovedQuizCreated::class, 1)
@@ -119,6 +128,7 @@ internal class CreateQuizFacadeTest(
             every { textSimilarityChecker.getSimilarity(any()) } returns SimilarityResponse(
                 listOf(quiz.id)
             )
+            notApprovedQuizRepository.deleteAll()
             notApprovedQuizRepository.saveAll(
                 listOf(
                     notApprovedQuiz(id = 1, userId = defaultUser.id.toLong()),
@@ -129,10 +139,7 @@ internal class CreateQuizFacadeTest(
 
             it("IllegalArgumentException을 던진다.") {
                 val result = shouldThrowExactly<IllegalArgumentException> {
-                    createQuizFacade.createQuiz(
-                        token,
-                        createQuizRequest
-                    )
+                    createQuizFacade.createQuiz(createQuizRequest)
                 }
 
                 result.message shouldBe "Cannot create quiz cause already have 3 not approved quizs."
