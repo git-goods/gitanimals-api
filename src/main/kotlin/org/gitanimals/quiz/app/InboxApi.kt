@@ -1,12 +1,12 @@
 package org.gitanimals.quiz.app
 
 import org.gitanimals.inbox.domain.InboxType
-import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.service.annotation.PostExchange
 import java.time.Instant
 
 fun interface InboxApi {
 
-    @PostMapping("/internals/inboxes")
+    @PostExchange("/internals/inboxes")
     fun inputInbox(request: InboxInputRequest)
 
     data class InboxInputRequest(
