@@ -25,6 +25,4 @@ interface QuizSolveContextRepository : JpaRepository<QuizSolveContext, Long> {
         id: Long,
         userId: Long,
     ): QuizSolveContext?
-
-    fun deleteByUserId(userId: Long)
 }
