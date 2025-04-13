@@ -20,7 +20,7 @@ import java.util.*
         InternalAuth::class,
     ]
 )
-@TestPropertySource("classpath:application.properties")
+@TestPropertySource("classpath:test.properties")
 @DisplayName("InternalAuth 클래스의")
 internal class InternalAuthTest(
     @MockkBean(relaxed = true) private val internalAuthClient: InternalAuthClient,
