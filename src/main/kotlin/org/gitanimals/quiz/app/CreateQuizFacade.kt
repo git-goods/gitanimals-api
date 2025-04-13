@@ -3,7 +3,9 @@ package org.gitanimals.quiz.app
 import org.gitanimals.core.IdGenerator
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
+import org.gitanimals.core.auth.InternalAuth
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.app.response.CreateQuizResponse
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component
 class CreateQuizFacade(
     private val aiApi: AIApi,
     private val identityApi: IdentityApi,
+    private val internalAuth: InternalAuth,
     private val quizService: QuizService,
     private val notApprovedQuizService: NotApprovedQuizService,
     private val textSimilarityChecker: TextSimilarityChecker,
@@ -33,8 +36,8 @@ class CreateQuizFacade(
 
     private lateinit var createQuizOrchestrator: Orchestrator<CreateQuizRequest, CreateQuizResponse>
 
-    fun createQuiz(token: String, createQuizRequest: CreateQuizRequest): CreateQuizResponse {
-        val user = identityApi.getUserByToken(token)
+    fun createQuiz(createQuizRequest: CreateQuizRequest): CreateQuizResponse {
+        val userId = internalAuth.getUserId()
 
         val quizCreatePrompt = quizCreatePromptService.getFirstPrompt()
         val isDevelopmentQuiz = runCatching {
@@ -56,7 +59,7 @@ class CreateQuizFacade(
             val similarityQuizs = quizService.findAllByIds(similarityResponses.similarityQuizIds)
 
             val notApprovedQuiz = notApprovedQuizService.createNotApprovedQuiz(
-                userId = user.id.toLong(),
+                userId = userId,
                 problem = createQuizRequest.problem,
                 category = createQuizRequest.category,
                 expectedAnswer = createQuizRequest.expectedAnswer,
@@ -64,7 +67,7 @@ class CreateQuizFacade(
             )
 
             identityApi.increaseUserPointsById(
-                userId = user.id.toLong(),
+                userId = userId,
                 point = CREATE_QUIZ_PRICE,
                 idempotencyKey = IdGenerator.generate().toString(),
             )
@@ -85,9 +88,10 @@ class CreateQuizFacade(
         return createQuizOrchestrator.sagaSync(
             request = createQuizRequest,
             context = mapOf(
-                "userId" to user.id,
+                "userId" to userId,
                 "idempotencyKey" to IdGenerator.generate(),
                 TRACE_ID to MDC.get(TRACE_ID),
+                USER_ID to MDC.get(USER_ID),
             ),
         ).decodeResultOrThrow(CreateQuizResponse::class)
     }

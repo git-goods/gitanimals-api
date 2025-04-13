@@ -14,6 +14,7 @@ data class SlackInteracted(
     val sourceKey: String,
     val payload: String,
 ) : AsyncRedisPubSubEvent(
+    apiUserId = null,
     traceId = runCatching { MDC.get(MDCFilter.TRACE_ID) }
         .getOrElse { IdGenerator.generate().toString() },
     channel = SLACK_INTERACTED

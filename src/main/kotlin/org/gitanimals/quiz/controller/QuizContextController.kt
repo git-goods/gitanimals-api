@@ -22,7 +22,8 @@ class QuizContextController(
         @RequestBody createSolveQuizRequest: CreateSolveQuizRequest,
         @RequestHeader("Locale") locale: String,
     ): CreateQuizContextResponse {
-        val contextId = solveQuizFacade.createContext(token, locale, createSolveQuizRequest)
+        val contextId =
+            solveQuizFacade.createContext(locale = locale, request = createSolveQuizRequest)
         return CreateQuizContextResponse(contextId.toString())
     }
 
@@ -31,7 +32,7 @@ class QuizContextController(
     fun getAndStartSolveQuizContextById(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
-    ): QuizContextResponse = solveQuizFacade.getAndStartSolveQuizContextById(token, contextId)
+    ): QuizContextResponse = solveQuizFacade.getAndStartSolveQuizContextById(id = contextId)
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/quizs/context/{contextId}/answers")
@@ -39,7 +40,7 @@ class QuizContextController(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
         @RequestBody answerQuizRequest: AnswerQuizRequest,
-    ) = solveQuizFacade.answerQuizById(token, contextId, answerQuizRequest.answer)
+    ) = solveQuizFacade.answerQuizById(id = contextId, answer = answerQuizRequest.answer)
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/quizs/context/{contextId}/results")
@@ -47,7 +48,7 @@ class QuizContextController(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
     ): QuizSolveContextStatusResponse {
-        val quizContext = solveQuizFacade.getQuizById(token = token, id = contextId)
+        val quizContext = solveQuizFacade.getQuizById(id = contextId)
 
         return QuizSolveContextStatusResponse(
             prize = quizContext.getPrize(),
@@ -60,7 +61,7 @@ class QuizContextController(
     fun stopQuizByContextId(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
-    ) = solveQuizFacade.stopQuiz(token = token, id = contextId)
+    ) = solveQuizFacade.stopQuiz(id = contextId)
 
 
     @ResponseStatus(HttpStatus.OK)

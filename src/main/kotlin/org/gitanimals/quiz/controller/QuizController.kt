@@ -18,5 +18,5 @@ class QuizController(
     fun createQuiz(
         @RequestBody request: CreateQuizRequest,
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
-    ): CreateQuizResponse = createQuizFacade.createQuiz(token, request)
+    ): CreateQuizResponse = createQuizFacade.createQuiz(request)
 }

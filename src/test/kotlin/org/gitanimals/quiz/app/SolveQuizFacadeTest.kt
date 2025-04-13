@@ -8,6 +8,7 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import org.gitanimals.core.auth.InternalAuth
 import org.gitanimals.quiz.app.request.CreateSolveQuizRequest
 import org.gitanimals.quiz.domain.approved.QuizRepository
 import org.gitanimals.quiz.domain.approved.QuizService
@@ -42,8 +43,13 @@ internal class SolveQuizFacadeTest(
     private val quizSolveContextRepository: QuizSolveContextRepository,
     private val quizService: QuizService,
     private val quizSolveContextService: QuizSolveContextService,
+    @MockkBean private val internalAuth: InternalAuth,
     @MockkBean private val identityApi: IdentityApi,
 ) : DescribeSpec({
+
+    beforeAny {
+        every { internalAuth.getUserId() } returns defaultUser.id.toLong()
+    }
 
     afterAny {
         quizRepository.deleteAll()
@@ -68,7 +74,7 @@ internal class SolveQuizFacadeTest(
 
             it("새로운 quizContext를 생성한다") {
                 shouldNotThrowAny {
-                    solveQuizFacade.createContext(token,"KR" , request)
+                    solveQuizFacade.createContext("KR", request)
                 }
             }
         }
@@ -80,7 +86,7 @@ internal class SolveQuizFacadeTest(
             every { identityApi.getUserByToken(any()) } returns defaultUser
 
             it("SOLVING상태의 QuizContextResponse를 응답한다") {
-                val result = solveQuizFacade.getAndStartSolveQuizContextById(token, quizContext.id)
+                val result = solveQuizFacade.getAndStartSolveQuizContextById(quizContext.id)
 
                 result.should {
                     it.status shouldBe QuizSolveContextStatus.SOLVING
@@ -101,7 +107,7 @@ internal class SolveQuizFacadeTest(
 
             it("퀴즈를 푼다") {
                 shouldNotThrowAny {
-                    solveQuizFacade.answerQuizById(token, quizContext.id, "YES")
+                    solveQuizFacade.answerQuizById(quizContext.id, "YES")
                 }
             }
         }
@@ -113,7 +119,7 @@ internal class SolveQuizFacadeTest(
 
             it("IllegalArgumentException을 던진다") {
                 shouldThrowExactly<IllegalArgumentException> {
-                    solveQuizFacade.answerQuizById(token, quizContext.id, "YES")
+                    solveQuizFacade.answerQuizById(quizContext.id, "YES")
                 }
             }
         }

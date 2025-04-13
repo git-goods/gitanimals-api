@@ -1,5 +1,6 @@
 package org.gitanimals.coupon.app
 
+import org.gitanimals.core.auth.InternalAuth
 import org.gitanimals.coupon.app.event.CouponUsed
 import org.gitanimals.coupon.app.response.CouponUsedResponse
 import org.gitanimals.coupon.domain.Coupon
@@ -13,12 +14,13 @@ class CouponFacade(
     private val couponService: CouponService,
     private val sagaManager: SagaManager,
     private val identityApi: IdentityApi,
+    private val internalAuth: InternalAuth,
 ) {
 
     fun useCoupon(token: String, code: String, dynamic: String): CouponUsedResponse? {
-        val user = identityApi.getUserByToken(token)
+        val userId = internalAuth.getUserId()
 
-        require(couponService.isValidCoupon(user.id.toLong(), code)) {
+        require(couponService.isValidCoupon(userId, code)) {
             "Cannot use coupon code $code"
         }
 
@@ -34,9 +36,9 @@ class CouponFacade(
         return null
     }
 
-    fun getUsedCoupons(token: String): List<Coupon> {
-        val user = identityApi.getUserByToken(token)
+    fun getUsedCoupons(): List<Coupon> {
+        val userId = internalAuth.getUserId()
 
-        return couponService.getCouponsByUserId(user.id.toLong())
+        return couponService.getCouponsByUserId(userId)
     }
 }

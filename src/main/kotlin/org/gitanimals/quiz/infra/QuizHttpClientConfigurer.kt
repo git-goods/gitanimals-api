@@ -1,5 +1,6 @@
 package org.gitanimals.quiz.infra
 
+import org.gitanimals.core.auth.InternalAuthRequestInterceptor
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.quiz.app.IdentityApi
 import org.gitanimals.quiz.app.InboxApi
@@ -22,6 +23,7 @@ class QuizHttpClientConfigurer(
     @Value("\${openai.key}") private val openAIKey: String,
     @Value("\${openai.organization-id}") private val openAIOrganizationId: String,
     @Value("\${openai.project}") private val openAIProject: String,
+    private val internalAuthRequestInterceptor: InternalAuthRequestInterceptor,
 ) {
 
     @Bean
@@ -35,6 +37,7 @@ class QuizHttpClientConfigurer(
                 }
                 execution.execute(request, body)
             }
+            .requestInterceptor(internalAuthRequestInterceptor)
             .defaultStatusHandler(quizHttpClientErrorHandler())
             .baseUrl("https://api.gitanimals.org")
             .build()
@@ -57,6 +60,7 @@ class QuizHttpClientConfigurer(
                 }
                 execution.execute(request, body)
             }
+            .requestInterceptor(internalAuthRequestInterceptor)
             .defaultStatusHandler(quizHttpClientErrorHandler())
             .baseUrl("https://api.gitanimals.org")
             .build()
