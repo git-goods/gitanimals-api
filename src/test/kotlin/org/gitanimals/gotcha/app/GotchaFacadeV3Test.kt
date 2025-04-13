@@ -1,5 +1,6 @@
 package org.gitanimals.gotcha.app
 
+import com.ninjasquad.springmockk.MockkBean
 import io.jsonwebtoken.JwtException
 import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.assertions.throwables.shouldThrow
@@ -9,10 +10,11 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.mockk.every
 import org.gitanimals.core.IdGenerator
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.gotcha.app.response.UserResponse
 import org.gitanimals.gotcha.domain.GotchaService
 import org.gitanimals.gotcha.domain.GotchaType
-import org.gitanimals.gotcha.infra.RestRenderApi
+import org.gitanimals.gotcha.infra.DropRateCache
 import org.junit.jupiter.api.DisplayName
 import org.rooftop.netx.meta.EnableSaga
 import org.slf4j.MDC
@@ -28,10 +30,10 @@ import kotlin.time.Duration.Companion.seconds
 @ContextConfiguration(
     classes = [
         RedisContainer::class,
-        MockServerConfiguration::class,
         SagaCapture::class,
         GotchaService::class,
         GotchaFacadeV3::class,
+        DropRateCache::class,
     ]
 )
 @EntityScan("org.gitanimals.gotcha")
@@ -41,12 +43,13 @@ import kotlin.time.Duration.Companion.seconds
 internal class GotchaFacadeV3Test(
     private val sagaCapture: SagaCapture,
     private val gotchaFacadeV3: GotchaFacadeV3,
-    private val userApi: UserApi,
-    private val renderApi: RenderApi,
+    @MockkBean(relaxed = true) private val userApi: UserApi,
+    @MockkBean(relaxed = true) private val renderApi: RenderApi,
 ) : DescribeSpec({
 
     beforeEach {
         sagaCapture.clear()
+        MDC.put(USER_ID, richUser.id)
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
     }
 
@@ -57,9 +60,8 @@ internal class GotchaFacadeV3Test(
                 renderApi.addPersonas(
                     any(),
                     any(),
-                    any()
                 )
-            } returns listOf(addPersonaResponse.id)
+            } returns listOf(addPersonaResponse)
 
             it("gotcha를 성공한다.") {
                 val gotchaResponse = gotchaFacadeV3.gotcha("token", GotchaType.DEFAULT, 1)
@@ -81,17 +83,17 @@ internal class GotchaFacadeV3Test(
         context("포인트가 충분한 유저가 Gotcha를 10번 연속 한다면,") {
             every { userApi.getUserByToken(any()) } returns richUser
 
-            every { renderApi.addPersonas(any(), any(), any()) } returns listOf(
-                addPersonaResponse.id,
-                addPersonaResponse.id,
-                addPersonaResponse.id,
-                addPersonaResponse.id,
-                addPersonaResponse.id,
-                addPersonaResponse.id,
-                addPersonaResponse.id,
-                addPersonaResponse.id,
-                addPersonaResponse.id,
-                addPersonaResponse.id,
+            every { renderApi.addPersonas(any(), any()) } returns listOf(
+                addPersonaResponse,
+                addPersonaResponse,
+                addPersonaResponse,
+                addPersonaResponse,
+                addPersonaResponse,
+                addPersonaResponse,
+                addPersonaResponse,
+                addPersonaResponse,
+                addPersonaResponse,
+                addPersonaResponse,
             )
 
 
@@ -108,7 +110,6 @@ internal class GotchaFacadeV3Test(
                 renderApi.addPersonas(
                     any(),
                     any(),
-                    any()
                 )
             } throws IllegalArgumentException("for test")
 
@@ -139,6 +140,6 @@ internal class GotchaFacadeV3Test(
         private val richUser = UserResponse("1", "rich_guy", "100000", "image-url.png")
         private val poorUser = UserResponse("1", "poor_guy", "0", "image-url.png")
         private val addPersonaResponse =
-            RestRenderApi.PersonaResponse("1", "GOOSE", "1", true, "0.1")
+            RenderApi.PersonaResponse("1", "GOOSE", "1", true, "0.1")
     }
 }
