@@ -81,7 +81,7 @@ class GitAnimalsNewUserSlackNotification(
 ) : SlackNotification(token, "C079NJ6PVBQ", objectMapper)
 
 @Component
-class GitAnimalsDailyReportSlackNotification(
+class GitAnimalsReportSlackNotification(
     objectMapper: ObjectMapper,
     @Value(value = "\${slack.token}") token: String,
 ) : SlackNotification(token, "C07BPB42R8D", objectMapper)

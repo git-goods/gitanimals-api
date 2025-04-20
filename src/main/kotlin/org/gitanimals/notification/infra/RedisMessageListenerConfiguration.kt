@@ -1,10 +1,7 @@
 package org.gitanimals.notification.infra
 
 import org.gitanimals.core.redis.RedisPubSubChannel
-import org.gitanimals.notification.app.NotApprovedQuizCreatedMessageListener
-import org.gitanimals.notification.app.QuizCreatedMessageListener
-import org.gitanimals.notification.app.SlackDeadLetterMessageListener
-import org.gitanimals.notification.app.SlackRepliedMessageListener
+import org.gitanimals.notification.app.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
@@ -18,6 +15,7 @@ class RedisMessageListenerConfiguration(
     private val notApprovedQuizCreatedMessageListener: NotApprovedQuizCreatedMessageListener,
     private val slackRepliedMessageListener: SlackRepliedMessageListener,
     private val slackDeadLetterMessageListener: SlackDeadLetterMessageListener,
+    private val newPetDropRateDistributionMessageListener: NewPetDropRateDistributionMessageListener,
 ) {
 
     @Bean
@@ -39,6 +37,10 @@ class RedisMessageListenerConfiguration(
             this.addMessageListener(
                 slackDeadLetterMessageListener,
                 ChannelTopic(RedisPubSubChannel.DEAD_LETTER_OCCURRED),
+            )
+            this.addMessageListener(
+                newPetDropRateDistributionMessageListener,
+                ChannelTopic(RedisPubSubChannel.NEW_PET_DROP_RATE_DISTRIBUTION)
             )
         }
     }
