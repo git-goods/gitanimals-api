@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 @SagaHandler
 class SlackNotificationHandler(
     @Qualifier("gitAnimalsNewUserSlackNotification") private val newUserSlackNotification: Notification,
-    @Qualifier("gitAnimalsDailyReportSlackNotification") private val dailyReportSlackNotification: Notification,
+    @Qualifier("gitAnimalsReportSlackNotification") private val dailyReportSlackNotification: Notification,
 ) {
 
     @SagaStartListener(event = NewUserCreated::class, successWith = SuccessWith.END)
