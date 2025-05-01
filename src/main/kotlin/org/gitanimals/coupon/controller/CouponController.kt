@@ -1,5 +1,7 @@
 package org.gitanimals.coupon.controller
 
+import org.gitanimals.core.auth.RequiredUserEntryPoints
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.coupon.app.CouponFacade
 import org.gitanimals.coupon.controller.request.CouponRequest
 import org.gitanimals.coupon.controller.response.CouponResponses
@@ -14,6 +16,7 @@ class CouponController(
 
     @PostMapping("/coupons")
     @ResponseStatus(HttpStatus.OK)
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun useCoupon(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestBody couponRequest: CouponRequest,
@@ -21,6 +24,7 @@ class CouponController(
 
     @GetMapping("/coupons/users")
     @ResponseStatus(HttpStatus.OK)
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun getUsedCoupons(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
     ): CouponResponses = CouponResponses.from(couponFacade.getUsedCoupons())

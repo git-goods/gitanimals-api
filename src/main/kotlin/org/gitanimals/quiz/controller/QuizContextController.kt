@@ -1,6 +1,8 @@
 package org.gitanimals.quiz.controller
 
 import org.apache.http.HttpHeaders
+import org.gitanimals.core.auth.RequiredUserEntryPoints
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.quiz.app.SolveQuizFacade
 import org.gitanimals.quiz.app.request.CreateSolveQuizRequest
 import org.gitanimals.quiz.app.response.QuizContextResponse
@@ -17,6 +19,7 @@ class QuizContextController(
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/quizs/context")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun createQuizContext(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestBody createSolveQuizRequest: CreateSolveQuizRequest,
@@ -29,6 +32,7 @@ class QuizContextController(
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/quizs/context/{contextId}")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun getAndStartSolveQuizContextById(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
@@ -36,6 +40,7 @@ class QuizContextController(
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/quizs/context/{contextId}/answers")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun answerQuizByContextId(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
@@ -44,6 +49,7 @@ class QuizContextController(
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/quizs/context/{contextId}/results")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun getQuizSolveContextStatus(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
@@ -58,6 +64,7 @@ class QuizContextController(
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/quizs/context/{contextId}/stops")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun stopQuizByContextId(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("contextId") contextId: Long,
@@ -66,6 +73,7 @@ class QuizContextController(
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/quizs/context/today")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun getTodaySolvedContextResult(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
     ) = solveQuizFacade.getTodaySolvedContextResult(token)

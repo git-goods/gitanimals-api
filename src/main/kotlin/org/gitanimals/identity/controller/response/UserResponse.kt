@@ -1,5 +1,6 @@
 package org.gitanimals.identity.controller.response
 
+import org.gitanimals.identity.domain.EntryPoint
 import org.gitanimals.identity.domain.User
 
 data class UserResponse(
@@ -7,15 +8,18 @@ data class UserResponse(
     val username: String,
     val points: String,
     val profileImage: String,
+    val entryPoint: EntryPoint,
 ) {
 
     companion object {
+
         fun from(user: User): UserResponse {
             return UserResponse(
-                user.id.toString(),
-                user.name,
-                user.getPoints().toString(),
-                user.profileImage,
+                id = user.id.toString(),
+                username = user.name,
+                points = user.getPoints().toString(),
+                profileImage = user.profileImage,
+                entryPoint = user.entryPoint,
             )
         }
     }

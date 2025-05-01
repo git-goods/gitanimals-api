@@ -22,6 +22,7 @@ ARG ELASTIC_SEARCH_PASSWORD
 ARG QUIZ_APPROVE_TOKEN
 ARG RELAY_APPROVE_TOKEN
 ARG INTERNAL_AUTH_SECRET
+ARG LOGIN_SECRET
 
 ARG JAR_FILE=./*.jar
 COPY ${JAR_FILE} gitanimals-api.jar
@@ -47,7 +48,8 @@ ENV db_url=${DB_URL} \
   elastic_search_password=${ELASTIC_SEARCH_PASSWORD} \
   quiz_approve_token=${QUIZ_APPROVE_TOKEN} \
   relay_approve_token=${RELAY_APPROVE_TOKEN} \
-  internal_auth_secret=${INTERNAL_AUTH_SECRET}
+  internal_auth_secret=${INTERNAL_AUTH_SECRET} \
+  login_secret=${LOGIN_SECRET}
 
 ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --spring.datasource.url=${db_url} \
@@ -71,4 +73,5 @@ ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --spring.elasticsearch.password=${elastic_search_password} \
   --quiz.approve.token=${quiz_approve_token} \
   --relay.approve.token=${relay_approve_token} \
-  --internal.auth.secret=${internal_auth_secret}
+  --internal.auth.secret=${internal_auth_secret} \
+  --login.secret=${login_secret}

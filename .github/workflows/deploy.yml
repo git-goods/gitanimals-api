@@ -87,6 +87,7 @@ jobs:
             "QUIZ_APPROVE_TOKEN=${{ secrets.QUIZ_APPROVE_TOKEN }}"
             "RELAY_APPROVE_TOKEN=${{ secrets.RELAY_APPROVE_TOKEN }}"
             "INTERNAL_AUTH_SECRET=${{ secrets.INTERNAL_AUTH_SECRET }}"
+            "LOGIN_SECRET=${{ secrets.LOGIN_SECRET }}"
 
       - name: build and push filebeat
         uses: docker/build-push-action@v4

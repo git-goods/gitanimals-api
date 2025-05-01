@@ -2,7 +2,7 @@ package org.gitanimals.notification.app
 
 import io.kotest.core.spec.style.DescribeSpec
 import org.gitanimals.notification.app.event.NewUserCreated
-import org.gitanimals.notification.infra.GitAnimalsDailyReportSlackNotification
+import org.gitanimals.notification.infra.GitAnimalsReportSlackNotification
 import org.gitanimals.notification.infra.GitAnimalsNewUserSlackNotification
 import org.junit.jupiter.api.DisplayName
 import org.rooftop.netx.api.SagaManager
@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource
     classes = [
         SlackNotificationHandler::class,
         GitAnimalsNewUserSlackNotification::class,
-        GitAnimalsDailyReportSlackNotification::class,
+        GitAnimalsReportSlackNotification::class,
     ]
 )
 @TestPropertySource("classpath:test.properties")

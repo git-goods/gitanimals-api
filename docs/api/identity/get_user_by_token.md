@@ -15,6 +15,7 @@
   "id": "1",
   "username": "devxb",
   "points": "491128",
-  "profileImage": "https://avatars.githubusercontent.com/u/62425964?v=4"
+  "profileImage": "https://avatars.githubusercontent.com/u/62425964?v=4",
+  "entryPoint": "GITHUB" // GITHUB OR APPLE
 }
 ```

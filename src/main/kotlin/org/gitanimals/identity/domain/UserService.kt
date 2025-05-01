@@ -13,23 +13,30 @@ class UserService(
     private val userIdempotencyRepository: UserIdempotencyRepository,
 ) {
 
-    fun existsUser(username: String): Boolean = userRepository.existsByName(username)
+    fun existsUser(username: String, entryPoint: EntryPoint): Boolean =
+        userRepository.existsByNameAndEntryPoint(username, entryPoint)
 
     @Retryable(retryFor = [ObjectOptimisticLockingFailureException::class])
     @Transactional
-    fun givePoint(username: String, point: Long, reason: String) {
-        userRepository.findByName(username)?.givePoint(point, reason)
+    fun givePoint(username: String, entryPoint: EntryPoint, point: Long, reason: String) {
+        userRepository.findByNameAndEntryPoint(username, entryPoint)?.givePoint(point, reason)
     }
 
     @Transactional
-    fun newUser(username: String, profileImage: String, contributionPerYears: Map<Int, Int>): User {
-        if (existsUser(username)) {
-            return getUserByName(username)
+    fun newUser(
+        username: String,
+        entryPoint: EntryPoint,
+        profileImage: String,
+        contributionPerYears: Map<Int, Int>
+    ): User {
+        if (existsUser(username, entryPoint)) {
+            return getUserByNameAndEntryPoint(username, entryPoint)
         }
         val user = User.newUser(
             name = username,
             points = contributionPerYears.toPoint(),
             profileImage = profileImage,
+            entryPoint = entryPoint,
         )
         return userRepository.save(user)
     }
@@ -56,8 +63,13 @@ class UserService(
 
     @Transactional
     @Retryable(ObjectOptimisticLockingFailureException::class)
-    fun increasePointByUsername(username: String, idempotencyKey: String, point: Long): User {
-        val user = getUserByName(username)
+    fun increasePointByUsername(
+        username: String,
+        entryPoint: EntryPoint,
+        idempotencyKey: String,
+        point: Long,
+    ): User {
+        val user = getUserByNameAndEntryPoint(username, entryPoint)
         requireIdempotency("increasePoint:${user.id}:$idempotencyKey")
 
         user.increasePoint(point)
@@ -81,8 +93,9 @@ class UserService(
         return point
     }
 
-    fun getUserByName(username: String): User = userRepository.findByName(username)
-        ?: throw IllegalArgumentException("Cannot find exists user by username \"$username\"")
+    fun getUserByNameAndEntryPoint(username: String, entryPoint: EntryPoint): User =
+        userRepository.findByNameAndEntryPoint(username, entryPoint)
+            ?: throw IllegalArgumentException("Cannot find exists user by username \"$username\" and entryPoint: \"$entryPoint\"")
 
     fun getUserById(userId: Long): User = userRepository.findByIdOrNull(userId)
         ?: throw IllegalArgumentException("Cannot find exists user by id \"$userId\"")

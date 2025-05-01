@@ -16,7 +16,7 @@ class JwtTokenManager(
     @Value("\${jwt.key}") key: String
 ) : TokenManager {
 
-    private val key = Keys.hmacShaKeyFor(key.toByteArray());
+    private val key = Keys.hmacShaKeyFor(key.toByteArray())
 
     override fun createToken(user: User): Token {
         val value = Jwts.builder()
@@ -26,6 +26,7 @@ class JwtTokenManager(
             .claims()
             .add(USER_ID, user.id)
             .add(USER_NAME, user.name)
+            .add(ENTRY_POINT, user.entryPoint)
             .issuedAt(Date.from(instant()))
             .expiration(Date.from(instant().plus(24 * 7, ChronoUnit.HOURS)))
             .and()
@@ -46,5 +47,6 @@ class JwtTokenManager(
     private companion object {
         private const val USER_ID = "userId"
         private const val USER_NAME = "username"
+        private const val ENTRY_POINT = "entryPoint"
     }
 }

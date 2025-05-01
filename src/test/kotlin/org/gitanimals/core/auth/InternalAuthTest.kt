@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.gitanimals.core.auth.InternalAuth.Companion.INTERNAL_AUTH_IV_KEY
 import org.gitanimals.core.auth.InternalAuth.Companion.INTERNAL_AUTH_SECRET_KEY
 import org.gitanimals.core.auth.InternalAuthClient.UserResponse
+import org.slf4j.MDC
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
@@ -54,6 +55,7 @@ internal class InternalAuthTest(
                 .encodeToString(encrypted.secret)
 
             it("userId를 응답한다") {
+                MDC.clear()
                 val expected = internalAuth.findUserId()
 
                 expected shouldBe userId
@@ -65,9 +67,10 @@ internal class InternalAuthTest(
 
             every { httpServletRequest.getHeader(any()) } returns null
             every { httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION) } returns "Bearer ..."
-            every { internalAuthClient.getUserByToken(any()) } returns UserResponse(userId.toString())
+            every { internalAuthClient.getUserByToken(any()) } returns UserResponse(userId.toString(), "GITHUB")
 
             it("userId를 응답한다") {
+                MDC.clear()
                 val expected = internalAuth.findUserId()
 
                 expected shouldBe userId
