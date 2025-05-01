@@ -3,6 +3,7 @@ package org.gitanimals.gotcha.app
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ENTRY_POINT
 import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.gotcha.app.response.GotchaResponseV3
 import org.gitanimals.gotcha.domain.DropRateClient
@@ -36,6 +37,7 @@ class GotchaFacadeV3(
                     "count" to count,
                     TRACE_ID to MDC.get(TRACE_ID),
                     USER_ID to MDC.get(USER_ID),
+                    USER_ENTRY_POINT to MDC.get(USER_ENTRY_POINT),
                 )
             ).decodeResultOrThrow(object : TypeReference<List<GotchaResponseV3>>() {})
     }

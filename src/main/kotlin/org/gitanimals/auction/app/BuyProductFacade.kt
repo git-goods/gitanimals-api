@@ -7,6 +7,7 @@ import org.gitanimals.auction.domain.ProductService
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ENTRY_POINT
 import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
@@ -36,6 +37,7 @@ class BuyProductFacade(
                 "idempotencyKey" to UUID.randomUUID().toString(),
                 TRACE_ID to MDC.get(TRACE_ID),
                 USER_ID to MDC.get(USER_ID),
+                USER_ENTRY_POINT to MDC.get(USER_ENTRY_POINT),
             )
         ).decodeResultOrThrow(Product::class)
 

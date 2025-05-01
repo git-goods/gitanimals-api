@@ -3,6 +3,7 @@ package org.gitanimals.shop.app
 import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ENTRY_POINT
 import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.shop.app.request.BuyCollaborationPersonaRequest
 import org.gitanimals.shop.domain.CollaborationPersonaService
@@ -32,6 +33,7 @@ class BuyCollaborationPersonaFacade(
                 "idempotencyKey" to UUID.randomUUID().toString(),
                 USER_ID to MDC.get(USER_ID),
                 TRACE_ID to MDC.get(TRACE_ID),
+                USER_ENTRY_POINT to MDC.get(USER_ENTRY_POINT),
             )
         )
 
