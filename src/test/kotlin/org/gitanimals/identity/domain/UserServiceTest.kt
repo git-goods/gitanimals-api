@@ -26,14 +26,14 @@ internal class UserServiceTest(
     }
 
     describe("givePoint 메소드는") {
-        context("username에 해당하는 user가 존재할경우,") {
+        context("username과 entryPoint에 해당하는 user가 존재할경우,") {
             val point = 100L
             userRepository.save(defaultUser)
 
             it("입력받은 point를 지급한다.") {
-                userService.givePoint(USER_NAME, point, "FOR_TEST")
+                userService.givePoint(USER_NAME, EntryPoint.GITHUB, point, "FOR_TEST")
 
-                val user = userRepository.findByName(USER_NAME)!!
+                val user = userRepository.findByNameAndEntryPoint(USER_NAME, EntryPoint.GITHUB)!!
 
                 user.getPoints() shouldBeEqual point
             }
@@ -42,7 +42,7 @@ internal class UserServiceTest(
         context("username에 해당하는 user가 존재하지 않을경우,") {
             it("아무런 동작도 하지 않는다") {
                 shouldNotThrowAny {
-                    userService.givePoint(NOT_EXIST_USER_NAME, 100, "FOR_TEST")
+                    userService.givePoint(NOT_EXIST_USER_NAME, EntryPoint.GITHUB, 100, "FOR_TEST")
                 }
             }
         }
@@ -56,7 +56,12 @@ internal class UserServiceTest(
 
             it("contribution * 100의 포인트를 갖고있는 새로운 user를 생성한다.") {
                 val user =
-                    userService.newUser(username, DEFAULT_PROFILE_IMAGE, contributionPerYears)
+                    userService.newUser(
+                        username,
+                        EntryPoint.GITHUB,
+                        DEFAULT_PROFILE_IMAGE,
+                        contributionPerYears,
+                    )
 
                 user.getPoints() shouldBeEqual expectedPoint
             }

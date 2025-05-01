@@ -3,6 +3,7 @@ package org.gitanimals.identity.controller
 import org.gitanimals.identity.app.Token
 import org.gitanimals.identity.app.UserFacade
 import org.gitanimals.identity.controller.response.UserResponse
+import org.gitanimals.identity.domain.EntryPoint
 import org.gitanimals.identity.domain.UserService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -36,8 +37,13 @@ class UserController(
     @GetMapping("/internals/users/by-name/{name}")
     fun getUserByName(
         @PathVariable("name") username: String,
+        @RequestParam(
+            name = "entryPoint",
+            defaultValue = "GITHUB",
+        )
+        entryPoint: EntryPoint = EntryPoint.GITHUB,
     ): UserResponse {
-        val user = userService.getUserByName(username)
+        val user = userService.getUserByNameAndEntryPoint(username, entryPoint)
         return UserResponse.from(user)
     }
 
@@ -87,7 +93,12 @@ class UserController(
         @PathVariable("username") username: String,
         @RequestParam("point") point: Long,
         @RequestParam("idempotency-key") idempotencyKey: String,
+        @RequestParam(
+            name = "entryPoint",
+            defaultValue = "GITHUB",
+        )
+        entryPoint: EntryPoint = EntryPoint.GITHUB,
     ) {
-        userService.increasePointByUsername(username, idempotencyKey, point)
+        userService.increasePointByUsername(username, entryPoint, idempotencyKey, point)
     }
 }

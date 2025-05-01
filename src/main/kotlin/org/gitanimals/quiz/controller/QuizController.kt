@@ -1,5 +1,7 @@
 package org.gitanimals.quiz.controller
 
+import org.gitanimals.core.auth.RequiredUserEntryPoints
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.quiz.app.CreateQuizFacade
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.app.response.CreateQuizResponse
@@ -15,6 +17,7 @@ class QuizController(
 ) {
 
     @PostMapping("/quizs")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun createQuiz(
         @RequestBody request: CreateQuizRequest,
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,

@@ -36,6 +36,10 @@ class User(
 
     @Column(name = "profile_image", nullable = false)
     val profileImage: String,
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "entry_point", columnDefinition = "VARCHAR(50) DEFAULT 'GITHUB'")
+    val entryPoint: EntryPoint,
 
     @Version
     private val version: Long? = null,
@@ -74,13 +78,19 @@ class User(
         private val JOIN_POINT_THRESHOLD = 100_000L
         private val PER_DAY_GIVE_POINT_THRESHOLD = 20000L
 
-        fun newUser(name: String, points: Long, profileImage: String): User {
+        fun newUser(
+            name: String,
+            points: Long,
+            profileImage: String,
+            entryPoint: EntryPoint,
+        ): User {
             return User(
                 id = IdGenerator.generate(),
                 name = name,
                 points = min(points, JOIN_POINT_THRESHOLD),
                 pointHistories = mutableListOf(),
                 profileImage = profileImage,
+                entryPoint = entryPoint,
             )
         }
     }

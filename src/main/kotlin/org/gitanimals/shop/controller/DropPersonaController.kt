@@ -1,5 +1,7 @@
 package org.gitanimals.shop.controller
 
+import org.gitanimals.core.auth.RequiredUserEntryPoints
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.shop.app.DropPersonaFacade
 import org.gitanimals.shop.controller.response.DropPersonaResponse
 import org.springframework.http.HttpHeaders
@@ -14,6 +16,7 @@ class DropPersonaController(
 ) {
 
     @PostMapping("shops/drop/{persona-id}")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun dropPersona(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @PathVariable("persona-id") personaId: Long,

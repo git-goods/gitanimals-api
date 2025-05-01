@@ -1,5 +1,7 @@
 package org.gitanimals.shop.controller
 
+import org.gitanimals.core.auth.RequiredUserEntryPoints
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.shop.app.BuyBackgroundFacade
 import org.gitanimals.shop.controller.response.ErrorResponse
 import org.gitanimals.shop.controller.request.BuyBackgroundRequest
@@ -21,6 +23,7 @@ class BuySaleController(
         BackgroundResponse.from(saleService.findAllByType(SaleType.BACKGROUND))
 
     @PostMapping("/shops/backgrounds")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun buyBackground(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestBody buyBackgroundRequest: BuyBackgroundRequest

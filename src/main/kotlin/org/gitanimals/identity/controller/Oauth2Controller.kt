@@ -1,6 +1,8 @@
 package org.gitanimals.identity.controller
 
-import org.gitanimals.identity.app.LoginFacade
+import org.gitanimals.identity.app.AppleLoginFacade
+import org.gitanimals.identity.app.GithubLoginFacade
+import org.gitanimals.identity.controller.request.AppleLoginRequest
 import org.gitanimals.identity.controller.request.RedirectWhenSuccess
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -10,7 +12,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class Oauth2Controller(
     @Value("\${oauth.client.id.github}") private val githubClientId: String,
-    private val loginFacade: LoginFacade,
+    private val githubLoginFacade: GithubLoginFacade,
+    private val appleLoginFacade: AppleLoginFacade,
 ) {
 
     @GetMapping("/logins/oauth/github")
@@ -35,12 +38,32 @@ class Oauth2Controller(
         @RequestParam("code") code: String,
         @PathVariable("redirect-path") redirectWhenSuccess: RedirectWhenSuccess,
     ): ResponseEntity<Unit> {
-        val token = loginFacade.login(code)
+        val token = githubLoginFacade.login(code)
         return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
             .header(
                 "Location",
                 redirectWhenSuccess.successUriWithToken(token)
             )
+            .build()
+    }
+
+    @PostMapping("/logins/oauth/apple")
+    fun loginWithAppleAndRedirect(
+        @RequestHeader(
+            name = "Redirect-When-Success",
+            defaultValue = "HOME"
+        ) redirectWhenSuccess: RedirectWhenSuccess,
+        @RequestHeader(name = "Login-Secret") loginSecret: String,
+        @RequestBody appleLoginRequest: AppleLoginRequest,
+    ): ResponseEntity<Unit> {
+        val token = appleLoginFacade.login(
+            username = appleLoginRequest.name,
+            profileImage = appleLoginRequest.profileImage,
+            loginSecret = loginSecret,
+        )
+
+        return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
+            .header("Location", redirectWhenSuccess.successUriWithToken(token))
             .build()
     }
 }
