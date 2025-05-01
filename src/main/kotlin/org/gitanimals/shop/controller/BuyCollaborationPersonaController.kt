@@ -1,5 +1,7 @@
 package org.gitanimals.shop.controller
 
+import org.gitanimals.core.auth.RequiredUserEntryPoints
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.shop.app.BuyCollaborationPersonaFacade
 import org.gitanimals.shop.app.request.BuyCollaborationPersonaRequest
 import org.gitanimals.shop.controller.response.CollaborationPersona
@@ -16,6 +18,7 @@ class BuyCollaborationPersonaController(
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("shops/personas/collaborations")
+    @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     fun buyCollaborationPersona(
         @RequestHeader(HttpHeaders.AUTHORIZATION) token: String,
         @RequestBody request: BuyCollaborationPersonaRequest,

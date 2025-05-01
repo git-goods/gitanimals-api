@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRepository : JpaRepository<User, Long> {
 
-    fun findByName(name: String): User?
-    fun existsByName(name: String): Boolean
+    fun findByNameAndEntryPoint(name: String, entryPoint: EntryPoint): User?
+
+    fun existsByNameAndEntryPoint(name: String, entryPoint: EntryPoint): Boolean
 }

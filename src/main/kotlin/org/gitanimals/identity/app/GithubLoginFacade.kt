@@ -1,10 +1,11 @@
 package org.gitanimals.identity.app
 
+import org.gitanimals.identity.domain.EntryPoint
 import org.gitanimals.identity.domain.UserService
 import org.springframework.stereotype.Service
 
 @Service
-class LoginFacade(
+class GithubLoginFacade(
     private val oauth2Api: Oauth2Api,
     private val userService: UserService,
     private val contributionApi: ContributionApi,
@@ -14,8 +15,12 @@ class LoginFacade(
     fun login(code: String): String {
         val oauthUserResponse = oauth2Api.getOauthUsername(oauth2Api.getToken(code))
 
-        val user = when (userService.existsUser(oauthUserResponse.username)) {
-            true -> userService.getUserByName(oauthUserResponse.username)
+        val user = when (userService.existsUser(oauthUserResponse.username, EntryPoint.GITHUB)) {
+            true -> userService.getUserByNameAndEntryPoint(
+                oauthUserResponse.username,
+                EntryPoint.GITHUB,
+            )
+
             else -> {
                 val contributedYears =
                     contributionApi.getAllContributionYearsWithToken(oauthUserResponse.username)
@@ -26,9 +31,10 @@ class LoginFacade(
                     )
 
                 userService.newUser(
-                    oauthUserResponse.username,
-                    oauthUserResponse.profileImage,
-                    contributionCountPerYears
+                    username = oauthUserResponse.username,
+                    entryPoint = EntryPoint.GITHUB,
+                    profileImage = oauthUserResponse.profileImage,
+                    contributionPerYears = contributionCountPerYears,
                 )
             }
         }
