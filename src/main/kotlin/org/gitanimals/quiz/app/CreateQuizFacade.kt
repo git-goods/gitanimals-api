@@ -5,6 +5,7 @@ import org.gitanimals.core.TraceIdContextOrchestrator
 import org.gitanimals.core.TraceIdContextRollback
 import org.gitanimals.core.auth.InternalAuth
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ENTRY_POINT
 import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
@@ -92,6 +93,7 @@ class CreateQuizFacade(
                 "idempotencyKey" to IdGenerator.generate(),
                 TRACE_ID to MDC.get(TRACE_ID),
                 USER_ID to MDC.get(USER_ID),
+                USER_ENTRY_POINT to MDC.get(USER_ENTRY_POINT),
             ),
         ).decodeResultOrThrow(CreateQuizResponse::class)
     }
@@ -151,6 +153,7 @@ class CreateQuizFacade(
         const val CREATE_QUIZ_PRICE = 5_000L
         private const val CREATE_QUIZ_SIMILARITY_CHECK_MESSAGE =
             "Your quiz has been successfully created, but a similar quiz has been found and is under review. The awarded $CREATE_QUIZ_PRICE points may be revoked."
-        private const val CREATE_QUIZ_SUCCESS_MESSAGE = "Success to create quiz and get $CREATE_QUIZ_PRICE points"
+        private const val CREATE_QUIZ_SUCCESS_MESSAGE =
+            "Success to create quiz and get $CREATE_QUIZ_PRICE points"
     }
 }
