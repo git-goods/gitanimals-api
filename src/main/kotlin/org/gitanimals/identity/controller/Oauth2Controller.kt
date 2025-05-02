@@ -4,6 +4,7 @@ import org.gitanimals.identity.app.AppleLoginFacade
 import org.gitanimals.identity.app.GithubLoginFacade
 import org.gitanimals.identity.controller.request.AppleLoginRequest
 import org.gitanimals.identity.controller.request.RedirectWhenSuccess
+import org.gitanimals.identity.controller.response.TokenResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -48,22 +49,17 @@ class Oauth2Controller(
     }
 
     @PostMapping("/logins/oauth/apple")
-    fun loginWithAppleAndRedirect(
-        @RequestHeader(
-            name = "Redirect-When-Success",
-            defaultValue = "HOME"
-        ) redirectWhenSuccess: RedirectWhenSuccess,
+    @ResponseStatus(HttpStatus.OK)
+    fun loginWithApple(
         @RequestHeader(name = "Login-Secret") loginSecret: String,
         @RequestBody appleLoginRequest: AppleLoginRequest,
-    ): ResponseEntity<Unit> {
+    ): TokenResponse {
         val token = appleLoginFacade.login(
             username = appleLoginRequest.name,
             profileImage = appleLoginRequest.profileImage,
             loginSecret = loginSecret,
         )
 
-        return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-            .header("Location", redirectWhenSuccess.successUriWithToken(token))
-            .build()
+        return TokenResponse(token)
     }
 }
