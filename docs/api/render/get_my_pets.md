@@ -20,6 +20,7 @@
       "type": "LITTLE_CHICK_SUNGLASSES",
       "level": "8",
       "visible": true,
+      "appVisible": false,
       "dropRate": "10%"
     },
     {
@@ -27,6 +28,7 @@
       "type": "LITTLE_CHICK_SUNGLASSES",
       "level": "7",
       "visible": true,
+      "appVisible": false,
       "dropRate": "0.7%"
     },
     {
@@ -34,6 +36,7 @@
       "type": "LITTLE_CHICK_SUNGLASSES",
       "level": "11",
       "visible": true,
+      "appVisible": false,
       "dropRate": "33%"
     },
     {
@@ -41,6 +44,7 @@
       "type": "LITTLE_CHICK",
       "level": "11",
       "visible": true,
+      "appVisible": false,
       "dropRate": "24%"
     },
     {
@@ -48,6 +52,7 @@
       "type": "GOBLIN_BAG",
       "level": "15",
       "visible": true,
+      "appVisible": false,
       "dropRate": "10%"
     },
     {
@@ -55,6 +60,7 @@
       "type": "LITTLE_CHICK_SUNGLASSES",
       "level": "14",
       "visible": true,
+      "appVisible": false,
       "dropRate": "10%"
     },
     {
@@ -62,6 +68,7 @@
       "type": "GOOSE",
       "level": "11",
       "visible": true,
+      "appVisible": false,
       "dropRate": "10%"
     },
     {
@@ -69,6 +76,7 @@
       "type": "FISH_MAN",
       "level": "14",
       "visible": true,
+      "appVisible": false,
       "dropRate": "10%"
     },
     {
@@ -76,6 +84,7 @@
       "type": "GOBLIN",
       "level": "16",
       "visible": true,
+      "appVisible": false,
       "dropRate": "10%"
     },
     {
@@ -83,6 +92,7 @@
       "type": "LITTLE_CHICK_SUNGLASSES",
       "level": "20",
       "visible": true,
+      "appVisible": false,
       "dropRate": "10%"
     },
     {
@@ -90,6 +100,7 @@
       "type": "LITTLE_CHICK",
       "level": "13",
       "visible": true,
+      "appVisible": false,
       "dropRate": "10%"
     },
     {
@@ -97,6 +108,7 @@
       "type": "LITTLE_CHICK",
       "level": "12",
       "visible": true,
+      "appVisible": false,
       "dropRate": "10%"
     }
   ]
