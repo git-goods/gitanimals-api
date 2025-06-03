@@ -15,27 +15,65 @@ class GithubLoginFacade(
     fun login(code: String): String {
         val oauthUserResponse = oauth2Api.getOauthUsername(oauth2Api.getToken(code))
 
-        val user = when (userService.existsUser(oauthUserResponse.username, EntryPoint.GITHUB)) {
-            true -> userService.getUserByNameAndEntryPoint(
-                oauthUserResponse.username,
-                EntryPoint.GITHUB,
-            )
-
-            else -> {
-                val contributedYears =
-                    contributionApi.getAllContributionYearsWithToken(oauthUserResponse.username)
-                val contributionCountPerYears =
-                    contributionApi.getContributionCountWithToken(
+        val user = when (userService.existsByEntryPointAndAuthenticationId(
+            entryPoint = EntryPoint.GITHUB,
+            authenticationId = oauthUserResponse.id,
+        )) {
+            true -> {
+                runCatching {
+                    userService.getUserByNameAndEntryPoint(
                         oauthUserResponse.username,
-                        contributedYears
+                        EntryPoint.GITHUB,
+                    )
+                }.getOrElse {
+                    if (it is IllegalArgumentException) {
+                        userService.updateUsernameByEntryPointAndAuthenticationId(
+                            username = oauthUserResponse.username,
+                            entryPoint = EntryPoint.GITHUB,
+                            authenticationId = oauthUserResponse.id,
+                        )
+                        return@getOrElse userService.getUserByNameAndEntryPoint(
+                            oauthUserResponse.username,
+                            EntryPoint.GITHUB,
+                        )
+                    }
+                    throw it
+                }
+            }
+
+            false -> {
+                if (userService.existsUser(
+                        username = oauthUserResponse.username,
+                        entryPoint = EntryPoint.GITHUB,
+                    )
+                ) {
+                    userService.updateUserAuthInfoByUsername(
+                        username = oauthUserResponse.username,
+                        entryPoint = EntryPoint.GITHUB,
+                        authenticationId = oauthUserResponse.id,
                     )
 
-                userService.newUser(
-                    username = oauthUserResponse.username,
-                    entryPoint = EntryPoint.GITHUB,
-                    profileImage = oauthUserResponse.profileImage,
-                    contributionPerYears = contributionCountPerYears,
-                )
+                    userService.getUserByNameAndEntryPoint(
+                        username = oauthUserResponse.username,
+                        entryPoint = EntryPoint.GITHUB,
+                    )
+                } else {
+                    val contributedYears =
+                        contributionApi.getAllContributionYearsWithToken(oauthUserResponse.username)
+                    val contributionCountPerYears =
+                        contributionApi.getContributionCountWithToken(
+                            oauthUserResponse.username,
+                            contributedYears,
+                        )
+
+                    userService.newUser(
+                        username = oauthUserResponse.username,
+                        entryPoint = EntryPoint.GITHUB,
+                        authenticationId = oauthUserResponse.id,
+                        profileImage = oauthUserResponse.profileImage,
+                        contributionPerYears = contributionCountPerYears,
+                    )
+                }
             }
         }
 

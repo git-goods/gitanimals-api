@@ -16,10 +16,10 @@ data class UserResponse(
         fun from(user: User): UserResponse {
             return UserResponse(
                 id = user.id.toString(),
-                username = user.name,
+                username = user.getName(),
                 points = user.getPoints().toString(),
                 profileImage = user.profileImage,
-                entryPoint = user.entryPoint,
+                entryPoint = user.getEntryPoint(),
             )
         }
     }

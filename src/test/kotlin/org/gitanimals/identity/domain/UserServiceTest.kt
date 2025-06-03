@@ -57,10 +57,11 @@ internal class UserServiceTest(
             it("contribution * 100의 포인트를 갖고있는 새로운 user를 생성한다.") {
                 val user =
                     userService.newUser(
-                        username,
-                        EntryPoint.GITHUB,
-                        DEFAULT_PROFILE_IMAGE,
-                        contributionPerYears,
+                        username = username,
+                        entryPoint = EntryPoint.GITHUB,
+                        authenticationId = "12345",
+                        profileImage = DEFAULT_PROFILE_IMAGE,
+                        contributionPerYears = contributionPerYears,
                     )
 
                 user.getPoints() shouldBeEqual expectedPoint

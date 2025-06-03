@@ -8,6 +8,7 @@ interface Oauth2Api {
 
     class OAuthUserResponse(
         val username: String,
+        val id: String,
         val profileImage: String,
     )
 }
