@@ -2,6 +2,7 @@ package org.gitanimals.identity.controller
 
 import org.gitanimals.identity.app.Token
 import org.gitanimals.identity.app.UserFacade
+import org.gitanimals.identity.controller.request.UsernameUpdateRequest
 import org.gitanimals.identity.controller.response.UserResponse
 import org.gitanimals.identity.domain.EntryPoint
 import org.gitanimals.identity.domain.UserService
@@ -100,5 +101,19 @@ class UserController(
         entryPoint: EntryPoint = EntryPoint.GITHUB,
     ) {
         userService.increasePointByUsername(username, entryPoint, idempotencyKey, point)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/internals/users")
+    fun updateUserByAuthInfo(
+        @RequestParam("entry-point") entryPoint: EntryPoint,
+        @RequestParam("authentication-id") authenticationId: String,
+        @RequestBody request: UsernameUpdateRequest,
+    ) {
+        userService.updateUsernameByEntryPointAndAuthenticationId(
+            username = request.changedName,
+            entryPoint = entryPoint,
+            authenticationId = authenticationId,
+        )
     }
 }

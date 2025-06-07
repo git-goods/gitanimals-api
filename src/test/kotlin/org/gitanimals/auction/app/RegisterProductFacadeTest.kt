@@ -13,6 +13,7 @@ import org.gitanimals.auction.AuctionTestRoot
 import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductRepository
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.core.filter.MDCFilter
 import org.slf4j.MDC
 import org.springframework.boot.test.context.SpringBootTest
@@ -50,6 +51,7 @@ internal class RegisterProductFacadeTest(
 
         MDC.put(MDCFilter.USER_ID, userResponse.id)
         MDC.put(MDCFilter.TRACE_ID, IdGenerator.generate().toString())
+        MDC.put(MDCFilter.USER_ENTRY_POINT, UserEntryPoint.GITHUB.name)
         return registerProductFacade.registerProduct(VALID_TOKEN, PERSONA_ID, PRICE)
     }
 
