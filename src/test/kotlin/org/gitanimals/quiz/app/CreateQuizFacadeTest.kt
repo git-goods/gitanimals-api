@@ -12,7 +12,9 @@ import io.mockk.every
 import io.mockk.just
 import org.gitanimals.core.IdGenerator
 import org.gitanimals.core.auth.InternalAuth
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ENTRY_POINT
 import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
 import org.gitanimals.quiz.app.request.CreateQuizRequest
@@ -84,6 +86,7 @@ internal class CreateQuizFacadeTest(
         quizCreatePromptRepository.save(QuizCreatePrompt(1L, "Hello AI"))
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
         MDC.put(USER_ID, defaultUser.id)
+        MDC.put(USER_ENTRY_POINT, UserEntryPoint.GITHUB.name)
         every { identityApi.getUserByToken(any()) } returns defaultUser
         every { internalAuth.getUserId() } returns defaultUser.id.toLong()
         every { identityApi.increaseUserPointsById(any(), any(), any()) } just Runs
