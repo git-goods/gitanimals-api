@@ -16,8 +16,10 @@ import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductRepository
 import org.gitanimals.auction.domain.ProductState
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.core.filter.MDCFilter
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.slf4j.MDC
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
@@ -45,6 +47,8 @@ internal class DeleteProductFacadeTest(
     beforeEach {
         sagaCapture.clear()
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
+        MDC.put(USER_ID, IdGenerator.generate().toString())
+        MDC.put(MDCFilter.USER_ENTRY_POINT, UserEntryPoint.GITHUB.name)
     }
 
     afterEach { productRepository.deleteAll() }
@@ -54,9 +58,9 @@ internal class DeleteProductFacadeTest(
         every { renderApi.getPersonaById(any(), any()) } returns personaResponse
         every { renderApi.deletePersonaById(any(), any()) } just Runs
 
-        MDC.put(MDCFilter.USER_ID, userResponse.id)
-
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
+        MDC.put(USER_ID, personaResponse.id)
+        MDC.put(MDCFilter.USER_ENTRY_POINT, UserEntryPoint.GITHUB.name)
         return registerProductFacade.registerProduct(VALID_TOKEN, PERSONA_ID, PRICE)
     }
 

@@ -16,6 +16,8 @@ import org.gitanimals.auction.domain.Product
 import org.gitanimals.auction.domain.ProductRepository
 import org.gitanimals.auction.domain.ProductState
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.core.auth.UserEntryPoint
+import org.gitanimals.core.filter.MDCFilter
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.slf4j.MDC
@@ -44,6 +46,8 @@ internal class BuyProductFacadeTest(
 
     beforeEach {
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
+        MDC.put(USER_ID, IdGenerator.generate().toString())
+        MDC.put(MDCFilter.USER_ENTRY_POINT, UserEntryPoint.GITHUB.name)
         sagaCapture.clear()
     }
 
@@ -56,6 +60,7 @@ internal class BuyProductFacadeTest(
 
         MDC.put(USER_ID, userResponse.id)
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
+        MDC.put(MDCFilter.USER_ENTRY_POINT, UserEntryPoint.GITHUB.name)
         return registerProductFacade.registerProduct(VALID_TOKEN, PERSONA_ID, PRICE)
     }
 

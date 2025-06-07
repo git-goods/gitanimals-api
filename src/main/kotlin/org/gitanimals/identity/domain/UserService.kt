@@ -14,7 +14,34 @@ class UserService(
 ) {
 
     fun existsUser(username: String, entryPoint: EntryPoint): Boolean =
-        userRepository.existsByNameAndEntryPoint(username, entryPoint)
+        userRepository.existsByNameAndAuthInfoEntryPoint(username, entryPoint)
+
+    fun existsByEntryPointAndAuthenticationId(entryPoint: EntryPoint, authenticationId: String) =
+        findByEntryPointAndAuthenticationId(entryPoint, authenticationId) != null
+
+    fun findByEntryPointAndAuthenticationId(
+        entryPoint: EntryPoint,
+        authenticationId: String
+    ): User? {
+        return userRepository.findByEntryPointAndAuthenticationId(
+            entryPoint = entryPoint,
+            authenticationId = authenticationId,
+        )
+    }
+
+    @Retryable(retryFor = [ObjectOptimisticLockingFailureException::class])
+    @Transactional
+    fun updateUsernameByEntryPointAndAuthenticationId(
+        username: String,
+        entryPoint: EntryPoint,
+        authenticationId: String,
+    ) {
+        userRepository.findByEntryPointAndAuthenticationId(entryPoint, authenticationId)
+            ?.updateUsername(username)
+            ?: throw IllegalArgumentException(
+                "Cannot find user by entryPoint(\"$entryPoint\") and authenticationId(\"$authenticationId\")"
+            )
+    }
 
     @Retryable(retryFor = [ObjectOptimisticLockingFailureException::class])
     @Transactional
@@ -26,17 +53,29 @@ class UserService(
     fun newUser(
         username: String,
         entryPoint: EntryPoint,
+        authenticationId: String,
         profileImage: String,
         contributionPerYears: Map<Int, Int>
     ): User {
         if (existsUser(username, entryPoint)) {
             return getUserByNameAndEntryPoint(username, entryPoint)
         }
+
+        if (existsByEntryPointAndAuthenticationId(entryPoint, authenticationId)) {
+            updateUsernameByEntryPointAndAuthenticationId(
+                username = username,
+                entryPoint = entryPoint,
+                authenticationId = authenticationId,
+            )
+            return getUserByNameAndEntryPoint(username, entryPoint)
+        }
+
         val user = User.newUser(
             name = username,
             points = contributionPerYears.toPoint(),
             profileImage = profileImage,
             entryPoint = entryPoint,
+            authenticationId = authenticationId,
         )
         return userRepository.save(user)
     }
@@ -74,6 +113,18 @@ class UserService(
 
         user.increasePoint(point)
         return user
+    }
+
+    @Transactional
+    @Retryable(ObjectOptimisticLockingFailureException::class)
+    fun updateUserAuthInfoByUsername(
+        username: String,
+        entryPoint: EntryPoint,
+        authenticationId: String,
+    ) {
+        val user = getUserByNameAndEntryPoint(username, entryPoint)
+
+        user.setAuthenticationId(authenticationId)
     }
 
     private fun requireIdempotency(idempotencyKey: String) {

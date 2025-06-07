@@ -12,7 +12,8 @@
 ``` json
 {
   "personaId": "123",
-  "visible": true
+  "visible": true,
+  "type": "APP" // "APP", "DEFAULT"
 }
 ```
 
@@ -26,6 +27,7 @@
   "type": "GOBLIN_BAG",
   "level": "15",
   "visible": true,
+  "appVisible": false,
   "dropRate": "10%"
 }
 ```

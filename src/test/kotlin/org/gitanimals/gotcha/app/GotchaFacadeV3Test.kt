@@ -9,7 +9,9 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.mockk.every
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
+import org.gitanimals.core.filter.MDCFilter.Companion.USER_ENTRY_POINT
 import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.gotcha.app.response.UserResponse
 import org.gitanimals.gotcha.domain.GotchaService
@@ -51,6 +53,7 @@ internal class GotchaFacadeV3Test(
         sagaCapture.clear()
         MDC.put(USER_ID, richUser.id)
         MDC.put(TRACE_ID, IdGenerator.generate().toString())
+        MDC.put(USER_ENTRY_POINT, UserEntryPoint.GITHUB.name)
     }
 
     describe("gotcha 메소드는") {

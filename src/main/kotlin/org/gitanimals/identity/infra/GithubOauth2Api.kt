@@ -47,7 +47,11 @@ class GithubOauth2Api(
                     )
             }
 
-        return Oauth2Api.OAuthUserResponse(userResponse.login, userResponse.avatarUrl)
+        return Oauth2Api.OAuthUserResponse(
+            username = userResponse.login,
+            id = userResponse.id,
+            profileImage = userResponse.avatarUrl,
+        )
     }
 
     private data class TokenResponse(
@@ -60,6 +64,7 @@ class GithubOauth2Api(
 
     private data class UserResponse(
         val login: String,
+        val id: String,
         @JsonProperty("avatar_url")
         val avatarUrl: String,
     )

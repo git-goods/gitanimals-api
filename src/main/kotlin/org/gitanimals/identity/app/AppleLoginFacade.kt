@@ -27,6 +27,7 @@ class AppleLoginFacade(
                     entryPoint = EntryPoint.APPLE,
                     profileImage = profileImage,
                     contributionPerYears = mapOf(),
+                    authenticationId = username,
                 )
             }
         }

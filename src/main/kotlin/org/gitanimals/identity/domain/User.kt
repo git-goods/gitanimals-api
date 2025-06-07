@@ -5,13 +5,15 @@ import org.gitanimals.identity.core.AggregateRoot
 import org.gitanimals.identity.core.IdGenerator
 import org.gitanimals.identity.core.instant
 import org.gitanimals.identity.core.toZonedDateTime
+import org.slf4j.LoggerFactory
 import kotlin.math.max
 import kotlin.math.min
 
 @AggregateRoot
 @Table(
     name = "users", indexes = [
-        Index(columnList = "username", unique = true)
+        Index(columnList = "username", unique = true),
+        Index(columnList = "entry_point, authentication_id", unique = true),
     ]
 )
 @Entity(name = "users")
@@ -21,7 +23,7 @@ class User(
     val id: Long,
 
     @Column(name = "username", nullable = false)
-    val name: String,
+    private var name: String,
 
     @Column(name = "points", nullable = false)
     private var points: Long,
@@ -36,16 +38,33 @@ class User(
 
     @Column(name = "profile_image", nullable = false)
     val profileImage: String,
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "entry_point", columnDefinition = "VARCHAR(50) DEFAULT 'GITHUB'")
-    val entryPoint: EntryPoint,
+
+    @Embedded
+    private val authInfo: UserAuthInfo,
 
     @Version
     private val version: Long? = null,
 ) : AbstractTime() {
 
+    fun getName(): String = name
+
     fun getPoints(): Long = points
+
+    fun getEntryPoint(): EntryPoint = authInfo.entryPoint
+
+    fun findAuthenticationId(): String? = authInfo.authenticationId
+
+    fun setAuthenticationId(authenticationId: String) {
+        if (authInfo.authenticationId != null) {
+            check(authInfo.authenticationId == authenticationId) {
+                val message =
+                    "Different authenticationId input. saved authenticationId: \"${authInfo.authenticationId}\", input authenticationId: \"$authenticationId\""
+                logger.error(message)
+                message
+            }
+        }
+        authInfo.authenticationId = authenticationId
+    }
 
     fun givePoint(point: Long, reason: String) {
         val current = instant().toZonedDateTime()
@@ -74,15 +93,22 @@ class User(
         this.points += point
     }
 
+    fun updateUsername(username: String) {
+        this.name = username
+    }
+
     companion object {
-        private val JOIN_POINT_THRESHOLD = 100_000L
-        private val PER_DAY_GIVE_POINT_THRESHOLD = 20000L
+        private val logger = LoggerFactory.getLogger(User::class.simpleName)
+
+        private const val JOIN_POINT_THRESHOLD = 100_000L
+        private const val PER_DAY_GIVE_POINT_THRESHOLD = 20000L
 
         fun newUser(
             name: String,
             points: Long,
             profileImage: String,
             entryPoint: EntryPoint,
+            authenticationId: String,
         ): User {
             return User(
                 id = IdGenerator.generate(),
@@ -90,7 +116,7 @@ class User(
                 points = min(points, JOIN_POINT_THRESHOLD),
                 pointHistories = mutableListOf(),
                 profileImage = profileImage,
-                entryPoint = entryPoint,
+                authInfo = UserAuthInfo(entryPoint, authenticationId),
             )
         }
     }
