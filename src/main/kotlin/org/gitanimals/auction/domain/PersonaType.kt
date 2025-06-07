@@ -90,5 +90,8 @@ enum class PersonaType {
     UNICORN,
     SHIBA,
     SHIBA_KING,
+    LITTLE_CHICK_TUBE,
+    HAMSTER_TUBE,
+    RABBIT_TUBE,
     ;
 }
