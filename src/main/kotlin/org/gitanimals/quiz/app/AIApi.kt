@@ -10,8 +10,13 @@ class AIApi(
     private val openAI: OpenAI,
 ) {
 
-    fun isDevelopmentQuiz(text: String): Boolean {
-        val request = OpenAI.Request(messages = listOf(Message(role = "user", content = text)))
+    fun isDevelopmentQuiz(prompt: String, text: String): Boolean {
+        val request = OpenAI.Request(
+            messages = listOf(
+                Message(role = "system", content = prompt),
+                Message(role = "user", content = text)
+            )
+        )
         val aiResponseContent = openAI.invoke(request).choices.first().message.content
         return when (aiResponseContent.trim().lowercase()) {
             "true" -> true
@@ -27,7 +32,7 @@ fun interface OpenAI {
     fun invoke(@RequestBody request: Request): Response
 
     data class Request(
-        val model: String = "gpt-4o",
+        val model: String = "o4-mini",
         val messages: List<Message>,
     ) {
 

@@ -8,11 +8,16 @@ import org.gitanimals.core.filter.MDCFilter.Companion.TRACE_ID
 import org.gitanimals.core.filter.MDCFilter.Companion.USER_ENTRY_POINT
 import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.quiz.app.event.NotApprovedQuizCreated
+import org.gitanimals.quiz.app.event.NotDeveloperQuizCreateRequested
 import org.gitanimals.quiz.app.request.CreateQuizRequest
 import org.gitanimals.quiz.app.response.CreateQuizResponse
 import org.gitanimals.quiz.domain.approved.QuizService
+import org.gitanimals.quiz.domain.core.Language
+import org.gitanimals.quiz.domain.core.Language.Companion.containsKorean
 import org.gitanimals.quiz.domain.not_approved.NotApprovedQuizService
 import org.gitanimals.quiz.domain.prompt.QuizCreatePromptService
+import org.gitanimals.quiz.domain.prompt.rag.QuizCreateRag
+import org.gitanimals.quiz.domain.prompt.rag.QuizCreateRagService
 import org.rooftop.netx.api.Orchestrator
 import org.rooftop.netx.api.OrchestratorFactory
 import org.slf4j.LoggerFactory
@@ -30,6 +35,7 @@ class CreateQuizFacade(
     private val textSimilarityChecker: TextSimilarityChecker,
     private val eventPublisher: ApplicationEventPublisher,
     private val quizCreatePromptService: QuizCreatePromptService,
+    private val quizCreateRagService: QuizCreateRagService,
     orchestratorFactory: OrchestratorFactory,
 ) {
 
@@ -41,8 +47,20 @@ class CreateQuizFacade(
         val userId = internalAuth.getUserId()
 
         val quizCreatePrompt = quizCreatePromptService.getFirstPrompt()
+        val language = when {
+            createQuizRequest.problem.containsKorean() -> Language.KOREA
+            else -> Language.ENGLISH
+        }
+        val quizCreateRags = quizCreateRagService.findAllByLanguageAndCategory(
+            language = language,
+            category = createQuizRequest.category,
+        )
+
         val isDevelopmentQuiz = runCatching {
-            aiApi.isDevelopmentQuiz(quizCreatePrompt.getRequestTextWithPrompt(text = createQuizRequest.problem))
+            aiApi.isDevelopmentQuiz(
+                prompt = quizCreateRags.toPrompt(),
+                text = quizCreatePrompt.getRequestTextWithPrompt(text = createQuizRequest.problem)
+            )
         }.getOrElse {
             logger.error("Validation fail on isDevelopmentQuiz cause ${it.message}", it)
             throw it
@@ -50,6 +68,13 @@ class CreateQuizFacade(
 
         require(isDevelopmentQuiz) {
             logger.warn("Only development quiz allow request: $createQuizRequest")
+            eventPublisher.publishEvent(
+                NotDeveloperQuizCreateRequested(
+                    category = createQuizRequest.category,
+                    problem = createQuizRequest.problem,
+                    language = language,
+                )
+            )
             "Only development quiz allow request: $createQuizRequest"
         }
 
@@ -96,6 +121,19 @@ class CreateQuizFacade(
                 USER_ENTRY_POINT to MDC.get(USER_ENTRY_POINT),
             ),
         ).decodeResultOrThrow(CreateQuizResponse::class)
+    }
+
+    private fun List<QuizCreateRag>.toPrompt(): String {
+        val quizCreateRag = this.map {
+            "problem: ${it.problem}. is developer quiz?: ${it.isDevelopQuiz}"
+        }.joinToString { "\n" }
+
+        return """
+            Here are the quiz questions that have been identified as development-related so far.
+            Please refer to these when determining whether a quiz is related to development.
+            
+            $quizCreateRag
+        """.trimIndent()
     }
 
     init {
