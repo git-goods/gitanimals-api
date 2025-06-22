@@ -91,7 +91,7 @@ internal class CreateQuizFacadeTest(
         every { internalAuth.getUserId() } returns defaultUser.id.toLong()
         every { identityApi.increaseUserPointsById(any(), any(), any()) } just Runs
         every { identityApi.decreaseUserPointsById(any(), any(), any()) } just Runs
-        every { aiApi.isDevelopmentQuiz(any()) } returns true
+        every { aiApi.isDevelopmentQuiz(any(), any()) } returns true
         domainEventHolder.deleteAll()
     }
 
