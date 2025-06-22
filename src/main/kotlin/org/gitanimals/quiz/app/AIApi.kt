@@ -50,7 +50,7 @@ fun interface OpenAI {
         val choices: List<Choice>,
         val usage: Usage,
         val service_tier: String,
-        val system_fingerprint: String
+        val system_fingerprint: String? = null,
     ) {
         data class Choice(
             val index: Int,
