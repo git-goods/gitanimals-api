@@ -16,6 +16,7 @@ class RedisMessageListenerConfiguration(
     private val slackRepliedMessageListener: SlackRepliedMessageListener,
     private val slackDeadLetterMessageListener: SlackDeadLetterMessageListener,
     private val newPetDropRateDistributionMessageListener: NewPetDropRateDistributionMessageListener,
+    private val notDeveloperQuizCreateRequestedMessageListener: NotDeveloperQuizCreateRequestedMessageListener,
 ) {
 
     @Bean
@@ -41,6 +42,10 @@ class RedisMessageListenerConfiguration(
             this.addMessageListener(
                 newPetDropRateDistributionMessageListener,
                 ChannelTopic(RedisPubSubChannel.NEW_PET_DROP_RATE_DISTRIBUTION)
+            )
+            this.addMessageListener(
+                notDeveloperQuizCreateRequestedMessageListener,
+                ChannelTopic(RedisPubSubChannel.NOT_DEVELOPER_QUIZ_CREATED)
             )
         }
     }
