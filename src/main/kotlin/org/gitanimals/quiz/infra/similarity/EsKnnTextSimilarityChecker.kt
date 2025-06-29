@@ -24,7 +24,7 @@ class EsKnnTextSimilarityChecker(
             .withKnnSearches {
                 it.field(QuizSimilarity::vector.name)
                 it.queryVector(embeddingResponse.data.first().embedding)
-                it.similarity(0.75F)
+                it.similarity(0.35F)
                 it.k(MAX_RETURN_KNN_SIZE)
                 it.numCandidates(MAX_RETURN_KNN_SIZE * 5)
             }.build()
