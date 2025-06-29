@@ -23,7 +23,7 @@ class EsKnnTextSimilarityChecker(
         val knnQuery = NativeQuery.builder()
             .withKnnSearches {
                 it.field(QuizSimilarity::vector.name)
-                it.queryVector(embeddingResponse.data.embedding)
+                it.queryVector(embeddingResponse.data.first().embedding)
                 it.similarity(0.75F)
                 it.k(MAX_RETURN_KNN_SIZE)
                 it.numCandidates(MAX_RETURN_KNN_SIZE * 5)
