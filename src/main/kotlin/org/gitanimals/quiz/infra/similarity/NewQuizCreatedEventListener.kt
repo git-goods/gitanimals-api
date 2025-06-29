@@ -18,20 +18,25 @@ class NewQuizCreatedEventListener(
     fun addQuizVectorToEs(newQuizCreated: NewQuizCreated) {
         gracefulLaunch {
             val tokenizedQuizText = runCatching {
-                tokenizer.tokenize(Tokenizer.Request(newQuizCreated.problem))
+                tokenizer.embed(Tokenizer.Request.from(newQuizCreated.problem))
+            }.onSuccess {
+                logger.info("[NewQuizCreatedEventListener] Embedding Success total token: ${it.usage.totalToken}, prompt token: ${it.usage.promptToken}")
             }.getOrElse {
-                logger.error("Tokenize fail. id: ${newQuizCreated.id}, cause: ${it.message}", it)
+                logger.error(
+                    "[NewQuizCreatedEventListener] Tokenize fail. id: ${newQuizCreated.id}, cause: ${it.message}",
+                    it
+                )
                 throw it
-            }
+            }.data.embedding
 
             runCatching {
                 val quizSimilarity = QuizSimilarity.from(newQuizCreated.id, tokenizedQuizText)
                 quizSimilarityRepository.save(quizSimilarity)
             }.onSuccess {
-                logger.info("Tokenize and save success. quizId: ${it.quizId}")
+                logger.info("[NewQuizCreatedEventListener] Tokenize and save success. quizId: ${it.quizId}")
             }.onFailure {
                 logger.error(
-                    "Tokenize success but, Fail to save es. quizId: ${newQuizCreated.id}, cause: ${it.message}",
+                    "[NewQuizCreatedEventListener] Tokenize success but, Fail to save es. quizId: ${newQuizCreated.id}, cause: ${it.message}",
                     it
                 )
             }
