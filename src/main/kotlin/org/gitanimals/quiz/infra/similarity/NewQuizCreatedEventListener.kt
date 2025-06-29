@@ -27,7 +27,7 @@ class NewQuizCreatedEventListener(
                     it
                 )
                 throw it
-            }.data.embedding
+            }.data.first().embedding
 
             runCatching {
                 val quizSimilarity = QuizSimilarity.from(newQuizCreated.id, tokenizedQuizText)

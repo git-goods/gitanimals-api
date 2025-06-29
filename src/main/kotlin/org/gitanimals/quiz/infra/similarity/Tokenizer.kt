@@ -26,7 +26,7 @@ fun interface Tokenizer {
     data class Response(
         val usage: Usage,
         val model: String,
-        val data: Data,
+        val data: List<Data>,
     ) {
         data class Usage(
             @JsonProperty("prompt_token")
