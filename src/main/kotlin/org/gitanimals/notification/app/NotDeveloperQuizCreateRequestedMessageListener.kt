@@ -42,10 +42,10 @@ class NotDeveloperQuizCreateRequestedMessageListener(
 
             this.newQuizCreatedNotification.notifyWithActions(
                 message = """
-                    :warning::warning::warning:
+                    :warning:
                     개발 관련 내용이 아닌 퀴즈가 생성 요청되었어요. 
                     개발 관련 퀴즈라면, 버튼을 눌러 학습 시켜주세요.
-                    ---생성 요청된 퀴즈 :point_down:---
+                    ---:point_down: 생성 요청된 퀴즈 :point_down:---
                     language: ${notDeveloperQuizCreateRequested.language}
                     category: ${notDeveloperQuizCreateRequested.category}
                     problem: ${notDeveloperQuizCreateRequested.problem}
@@ -54,7 +54,7 @@ class NotDeveloperQuizCreateRequestedMessageListener(
                     ActionRequest(
                         id = "approve_action",
                         style = DANGER,
-                        name = "Approve",
+                        name = "눌러서 학습시키기",
                         interaction = payloadWhenApprovedButtonClicked,
                     ),
                 )

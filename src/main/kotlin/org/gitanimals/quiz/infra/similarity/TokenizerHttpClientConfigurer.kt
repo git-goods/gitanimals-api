@@ -12,7 +12,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory
 
 @Configuration
 class TokenizerHttpClientConfigurer(
-    @Value("\${tokenizer.api.key}") private val apiKey: String,
+    @Value("\${openai.key}") private val apiKey: String,
 ) {
 
     @Bean
@@ -23,7 +23,7 @@ class TokenizerHttpClientConfigurer(
                 request.headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 execution.execute(request, body)
             }
-            .baseUrl("https://api-inference.huggingface.co")
+            .baseUrl("https://api.openai.com")
             .defaultStatusHandler(tokenizerHttpClientErrorHandler())
             .build()
 
