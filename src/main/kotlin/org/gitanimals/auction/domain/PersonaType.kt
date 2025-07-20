@@ -93,5 +93,8 @@ enum class PersonaType {
     LITTLE_CHICK_TUBE,
     HAMSTER_TUBE,
     RABBIT_TUBE,
+    CAPYBARA,
+    CAPYBARA_CARROT,
+    CAPYBARA_SWIM,
     ;
 }
