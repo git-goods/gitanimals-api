@@ -51,13 +51,10 @@ class Oauth2Controller(
     @PostMapping("/logins/oauth/apple")
     @ResponseStatus(HttpStatus.OK)
     fun loginWithApple(
-        @RequestHeader(name = "Login-Secret") loginSecret: String,
         @RequestBody appleLoginRequest: AppleLoginRequest,
     ): TokenResponse {
         val token = appleLoginFacade.login(
-            username = appleLoginRequest.name,
-            profileImage = appleLoginRequest.profileImage,
-            loginSecret = loginSecret,
+            accessToken = appleLoginRequest.accessToken
         )
 
         return TokenResponse(token)
