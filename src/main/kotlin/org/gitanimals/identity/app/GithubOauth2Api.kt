@@ -1,6 +1,6 @@
 package org.gitanimals.identity.app
 
-interface Oauth2Api {
+interface GithubOauth2Api {
 
     fun getToken(temporaryToken: String): String
 
