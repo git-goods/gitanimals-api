@@ -35,7 +35,7 @@ class GithubGithubOauth2Api(
         return "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
     }
 
-    override fun getOauthUsername(token: String): org.gitanimals.identity.app.Oauth2Api.GithubOauth2Api.OAuthUserResponse {
+    override fun getOauthUsername(token: String): GithubOauth2Api.OAuthUserResponse {
         val userResponse = githubApiClient.get()
             .uri("/user")
             .header(HttpHeaders.AUTHORIZATION, token)
