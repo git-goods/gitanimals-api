@@ -3,10 +3,12 @@ package org.gitanimals.identity.app
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.Jwts
+import org.gitanimals.core.AUTHORIZATION_EXCEPTION
 import org.gitanimals.identity.app.AppleOauth2Api.AppleAuthKeyResponse
 import org.gitanimals.identity.domain.EntryPoint
 import org.gitanimals.identity.domain.UserService
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 import java.security.KeyFactory
@@ -20,11 +22,13 @@ class AppleLoginFacade(
     private val userService: UserService,
     private val appleOauth2Api: AppleOauth2Api,
     private val objectMapper: ObjectMapper,
+    @Value("\${login.secret}") private val loginSecret: String,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
-    fun login(accessToken: String): String {
+    fun login(loginSecret: String, accessToken: String): String {
+        require(this.loginSecret == loginSecret) { throw AUTHORIZATION_EXCEPTION }
         val appleUserInfo = getAppleUserInfo(accessToken)
 
         val isExistsUser = userService.existsByEntryPointAndAuthenticationId(
