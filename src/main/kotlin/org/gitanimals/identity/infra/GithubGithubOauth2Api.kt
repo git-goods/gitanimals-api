@@ -1,7 +1,7 @@
 package org.gitanimals.identity.infra
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.gitanimals.identity.app.Oauth2Api
+import org.gitanimals.identity.app.GithubOauth2Api
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 
 @Component
-class GithubOauth2Api(
+class GithubGithubOauth2Api(
     @Value("\${oauth.client.id.github}") private val clientId: String,
     @Value("\${oauth.client.secret.github}") private val clientSecret: String,
-) : Oauth2Api {
+) : GithubOauth2Api {
 
     private val githubClient = RestClient.create("https://github.com")
     private val githubApiClient = RestClient.create("https://api.github.com")
@@ -35,7 +35,7 @@ class GithubOauth2Api(
         return "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
     }
 
-    override fun getOauthUsername(token: String): Oauth2Api.OAuthUserResponse {
+    override fun getOauthUsername(token: String): GithubOauth2Api.OAuthUserResponse {
         val userResponse = githubApiClient.get()
             .uri("/user")
             .header(HttpHeaders.AUTHORIZATION, token)
@@ -47,7 +47,7 @@ class GithubOauth2Api(
                     )
             }
 
-        return Oauth2Api.OAuthUserResponse(
+        return GithubOauth2Api.OAuthUserResponse(
             username = userResponse.login,
             id = userResponse.id,
             profileImage = userResponse.avatarUrl,

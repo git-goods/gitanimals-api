@@ -29,7 +29,7 @@ import org.springframework.test.context.TestPropertySource
 internal class GithubLoginFacadeTest(
     private val githubLoginFacade: GithubLoginFacade,
     private val userRepository: UserRepository,
-    @MockkBean(relaxed = true) private val oauth2Api: Oauth2Api,
+    @MockkBean(relaxed = true) private val githubOauth2Api: GithubOauth2Api,
     @MockkBean(relaxed = true) private val contributionApi: ContributionApi,
 ) : DescribeSpec({
 
@@ -43,7 +43,7 @@ internal class GithubLoginFacadeTest(
             val entryPoint = EntryPoint.GITHUB
             val authenticationId = "some id"
 
-            every { oauth2Api.getOauthUsername(any()) } returns Oauth2Api.OAuthUserResponse(
+            every { githubOauth2Api.getOauthUsername(any()) } returns GithubOauth2Api.OAuthUserResponse(
                 username = username,
                 id = authenticationId,
                 profileImage = "https://...",
@@ -93,7 +93,7 @@ internal class GithubLoginFacadeTest(
                 )
             )
 
-            every { oauth2Api.getOauthUsername(any()) } returns Oauth2Api.OAuthUserResponse(
+            every { githubOauth2Api.getOauthUsername(any()) } returns GithubOauth2Api.OAuthUserResponse(
                 username = changeName,
                 id = authenticationId,
                 profileImage = "https://...",

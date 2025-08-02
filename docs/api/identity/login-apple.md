@@ -9,8 +9,7 @@
 ### Request Body
 ```json
 {
-  "name": "유저의 이름",
-  "profileImage": "유저의 프로필 이미지"
+  "accessToken": "..." // accessToken을 전달합니다. 
 }
 ```
 
