@@ -2,6 +2,7 @@ package org.gitanimals.identity.app
 
 import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.core.spec.style.DescribeSpec
+import org.gitanimals.core.redis.RedisConfiguration
 import org.gitanimals.identity.IdentityTestRoot
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestPropertySource
@@ -12,6 +13,7 @@ import kotlin.time.Duration.Companion.seconds
         IdentityTestRoot::class,
         RedisContainer::class,
         IdentitySagaCapture::class,
+        RedisConfiguration::class,
     ]
 )
 @TestPropertySource("classpath:test.properties")
