@@ -63,11 +63,11 @@ class AuctionController(
         @RequestParam(name = "sort-direction", defaultValue = "DESC") sortDirection: String,
     ): ProductsResponse {
         val products = productService.getProductHistories(
-            pageNumber,
-            personaType,
-            count,
-            orderType,
-            sortDirection,
+            pageNumber = pageNumber,
+            personaType = personaType,
+            count = count,
+            orderType = orderType,
+            sortDirection = sortDirection,
         )
 
         return ProductsResponse.from(products)

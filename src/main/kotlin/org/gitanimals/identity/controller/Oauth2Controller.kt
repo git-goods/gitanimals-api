@@ -17,6 +17,19 @@ class Oauth2Controller(
     private val appleLoginFacade: AppleLoginFacade,
 ) {
 
+    @GetMapping("/logins/oauth/github/by-redirect-when-success/{redirectWhenSuccess}")
+    @ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
+    fun redirectToGithubWithPathVariables(
+        @PathVariable("redirectWhenSuccess") redirectWhenSuccess: RedirectWhenSuccess,
+    ): ResponseEntity<Unit> {
+        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+            .header(
+                "Location",
+                "https://github.com/login/oauth/authorize?client_id=$githubClientId&redirect_uri=${redirectWhenSuccess.callbackUri}"
+            )
+            .build()
+    }
+
     @GetMapping("/logins/oauth/github")
     @ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
     fun redirectToGithub(
