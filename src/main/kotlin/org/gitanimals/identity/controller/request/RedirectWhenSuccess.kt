@@ -24,6 +24,10 @@ enum class RedirectWhenSuccess(
         "https://api.gitanimals.org/logins/oauth/github/tokens/APP",
         "gitanimals://auth?jwt={jwt}"
     ),
+    WEB_VIEW(
+        "https://api.gitanimals.org/logins/oauth/github/tokens/WEB_VIEW",
+        "https://git-animal-client-webview.vercel.app/auth?jwt={jwt}"
+    )
     ;
 
     fun successUriWithToken(jwt: String): String = successUri.replace("{jwt}", jwt)
