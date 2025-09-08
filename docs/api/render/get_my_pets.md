@@ -21,7 +21,8 @@
       "level": "8",
       "visible": true,
       "appVisible": false,
-      "dropRate": "10%"
+      "dropRate": "10%",
+      "grade": "DEFAULT"
     },
     {
       "id": "2",
@@ -29,7 +30,8 @@
       "level": "7",
       "visible": true,
       "appVisible": false,
-      "dropRate": "0.7%"
+      "dropRate": "0.7%",
+      "grade": "DEFAULT"
     },
     {
       "id": "3",
@@ -37,7 +39,8 @@
       "level": "11",
       "visible": true,
       "appVisible": false,
-      "dropRate": "33%"
+      "dropRate": "33%",
+      "grade": "DEFAULT"
     },
     {
       "id": "4",
@@ -45,7 +48,8 @@
       "level": "11",
       "visible": true,
       "appVisible": false,
-      "dropRate": "24%"
+      "dropRate": "24%",
+      "grade": "DEFAULT"
     },
     {
       "id": "5",
@@ -53,7 +57,8 @@
       "level": "15",
       "visible": true,
       "appVisible": false,
-      "dropRate": "10%"
+      "dropRate": "10%",
+      "grade": "DEFAULT"
     },
     {
       "id": "6",
@@ -61,7 +66,8 @@
       "level": "14",
       "visible": true,
       "appVisible": false,
-      "dropRate": "10%"
+      "dropRate": "10%",
+      "grade": "DEFAULT"
     },
     {
       "id": "7",
@@ -69,7 +75,8 @@
       "level": "11",
       "visible": true,
       "appVisible": false,
-      "dropRate": "10%"
+      "dropRate": "10%",
+      "grade": "DEFAULT"
     },
     {
       "id": "8",
@@ -77,7 +84,8 @@
       "level": "14",
       "visible": true,
       "appVisible": false,
-      "dropRate": "10%"
+      "dropRate": "10%",
+      "grade": "DEFAULT"
     },
     {
       "id": "9",
@@ -85,7 +93,8 @@
       "level": "16",
       "visible": true,
       "appVisible": false,
-      "dropRate": "10%"
+      "dropRate": "10%",
+      "grade": "DEFAULT"
     },
     {
       "id": "10",
@@ -93,7 +102,8 @@
       "level": "20",
       "visible": true,
       "appVisible": false,
-      "dropRate": "10%"
+      "dropRate": "10%",
+      "grade": "DEFAULT"
     },
     {
       "id": "11",
@@ -101,7 +111,8 @@
       "level": "13",
       "visible": true,
       "appVisible": false,
-      "dropRate": "10%"
+      "dropRate": "10%",
+      "grade": "DEFAULT"
     },
     {
       "id": "12",
@@ -109,7 +120,8 @@
       "level": "12",
       "visible": true,
       "appVisible": false,
-      "dropRate": "10%"
+      "dropRate": "10%",
+      "grade": "DEFAULT"
     }
   ]
 }
