@@ -2,6 +2,7 @@ package org.gitanimals.quiz.infra.hibernate
 
 import org.gitanimals.core.GracefulShutdownDispatcher.gracefulLaunch
 import org.gitanimals.core.IdGenerator
+import org.gitanimals.core.clock
 import org.gitanimals.inbox.domain.InboxType
 import org.gitanimals.quiz.app.IdentityApi
 import org.gitanimals.quiz.app.InboxApi
@@ -66,6 +67,10 @@ class QuizSolveContextDoneLogicDelegator(
                 }.onSuccess {
                     inboxApi.inputInbox(
                         InboxInputRequest(
+                            publisher = InboxInputRequest.Publisher(
+                                publisher = "QUIZ",
+                                publishedAt = clock.instant(),
+                            ),
                             inboxData = InboxData(
                                 userId = event.userId,
                                 type = InboxType.INBOX,
