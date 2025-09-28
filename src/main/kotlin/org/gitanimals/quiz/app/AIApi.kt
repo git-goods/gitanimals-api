@@ -44,13 +44,7 @@ fun interface OpenAI {
         val model: String = "gpt-5-nano",
         val instructions: String,
         val input: String,
-    ) {
-
-        data class Message(
-            val role: String,
-            val content: String,
-        )
-    }
+    )
 
     data class Response(
         val id: String,
@@ -60,7 +54,7 @@ fun interface OpenAI {
         data class Output(
             val id: String,
             val type: String,
-            val content: List<Content>,
+            val content: List<Content> = emptyList(),
         ) {
 
             data class Content(
