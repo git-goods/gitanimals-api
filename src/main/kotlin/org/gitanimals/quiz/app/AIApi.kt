@@ -1,6 +1,6 @@
 package org.gitanimals.quiz.app
 
-import org.gitanimals.quiz.app.OpenAI.Request.Message
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.service.annotation.PostExchange
@@ -10,14 +10,23 @@ class AIApi(
     private val openAI: OpenAI,
 ) {
 
+    private val logger = LoggerFactory.getLogger(this::class.simpleName)
+
     fun isDevelopmentQuiz(prompt: String, text: String): Boolean {
         val request = OpenAI.Request(
-            messages = listOf(
-                Message(role = "system", content = prompt),
-                Message(role = "user", content = text)
-            )
+            instructions = prompt,
+            input = text,
         )
-        val aiResponseContent = openAI.invoke(request).choices.first().message.content
+
+        logger.info("[AIApi] request: $request")
+        val aiResponseContent = openAI.invoke(request)
+            .also {
+                logger.info("[AIApi] response: $it")
+            }
+            .output
+            .first { it.type == "message" }
+            .content[0].text
+
         return when (aiResponseContent.trim().lowercase()) {
             "true" -> true
             "false" -> false
@@ -28,12 +37,13 @@ class AIApi(
 
 fun interface OpenAI {
 
-    @PostExchange("/v1/chat/completions")
+    @PostExchange("/v1/responses")
     fun invoke(@RequestBody request: Request): Response
 
     data class Request(
-        val model: String = "o4-mini",
-        val messages: List<Message>,
+        val model: String = "gpt-5-nano",
+        val instructions: String,
+        val input: String,
     ) {
 
         data class Message(
@@ -44,41 +54,18 @@ fun interface OpenAI {
 
     data class Response(
         val id: String,
-        val `object`: String,
-        val created: Long,
         val model: String,
-        val choices: List<Choice>,
-        val usage: Usage,
-        val service_tier: String,
-        val system_fingerprint: String? = null,
+        val output: List<Output>,
     ) {
-        data class Choice(
-            val index: Int,
-            val message: Message,
-            val logprobs: String?,
-            val finish_reason: String
+        data class Output(
+            val id: String,
+            val type: String,
+            val content: List<Content>,
         ) {
 
-            data class Message(
-                val role: String,
-                val content: String,
-                val refusal: String?,
-                val annotations: List<String>
-            ) {
-
-            }
-        }
-
-        data class Usage(
-            val prompt_tokens: Int,
-            val completion_tokens: Int,
-            val total_tokens: Int,
-            val prompt_tokens_details: TokenDetails,
-            val completion_tokens_details: TokenDetails
-        ) {
-            data class TokenDetails(
-                val cached_tokens: Int,
-                val audio_tokens: Int
+            data class Content(
+                val type: String,
+                val text: String,
             )
         }
     }
