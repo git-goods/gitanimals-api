@@ -11,6 +11,7 @@ fun interface InboxApi {
 
     data class InboxInputRequest(
         val inboxData: InboxData,
+        val publisher: Publisher,
     ) {
 
         data class Publisher(
