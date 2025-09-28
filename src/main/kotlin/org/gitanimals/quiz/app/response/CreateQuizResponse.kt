@@ -22,5 +22,13 @@ data class CreateQuizResponse(
                 message = message,
             )
         }
+
+        fun underReview(point: Long, message: String): CreateQuizResponse {
+            return CreateQuizResponse(
+                result = "UNDER_REVIEW",
+                point = point,
+                message = message,
+            )
+        }
     }
 }

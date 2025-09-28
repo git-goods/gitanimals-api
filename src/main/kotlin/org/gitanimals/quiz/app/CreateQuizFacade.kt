@@ -105,7 +105,7 @@ class CreateQuizFacade(
                 )
             )
 
-            return CreateQuizResponse.fail(
+            return CreateQuizResponse.underReview(
                 point = CREATE_QUIZ_PRICE,
                 message = CREATE_QUIZ_SIMILARITY_CHECK_MESSAGE
             )
