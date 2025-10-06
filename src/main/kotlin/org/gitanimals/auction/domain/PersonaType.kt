@@ -96,5 +96,10 @@ enum class PersonaType {
     CAPYBARA,
     CAPYBARA_CARROT,
     CAPYBARA_SWIM,
+    LITTLE_CHICK_EGG_ON_HAT,
+    LITTLE_CHICK_ANGEL,
+    CAT_WINDOW,
+    SLIME_ANGEL,
+    FLAMINGO_WHITE,
     ;
 }
