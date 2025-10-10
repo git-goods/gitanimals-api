@@ -19,7 +19,7 @@ class QuizSolveContextService(
         category: Category,
         quizs: List<Quiz>,
     ): QuizSolveContext {
-        val now = LocalDate.ofInstant(instant(), ZoneId.of("UTC"))
+        val now = LocalDate.ofInstant(instant(), ZoneId.of("Asia/Seoul"))
         quizSolveContextRepository.findQuizSolveContextByUserIdAndSolvedAt(userId, now)?.let {
             throw IllegalArgumentException("Already solve daily quiz.")
         }
