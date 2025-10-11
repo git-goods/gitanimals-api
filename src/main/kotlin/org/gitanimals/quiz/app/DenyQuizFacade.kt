@@ -56,7 +56,7 @@ class DenyQuizFacade(
                 )
             )
         }.getOrElse {
-            logger.error("[DenyQuizFacade] Cannot decrease point. userId: \"${notApprovedQuiz.userId}\", point: \"$CREATE_QUIZ_PRICE\"")
+            logger.error("[DenyQuizFacade] Cannot decrease point. userId: \"${notApprovedQuiz.userId}\", point: \"$CREATE_QUIZ_PRICE\"", it)
         }
     }
 }
