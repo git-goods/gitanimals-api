@@ -30,7 +30,7 @@ enum class RedirectWhenSuccess(
     ),
     DEV(
         "https://api.gitanimals.org/logins/oauth/github/tokens/DEV",
-        "https://gitanimals-dev.vercel.app/en_US/auth/jwt={jwt}",
+        "https://gitanimals-dev.vercel.app/en_US/auth?jwt={jwt}",
     ),
     ;
 
