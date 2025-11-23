@@ -23,22 +23,25 @@ class QuizSolveContextDoneHibernateEventListener(
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : PostUpdateEventListener {
 
+    private val logger = LoggerFactory.getLogger(this::class.simpleName)
+
     override fun requiresPostCommitHandling(persister: EntityPersister): Boolean =
         persister.mappedClass == QuizSolveContext::class.java
 
     override fun onPostUpdate(event: PostUpdateEvent) {
-        if (event.entity is QuizSolveContext) {
             val quizSolveContext = event.entity as QuizSolveContext
-            applicationEventPublisher.publishEvent(
-                QuizSolveContextDoneLogicDelegator.QuizSolveContextDone(
-                    userId = quizSolveContext.userId,
-                    prize = quizSolveContext.getPrize(),
-                    status = quizSolveContext.getStatus(),
+            logger.info("[QuizSolveContextDoneHibernateEventListener] userId: ${quizSolveContext.userId}, prize: ${quizSolveContext.getPrize()}, status: ${quizSolveContext.getStatus()}")
+            if (quizSolveContext.getStatus() == QuizSolveContextStatus.DONE) {
+                applicationEventPublisher.publishEvent(
+                    QuizSolveContextDoneLogicDelegator.QuizSolveContextDone(
+                        userId = quizSolveContext.userId,
+                        prize = quizSolveContext.getPrize(),
+                        status = quizSolveContext.getStatus(),
+                    )
                 )
-            )
+            }
         }
     }
-}
 
 @Component
 class QuizSolveContextDoneLogicDelegator(
@@ -55,7 +58,7 @@ class QuizSolveContextDoneLogicDelegator(
     )
 
     @EventListener(QuizSolveContextDone::class)
-    fun listenQUizSolveContextDone(event: QuizSolveContextDone) {
+    fun listenQuizSolveContextDone(event: QuizSolveContextDone) {
         gracefulLaunch {
             if (event.status == QuizSolveContextStatus.DONE) {
                 runCatching {
