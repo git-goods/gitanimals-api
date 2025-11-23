@@ -101,5 +101,7 @@ enum class PersonaType {
     CAT_WINDOW,
     SLIME_ANGEL,
     FLAMINGO_WHITE,
+    GOOSE_ROBOT,
+    PIG_ROBOT,
     ;
 }
