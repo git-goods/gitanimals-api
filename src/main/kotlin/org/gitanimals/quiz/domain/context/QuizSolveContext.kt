@@ -96,7 +96,7 @@ class QuizSolveContext(
     }
 
     fun stopSolve() {
-        check(this.status == QuizSolveContextStatus.SUCCESS) {
+        require(this.status == QuizSolveContextStatus.SUCCESS) {
             "Stop quiz is only available in \"SUCCESS\" status."
         }
 
