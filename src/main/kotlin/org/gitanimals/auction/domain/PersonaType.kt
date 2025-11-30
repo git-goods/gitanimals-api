@@ -103,5 +103,7 @@ enum class PersonaType {
     FLAMINGO_WHITE,
     GOOSE_ROBOT,
     PIG_ROBOT,
+    HAMSTER_SNOW,
+    HAMSTER_SNOW_SWEET_POTATO,
     ;
 }
