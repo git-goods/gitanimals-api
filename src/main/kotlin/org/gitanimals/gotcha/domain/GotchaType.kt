@@ -118,6 +118,8 @@ enum class GotchaType(
             Capsule.of("CAPYBARA", 0.8),
             Capsule.of("CAPYBARA_CARROT", 0.6),
             Capsule.of("CAPYBARA_SWIM", 0.4),
+            Capsule.of("HAMSTER_SNOW", 0.01),
+            Capsule.of("HAMSTER_SNOW_SWEET_POTATO", 0.009),
         )
     }
 }
