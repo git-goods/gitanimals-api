@@ -97,3 +97,9 @@ class GitAnimalsDeadLetterSlackNotification(
     objectMapper: ObjectMapper,
     @Value(value = "\${slack.token}") token: String,
 ) : SlackNotification(token, "C08M0R0GEKV", objectMapper)
+
+@Component
+class GitAnimalsAdminCallDetectNotification(
+    objectMapper: ObjectMapper,
+    @Value(value = "\${slack.token}") token: String,
+) : SlackNotification(token, "C0A1XL7MRDL", objectMapper)

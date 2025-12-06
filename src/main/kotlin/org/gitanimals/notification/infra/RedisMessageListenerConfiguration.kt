@@ -17,6 +17,7 @@ class RedisMessageListenerConfiguration(
     private val slackDeadLetterMessageListener: SlackDeadLetterMessageListener,
     private val newPetDropRateDistributionMessageListener: NewPetDropRateDistributionMessageListener,
     private val notDeveloperQuizCreateRequestedMessageListener: NotDeveloperQuizCreateRequestedMessageListener,
+    private val adminCallDetectedMessageListener: AdminCallDetectedMessageListener,
 ) {
 
     @Bean
@@ -41,11 +42,15 @@ class RedisMessageListenerConfiguration(
             )
             this.addMessageListener(
                 newPetDropRateDistributionMessageListener,
-                ChannelTopic(RedisPubSubChannel.NEW_PET_DROP_RATE_DISTRIBUTION)
+                ChannelTopic(RedisPubSubChannel.NEW_PET_DROP_RATE_DISTRIBUTION),
             )
             this.addMessageListener(
                 notDeveloperQuizCreateRequestedMessageListener,
-                ChannelTopic(RedisPubSubChannel.NOT_DEVELOPER_QUIZ_CREATED)
+                ChannelTopic(RedisPubSubChannel.NOT_DEVELOPER_QUIZ_CREATED),
+            )
+            this.addMessageListener(
+                adminCallDetectedMessageListener,
+                ChannelTopic(RedisPubSubChannel.ADMIN_CALL_DETECTED),
             )
         }
     }

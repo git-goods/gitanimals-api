@@ -23,6 +23,7 @@ ARG QUIZ_APPROVE_TOKEN
 ARG RELAY_APPROVE_TOKEN
 ARG INTERNAL_AUTH_SECRET
 ARG LOGIN_SECRET
+ARG GITANIMALS_ADMIN_TOKEN
 
 ARG JAR_FILE=./*.jar
 COPY ${JAR_FILE} gitanimals-api.jar
@@ -49,7 +50,8 @@ ENV db_url=${DB_URL} \
   quiz_approve_token=${QUIZ_APPROVE_TOKEN} \
   relay_approve_token=${RELAY_APPROVE_TOKEN} \
   internal_auth_secret=${INTERNAL_AUTH_SECRET} \
-  login_secret=${LOGIN_SECRET}
+  login_secret=${LOGIN_SECRET} \
+  gitanimals_admin_token=${GITANIMALS_ADMIN_TOKEN}
 
 ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --spring.datasource.url=${db_url} \
@@ -74,4 +76,5 @@ ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --quiz.approve.token=${quiz_approve_token} \
   --relay.approve.token=${relay_approve_token} \
   --internal.auth.secret=${internal_auth_secret} \
-  --login.secret=${login_secret}
+  --login.secret=${login_secret} \
+  --gitanimals.admin.token=${gitanimals_admin_token}

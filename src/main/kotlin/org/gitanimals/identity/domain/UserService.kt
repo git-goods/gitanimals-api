@@ -116,6 +116,31 @@ class UserService(
     }
 
     @Transactional
+    fun increasePointByUsernameWithoutIdempotency(
+        username: String,
+        entryPoint: EntryPoint,
+        point: Long,
+    ): User {
+        val user = getUserByNameAndEntryPoint(username, entryPoint)
+
+        user.increasePoint(point)
+        return user
+    }
+
+    @Transactional
+    fun decreasePointByUsernameWithoutIdempotency(
+        username: String,
+        entryPoint: EntryPoint,
+        point: Long,
+    ): User {
+        val user = getUserByNameAndEntryPoint(username, entryPoint)
+
+        user.decreasePoint(point)
+        return user
+    }
+
+
+    @Transactional
     @Retryable(ObjectOptimisticLockingFailureException::class)
     fun updateUserAuthInfoByUsername(
         username: String,
