@@ -88,6 +88,7 @@ jobs:
             "RELAY_APPROVE_TOKEN=${{ secrets.RELAY_APPROVE_TOKEN }}"
             "INTERNAL_AUTH_SECRET=${{ secrets.INTERNAL_AUTH_SECRET }}"
             "LOGIN_SECRET=${{ secrets.LOGIN_SECRET }}"
+            "GITANIMALS_ADMIN_TOKEN=${{ secrets.GITANIMALS_ADMIN_TOKEN }}"
 
       - name: build and push filebeat
         uses: docker/build-push-action@v4
