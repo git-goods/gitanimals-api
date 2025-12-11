@@ -12,7 +12,7 @@ class QuizCreatePrompt(
     @Column(name = "id")
     val id: Long,
 
-    @Column(name = "text")
+    @Column(name = "text", columnDefinition = "VARCHAR(1000)")
     val text: String,
 ) {
 
