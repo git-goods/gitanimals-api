@@ -2,13 +2,14 @@ package org.gitanimals.quiz.app
 
 import org.gitanimals.inbox.domain.InboxType
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.service.annotation.PostExchange
 import java.time.Instant
 
 fun interface InboxApi {
 
     @PostExchange("/internals/inboxes")
-    fun inputInbox(@RequestBody request: InboxInputRequest)
+    fun inputInbox(@RequestParam("userId") userId: Long, @RequestBody request: InboxInputRequest)
 
     data class InboxInputRequest(
         val inboxData: InboxData,

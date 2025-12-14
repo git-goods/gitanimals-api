@@ -69,7 +69,8 @@ class QuizSolveContextDoneLogicDelegator(
                     )
                 }.onSuccess {
                     inboxApi.inputInbox(
-                        InboxInputRequest(
+                        userId = event.userId,
+                        request = InboxInputRequest(
                             publisher = InboxInputRequest.Publisher(
                                 publisher = "QUIZ",
                                 publishedAt = clock.instant(),
@@ -82,7 +83,7 @@ class QuizSolveContextDoneLogicDelegator(
                                 image = "https://avatars.githubusercontent.com/u/171903401?s=200&v=4",
                                 redirectTo = "NO_REDIRECT",
                             )
-                        )
+                        ),
                     )
                 }.onFailure {
                     logger.error(
