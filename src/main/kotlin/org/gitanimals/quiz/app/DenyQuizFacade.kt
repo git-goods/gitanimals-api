@@ -40,7 +40,8 @@ class DenyQuizFacade(
             )
 
             inboxApi.inputInbox(
-                InboxApi.InboxInputRequest(
+                userId = notApprovedQuiz.userId,
+                request = InboxApi.InboxInputRequest(
                     publisher = InboxApi.InboxInputRequest.Publisher(
                         publisher = "QUIZ",
                         publishedAt = clock.instant(),
@@ -53,7 +54,7 @@ class DenyQuizFacade(
                         image = "https://avatars.githubusercontent.com/u/171903401?s=200&v=4",
                         redirectTo = "NO_REDIRECT",
                     )
-                )
+                ),
             )
         }.getOrElse {
             logger.error("[DenyQuizFacade] Cannot decrease point. userId: \"${notApprovedQuiz.userId}\", point: \"$CREATE_QUIZ_PRICE\"", it)
