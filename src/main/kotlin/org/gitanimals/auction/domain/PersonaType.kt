@@ -105,5 +105,6 @@ enum class PersonaType {
     PIG_ROBOT,
     HAMSTER_SNOW,
     HAMSTER_SNOW_SWEET_POTATO,
+    RUDOLPH,
     ;
 }
