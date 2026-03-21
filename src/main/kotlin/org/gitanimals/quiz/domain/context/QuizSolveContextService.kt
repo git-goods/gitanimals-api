@@ -3,6 +3,7 @@ package org.gitanimals.quiz.domain.context
 import org.gitanimals.core.instant
 import org.gitanimals.quiz.domain.approved.Quiz
 import org.gitanimals.quiz.domain.core.Category
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -77,5 +78,18 @@ class QuizSolveContextService(
     ): QuizSolveContext {
         return quizSolveContextRepository.findByIdAndUserId(id, userId)
             ?: throw IllegalArgumentException("Cannot find quizContext by id: \"$id\" and userId: \"$userId\"")
+    }
+
+    @Transactional(readOnly = true)
+    fun scrollQuizSolveContexts(
+        userId: Long,
+        lastId: Long,
+        size: Int,
+    ): List<QuizSolveContext> {
+        return quizSolveContextRepository.findAllByUserIdAndCursor(
+            userId = userId,
+            lastId = lastId,
+            pageable = PageRequest.of(0, size),
+        )
     }
 }
