@@ -29,11 +29,17 @@ class EsKnnTextSimilarityChecker(
                 it.numCandidates(MAX_RETURN_KNN_SIZE * 5)
             }.build()
 
-        val searchHits = elasticSearchOperations.search(knnQuery, QuizSimilarity::class.java)
-
-        return SimilarityResponse(
-            searchHits.searchHits.map { it.content.quizId }
-        )
+        return runCatching {
+            elasticSearchOperations.search(knnQuery, QuizSimilarity::class.java)
+        }.onFailure {
+            logger.warn("[EsKnnTextSimilarityChecker] Elasticsearch similarity search failed. return empty result.", it)
+        }.map { searchHits ->
+            SimilarityResponse(
+                searchHits.searchHits.map { it.content.quizId }
+            )
+        }.getOrElse {
+            SimilarityResponse(emptyList())
+        }
     }
 
     companion object {
