@@ -1,8 +1,10 @@
 package org.gitanimals.quiz.domain.not_approved
 
 import org.gitanimals.quiz.domain.core.Category
+import org.gitanimals.quiz.domain.core.Language
 import org.gitanimals.quiz.domain.core.Level
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -46,4 +48,21 @@ class NotApprovedQuizService(
 
     fun deleteQuizById(notApprovedQuizId: Long) =
         notApprovedQuizRepository.deleteById(notApprovedQuizId)
+
+    @Transactional(readOnly = true)
+    fun scrollNotApprovedQuizs(
+        lastId: Long,
+        level: Level?,
+        category: Category?,
+        language: Language?,
+        size: Int,
+    ): List<NotApprovedQuiz> {
+        return notApprovedQuizRepository.findAllByCursor(
+            lastId = lastId,
+            level = level,
+            category = category,
+            language = language,
+            pageable = PageRequest.of(0, size),
+        )
+    }
 }

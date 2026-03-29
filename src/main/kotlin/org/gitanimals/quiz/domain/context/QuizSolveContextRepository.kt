@@ -1,6 +1,7 @@
 package org.gitanimals.quiz.domain.context
 
 import jakarta.persistence.LockModeType
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.data.jpa.repository.Query
@@ -25,4 +26,19 @@ interface QuizSolveContextRepository : JpaRepository<QuizSolveContext, Long> {
         id: Long,
         userId: Long,
     ): QuizSolveContext?
+
+    @Query(
+        """
+        select q
+        from QuizSolveContext q
+        where q.userId = :userId
+          and q.id < :lastId
+        order by q.id desc
+        """
+    )
+    fun findAllByUserIdAndCursor(
+        userId: Long,
+        lastId: Long,
+        pageable: Pageable,
+    ): List<QuizSolveContext>
 }

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class QuizService(
@@ -117,6 +118,23 @@ class QuizService(
     fun deleteById(quizId: Long) {
         quizRepository.deleteById(quizId)
         updateQuizCountCacheScheduled()
+    }
+
+    @Transactional(readOnly = true)
+    fun scrollApprovedQuizs(
+        lastId: Long,
+        level: Level?,
+        category: Category?,
+        language: Language?,
+        size: Int,
+    ): List<Quiz> {
+        return quizRepository.findAllByCursor(
+            lastId = lastId,
+            level = level,
+            category = category,
+            language = language,
+            pageable = PageRequest.of(0, size),
+        )
     }
 
     companion object {
