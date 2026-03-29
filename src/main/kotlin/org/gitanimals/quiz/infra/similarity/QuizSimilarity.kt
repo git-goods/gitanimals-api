@@ -8,7 +8,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType
 
 private const val OPEN_AI_SMALL_DIMS = 1536
 
-@Document(indexName = "quiz_similarity", createIndex = true)
+@Document(indexName = "quiz_similarity", createIndex = false)
 class QuizSimilarity(
     @Id
     val id: Long,
