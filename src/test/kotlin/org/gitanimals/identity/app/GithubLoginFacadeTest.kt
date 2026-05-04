@@ -6,6 +6,8 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
+import io.mockk.verify
+import org.gitanimals.core.event.EventLogger
 import org.gitanimals.identity.domain.*
 import org.gitanimals.identity.infra.JwtTokenManager
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -31,6 +33,7 @@ internal class GithubLoginFacadeTest(
     private val userRepository: UserRepository,
     @MockkBean(relaxed = true) private val githubOauth2Api: GithubOauth2Api,
     @MockkBean(relaxed = true) private val contributionApi: ContributionApi,
+    @MockkBean(relaxed = true) private val eventLogger: EventLogger,
 ) : DescribeSpec({
 
     afterEach {
@@ -108,6 +111,29 @@ internal class GithubLoginFacadeTest(
                 result?.findAuthenticationId() shouldBe authenticationId
                 result?.getName() shouldBe changeName
                 userRepository.findAll().count() shouldBe 1
+            }
+        }
+
+        context("로그인에 성공했을때") {
+            val username = "track-user"
+            val authenticationId = "track-id"
+
+            every { githubOauth2Api.getOauthUsername(any()) } returns GithubOauth2Api.OAuthUserResponse(
+                username = username,
+                id = authenticationId,
+                profileImage = "https://...",
+            )
+
+            it("complete_login 이벤트를 user_id와 함께 트래킹한다") {
+                githubLoginFacade.login("code")
+
+                verify {
+                    eventLogger.track(
+                        eventName = "complete_login",
+                        distinctId = any(),
+                        properties = match { it["user_id"] != null },
+                    )
+                }
             }
         }
     }

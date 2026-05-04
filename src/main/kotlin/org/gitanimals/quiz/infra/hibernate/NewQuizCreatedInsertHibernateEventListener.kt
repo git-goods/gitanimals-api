@@ -1,5 +1,6 @@
 package org.gitanimals.quiz.infra.hibernate
 
+import org.gitanimals.core.event.EventLogger
 import org.gitanimals.quiz.domain.approved.Quiz
 import org.gitanimals.quiz.infra.event.NewQuizCreated
 import org.hibernate.event.spi.PostInsertEvent
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component
 @Component
 class NewQuizCreatedInsertHibernateEventListener(
     private val applicationEventPublisher: ApplicationEventPublisher,
+    private val eventLogger: EventLogger,
 ) : PostInsertEventListener {
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
@@ -21,12 +23,26 @@ class NewQuizCreatedInsertHibernateEventListener(
 
     override fun onPostInsert(event: PostInsertEvent) {
         if (event.entity is Quiz) {
+            val quiz = event.entity as Quiz
             runCatching {
                 applicationEventPublisher.publishEvent(
-                    NewQuizCreated.from(event.entity as Quiz)
+                    NewQuizCreated.from(quiz)
                 )
             }.onFailure {
                 logger.error("Cannot publish NewQuizCreate event. cause ${it.message}", it)
+            }
+            runCatching {
+                eventLogger.track(
+                    eventName = "complete_make_quiz",
+                    distinctId = quiz.userId.toString(),
+                    properties = mapOf(
+                        "quiz_id" to quiz.id,
+                        "language" to quiz.language.name,
+                        "user_id" to quiz.userId,
+                    )
+                )
+            }.onFailure {
+                logger.warn("Failed to track complete_make_quiz event. cause ${it.message}", it)
             }
         }
     }
