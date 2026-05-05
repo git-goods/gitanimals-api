@@ -31,19 +31,15 @@ class NewQuizCreatedInsertHibernateEventListener(
             }.onFailure {
                 logger.error("Cannot publish NewQuizCreate event. cause ${it.message}", it)
             }
-            runCatching {
-                eventLogger.track(
-                    eventName = "complete_make_quiz",
-                    distinctId = quiz.userId.toString(),
-                    properties = mapOf(
-                        "quiz_id" to quiz.id,
-                        "language" to quiz.language.name,
-                        "user_id" to quiz.userId,
-                    )
+            eventLogger.track(
+                eventName = "complete_make_quiz",
+                distinctId = quiz.userId.toString(),
+                properties = mapOf(
+                    "quiz_id" to quiz.id,
+                    "language" to quiz.language.name,
+                    "user_id" to quiz.userId,
                 )
-            }.onFailure {
-                logger.warn("Failed to track complete_make_quiz event. cause ${it.message}", it)
-            }
+            )
         }
     }
 }

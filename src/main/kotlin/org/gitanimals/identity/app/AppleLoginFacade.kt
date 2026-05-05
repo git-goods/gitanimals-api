@@ -51,17 +51,15 @@ class AppleLoginFacade(
             }
         }
 
-        runCatching {
-            eventLogger.track(
-                eventName = "complete_login",
-                distinctId = user.id.toString(),
-                properties = mapOf(
-                    "provider" to "apple",
-                    "user_id" to user.id,
-                    "is_new_user" to !isExistsUser,
-                ),
-            )
-        }.onFailure { logger.warn("Failed to track complete_login event: {}", it.message) }
+        eventLogger.track(
+            eventName = "complete_login",
+            distinctId = user.id.toString(),
+            properties = mapOf(
+                "provider" to "apple",
+                "user_id" to user.id,
+                "is_new_user" to !isExistsUser,
+            ),
+        )
 
         return tokenManager.createToken(user).withType()
     }

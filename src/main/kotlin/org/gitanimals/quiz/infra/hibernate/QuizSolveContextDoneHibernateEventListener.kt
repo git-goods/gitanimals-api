@@ -98,20 +98,16 @@ class QuizSolveContextDoneLogicDelegator(
                     )
                 }
 
-                runCatching {
-                    eventLogger.track(
-                        eventName = "complete_solve_quiz",
-                        distinctId = event.userId.toString(),
-                        properties = mapOf(
-                            "context_id" to event.contextId,
-                            "score" to event.prize,
-                            "language" to event.language,
-                            "user_id" to event.userId,
-                        )
+                eventLogger.track(
+                    eventName = "complete_solve_quiz",
+                    distinctId = event.userId.toString(),
+                    properties = mapOf(
+                        "context_id" to event.contextId,
+                        "score" to event.prize,
+                        "language" to event.language,
+                        "user_id" to event.userId,
                     )
-                }.onFailure {
-                    logger.warn("Failed to track complete_solve_quiz event. cause ${it.message}", it)
-                }
+                )
             }
         }
     }

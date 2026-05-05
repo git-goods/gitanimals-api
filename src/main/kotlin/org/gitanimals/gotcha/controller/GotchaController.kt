@@ -1,15 +1,13 @@
 package org.gitanimals.gotcha.controller
 
+import org.gitanimals.core.auth.InternalAuth
 import org.gitanimals.core.auth.RequiredUserEntryPoints
 import org.gitanimals.core.auth.UserEntryPoint
 import org.gitanimals.core.event.EventLogger
-import org.gitanimals.core.filter.MDCFilter.Companion.USER_ID
 import org.gitanimals.gotcha.app.GotchaFacadeV3
 import org.gitanimals.gotcha.app.response.GotchaResponseV3
 import org.gitanimals.gotcha.controller.response.ErrorResponse
 import org.gitanimals.gotcha.domain.GotchaType
-import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -18,9 +16,8 @@ import org.springframework.web.bind.annotation.*
 class GotchaController(
     private val gotchaFacadeV3: GotchaFacadeV3,
     private val eventLogger: EventLogger,
+    private val internalAuth: InternalAuth,
 ) {
-
-    private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
     @RequiredUserEntryPoints([UserEntryPoint.GITHUB])
     @PostMapping(path = ["/gotchas"], headers = ["Api-Version=3"])
@@ -33,19 +30,18 @@ class GotchaController(
 
         val gotchaResponses = gotchaFacadeV3.gotcha(token, gotchaType, count)
 
-        val userId = MDC.get(USER_ID)
-        gotchaResponses.forEach { response ->
-            runCatching {
+        internalAuth.findUserId()?.let { userId ->
+            gotchaResponses.forEach { response ->
                 eventLogger.track(
                     eventName = "complete_gotcha",
-                    distinctId = userId,
+                    distinctId = userId.toString(),
                     properties = mapOf(
                         "pet_persona" to response.name,
                         "cost_point" to gotchaType.point,
                         "user_id" to userId,
                     ),
                 )
-            }.onFailure { logger.warn("Failed to track complete_gotcha event: {}", it.message) }
+            }
         }
 
         return mapOf("gotchaResults" to gotchaResponses)

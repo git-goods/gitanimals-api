@@ -3,7 +3,6 @@ package org.gitanimals.identity.app
 import org.gitanimals.core.event.EventLogger
 import org.gitanimals.identity.domain.EntryPoint
 import org.gitanimals.identity.domain.UserService
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -14,8 +13,6 @@ class GithubLoginFacade(
     private val tokenManager: TokenManager,
     private val eventLogger: EventLogger,
 ) {
-
-    private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
     fun login(code: String): String {
         val oauthUserResponse = githubOauth2Api.getOauthUsername(githubOauth2Api.getToken(code))
@@ -84,17 +81,15 @@ class GithubLoginFacade(
             }
         }
 
-        runCatching {
-            eventLogger.track(
-                eventName = "complete_login",
-                distinctId = user.id.toString(),
-                properties = mapOf(
-                    "provider" to "github",
-                    "user_id" to user.id,
-                    "is_new_user" to isNewUser,
-                ),
-            )
-        }.onFailure { logger.warn("Failed to track complete_login event: {}", it.message) }
+        eventLogger.track(
+            eventName = "complete_login",
+            distinctId = user.id.toString(),
+            properties = mapOf(
+                "provider" to "github",
+                "user_id" to user.id,
+                "is_new_user" to isNewUser,
+            ),
+        )
 
         return tokenManager.createToken(user).withType()
     }

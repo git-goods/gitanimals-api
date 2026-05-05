@@ -11,7 +11,6 @@ import org.gitanimals.quiz.domain.context.QuizSolveContextService
 import org.gitanimals.quiz.domain.context.QuizSolveContextStatus
 import org.gitanimals.quiz.domain.core.Language
 import org.gitanimals.quiz.domain.core.Level
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,8 +20,6 @@ class SolveQuizFacade(
     private val quizSolveContextService: QuizSolveContextService,
     private val eventLogger: EventLogger,
 ) {
-
-    private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
     fun createContext(locale: String, request: CreateSolveQuizRequest): Long {
         val userId = internalAuth.getUserId()
@@ -62,19 +59,15 @@ class SolveQuizFacade(
         quizSolveContextService.solveQuiz(id, userId, answer)
 
         val context = quizSolveContextService.getQuizSolveContextByIdAndUserId(id, userId)
-        runCatching {
-            eventLogger.track(
-                eventName = "submit_quiz_answer",
-                distinctId = userId.toString(),
-                properties = mapOf(
-                    "quiz_id" to id,
-                    "is_correct" to (context.getStatus() in setOf(QuizSolveContextStatus.SUCCESS, QuizSolveContextStatus.DONE)),
-                    "user_id" to userId,
-                )
+        eventLogger.track(
+            eventName = "submit_quiz_answer",
+            distinctId = userId.toString(),
+            properties = mapOf(
+                "quiz_id" to id,
+                "is_correct" to (context.getStatus() in setOf(QuizSolveContextStatus.SUCCESS, QuizSolveContextStatus.DONE)),
+                "user_id" to userId,
             )
-        }.onFailure {
-            logger.warn("Failed to track submit_quiz_answer event. cause ${it.message}", it)
-        }
+        )
     }
 
     fun getQuizById(id: Long): QuizSolveContext {

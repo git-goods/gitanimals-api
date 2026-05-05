@@ -77,15 +77,6 @@ internal class QuizEventTrackingTest(
             }
         }
 
-        context("EventLogger가 예외를 던져도") {
-            val quizContext2 = quizSolveContextRepository.save(quizSolveContext(userId = userId))
-            quizSolveContextService.getAndStartSolveQuizContext(quizContext2.id, quizContext2.userId)
-            every { eventLogger.track(any(), any(), any()) } throws RuntimeException("tracking error")
-
-            it("예외가 전파되지 않는다") {
-                solveQuizFacade.answerQuizById(quizContext2.id, "YES")
-            }
-        }
     }
 
     describe("createContext 메소드는") {
