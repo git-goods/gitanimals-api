@@ -35,6 +35,7 @@ apply from: "gradle/spring.gradle"
 apply from: "gradle/logging.gradle"
 apply from: "gradle/monitor.gradle"
 apply from: "gradle/jetbrains.gradle"
+apply from: "gradle/analytics.gradle"
 
 sentry {
     includeSourceContext = true

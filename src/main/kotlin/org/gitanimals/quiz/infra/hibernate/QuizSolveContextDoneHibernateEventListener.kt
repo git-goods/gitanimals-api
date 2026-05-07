@@ -3,6 +3,7 @@ package org.gitanimals.quiz.infra.hibernate
 import org.gitanimals.core.GracefulShutdownDispatcher.gracefulLaunch
 import org.gitanimals.core.IdGenerator
 import org.gitanimals.core.clock
+import org.gitanimals.core.event.EventLogger
 import org.gitanimals.inbox.domain.InboxType
 import org.gitanimals.quiz.app.IdentityApi
 import org.gitanimals.quiz.app.InboxApi
@@ -34,9 +35,11 @@ class QuizSolveContextDoneHibernateEventListener(
             if (quizSolveContext.getStatus() == QuizSolveContextStatus.DONE) {
                 applicationEventPublisher.publishEvent(
                     QuizSolveContextDoneLogicDelegator.QuizSolveContextDone(
+                        contextId = quizSolveContext.id,
                         userId = quizSolveContext.userId,
                         prize = quizSolveContext.getPrize(),
                         status = quizSolveContext.getStatus(),
+                        language = quizSolveContext.category.name,
                     )
                 )
             }
@@ -47,14 +50,17 @@ class QuizSolveContextDoneHibernateEventListener(
 class QuizSolveContextDoneLogicDelegator(
     private val inboxApi: InboxApi,
     private val identityApi: IdentityApi,
+    private val eventLogger: EventLogger,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
     data class QuizSolveContextDone(
+        val contextId: Long,
         val userId: Long,
         val prize: Int,
         val status: QuizSolveContextStatus,
+        val language: String,
     )
 
     @EventListener(QuizSolveContextDone::class)
@@ -91,6 +97,17 @@ class QuizSolveContextDoneLogicDelegator(
                         it
                     )
                 }
+
+                eventLogger.track(
+                    eventName = "complete_solve_quiz",
+                    distinctId = event.userId.toString(),
+                    properties = mapOf(
+                        "context_id" to event.contextId,
+                        "score" to event.prize,
+                        "language" to event.language,
+                        "user_id" to event.userId,
+                    )
+                )
             }
         }
     }
