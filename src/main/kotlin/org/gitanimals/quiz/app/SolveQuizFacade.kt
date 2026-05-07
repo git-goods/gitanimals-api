@@ -1,12 +1,14 @@
 package org.gitanimals.quiz.app
 
 import org.gitanimals.core.auth.InternalAuth
+import org.gitanimals.core.event.EventLogger
 import org.gitanimals.quiz.app.request.CreateSolveQuizRequest
 import org.gitanimals.quiz.app.response.QuizContextResponse
 import org.gitanimals.quiz.app.response.TodaySolvedContextResponse
 import org.gitanimals.quiz.domain.approved.QuizService
 import org.gitanimals.quiz.domain.context.QuizSolveContext
 import org.gitanimals.quiz.domain.context.QuizSolveContextService
+import org.gitanimals.quiz.domain.context.QuizSolveContextStatus
 import org.gitanimals.quiz.domain.core.Language
 import org.gitanimals.quiz.domain.core.Level
 import org.springframework.stereotype.Service
@@ -16,6 +18,7 @@ class SolveQuizFacade(
     private val internalAuth: InternalAuth,
     private val quizService: QuizService,
     private val quizSolveContextService: QuizSolveContextService,
+    private val eventLogger: EventLogger,
 ) {
 
     fun createContext(locale: String, request: CreateSolveQuizRequest): Long {
@@ -54,6 +57,17 @@ class SolveQuizFacade(
         val userId = internalAuth.getUserId()
 
         quizSolveContextService.solveQuiz(id, userId, answer)
+
+        val context = quizSolveContextService.getQuizSolveContextByIdAndUserId(id, userId)
+        eventLogger.track(
+            eventName = "submit_quiz_answer",
+            distinctId = userId.toString(),
+            properties = mapOf(
+                "quiz_id" to id,
+                "is_correct" to (context.getStatus() in setOf(QuizSolveContextStatus.SUCCESS, QuizSolveContextStatus.DONE)),
+                "user_id" to userId,
+            )
+        )
     }
 
     fun getQuizById(id: Long): QuizSolveContext {

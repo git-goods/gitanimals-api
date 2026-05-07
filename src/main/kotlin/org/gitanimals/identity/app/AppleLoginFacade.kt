@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.Jwts
 import org.gitanimals.core.AUTHORIZATION_EXCEPTION
+import org.gitanimals.core.event.EventLogger
 import org.gitanimals.identity.app.AppleOauth2Api.AppleAuthKeyResponse
 import org.gitanimals.identity.domain.EntryPoint
 import org.gitanimals.identity.domain.UserService
@@ -23,6 +24,7 @@ class AppleLoginFacade(
     private val appleOauth2Api: AppleOauth2Api,
     private val objectMapper: ObjectMapper,
     @Value("\${login.secret}") private val loginSecret: String,
+    private val eventLogger: EventLogger,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
@@ -48,6 +50,16 @@ class AppleLoginFacade(
                 )
             }
         }
+
+        eventLogger.track(
+            eventName = "complete_login",
+            distinctId = user.id.toString(),
+            properties = mapOf(
+                "provider" to "apple",
+                "user_id" to user.id,
+                "is_new_user" to !isExistsUser,
+            ),
+        )
 
         return tokenManager.createToken(user).withType()
     }

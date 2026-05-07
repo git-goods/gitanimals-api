@@ -1,5 +1,6 @@
 package org.gitanimals.identity.app
 
+import org.gitanimals.core.event.EventLogger
 import org.gitanimals.identity.domain.EntryPoint
 import org.gitanimals.identity.domain.UserService
 import org.springframework.stereotype.Service
@@ -10,11 +11,13 @@ class GithubLoginFacade(
     private val userService: UserService,
     private val contributionApi: ContributionApi,
     private val tokenManager: TokenManager,
+    private val eventLogger: EventLogger,
 ) {
 
     fun login(code: String): String {
         val oauthUserResponse = githubOauth2Api.getOauthUsername(githubOauth2Api.getToken(code))
 
+        var isNewUser = false
         val user = when (userService.existsByEntryPointAndAuthenticationId(
             entryPoint = EntryPoint.GITHUB,
             authenticationId = oauthUserResponse.id,
@@ -58,6 +61,7 @@ class GithubLoginFacade(
                         entryPoint = EntryPoint.GITHUB,
                     )
                 } else {
+                    isNewUser = true
                     val contributedYears =
                         contributionApi.getAllContributionYearsWithToken(oauthUserResponse.username)
                     val contributionCountPerYears =
@@ -76,6 +80,16 @@ class GithubLoginFacade(
                 }
             }
         }
+
+        eventLogger.track(
+            eventName = "complete_login",
+            distinctId = user.id.toString(),
+            properties = mapOf(
+                "provider" to "github",
+                "user_id" to user.id,
+                "is_new_user" to isNewUser,
+            ),
+        )
 
         return tokenManager.createToken(user).withType()
     }
