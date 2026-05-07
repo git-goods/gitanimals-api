@@ -24,6 +24,7 @@ ARG RELAY_APPROVE_TOKEN
 ARG INTERNAL_AUTH_SECRET
 ARG LOGIN_SECRET
 ARG GITANIMALS_ADMIN_TOKEN
+ARG MIXPANEL_PROJECT_TOKEN
 
 ARG JAR_FILE=./*.jar
 COPY ${JAR_FILE} gitanimals-api.jar
@@ -51,7 +52,8 @@ ENV db_url=${DB_URL} \
   relay_approve_token=${RELAY_APPROVE_TOKEN} \
   internal_auth_secret=${INTERNAL_AUTH_SECRET} \
   login_secret=${LOGIN_SECRET} \
-  gitanimals_admin_token=${GITANIMALS_ADMIN_TOKEN}
+  gitanimals_admin_token=${GITANIMALS_ADMIN_TOKEN} \
+  mixpanel_project_token=${MIXPANEL_PROJECT_TOKEN}
 
 ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar gitanimals-api.jar \
   --spring.datasource.url=${db_url} \
